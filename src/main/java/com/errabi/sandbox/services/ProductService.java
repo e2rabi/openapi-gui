@@ -4,12 +4,15 @@ import com.errabi.sandbox.entities.Product;
 import com.errabi.sandbox.repositories.ProductRepository;
 import com.errabi.sandbox.web.mapper.ProductMapper;
 import com.errabi.sandbox.web.model.ProductDto;
+import com.errabi.sandbox.web.model.ResponseInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import static com.errabi.sandbox.utils.SandboxConstant.SYSTEM_ERROR;
 
 @Slf4j
 @Service
@@ -25,6 +28,11 @@ public class ProductService {
             productRepository.save(product);
         } catch(Exception ex) {
             log.error("Unexpected error occurred while saving the product", ex);
+            var responseInfo = ResponseInfo.builder()
+                                            .errorCode(SYSTEM_ERROR)
+                                            .errorDescription(ex.getMessage())
+                                            .build();
+            productDto.setResponseInfo(responseInfo);
         }
         return productDto;
     }
