@@ -11,7 +11,7 @@ import javax.validation.constraints.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductDto {
+public class ProductDto extends  AbstractResponse{
     private Long id;
     @NotBlank(message = "Product name is mandatory")
     @Size(max = 30, message = "Product name must not exceed 30 characters")
