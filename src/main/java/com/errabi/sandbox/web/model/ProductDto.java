@@ -1,7 +1,6 @@
 package com.errabi.sandbox.web.model;
 
 import lombok.*;
-
 import javax.validation.constraints.*;
 
 @Builder
@@ -9,7 +8,7 @@ import javax.validation.constraints.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper=false)
-public class ProductDto extends  AbstractResponse{
+public class ProductDto{
     private Long id;
     @NotBlank(message = "Product name is mandatory")
     @Size(max = 30, message = "Product name must not exceed 30 characters")
