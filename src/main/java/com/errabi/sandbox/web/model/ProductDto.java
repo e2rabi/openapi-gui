@@ -1,9 +1,6 @@
 package com.errabi.sandbox.web.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.validation.constraints.*;
 
@@ -11,6 +8,7 @@ import javax.validation.constraints.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper=false)
 public class ProductDto extends  AbstractResponse{
     private Long id;
     @NotBlank(message = "Product name is mandatory")
