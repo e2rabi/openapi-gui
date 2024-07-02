@@ -22,15 +22,15 @@ public class ProductService {
     private final ProductMapper productMapper;
 
     public ProductDto createProduct(ProductDto productDto){
-        log.info("Creating product {} ..", productDto);
+        log.info("Creating product {} ..", productDto.getName());
         try {
             Product product = productMapper.toEntity(productDto);
             productRepository.save(product);
         } catch(Exception ex) {
-            log.error("Unexpected error occurred while saving the label", ex);
+            log.error("Unexpected error occurred while saving the product", ex);
             throw new TechnicalException(
                     SAVE_ERROR_CODE,
-                    "Unexpected error occurred while saving the label",
+                    "Unexpected error occurred while saving the product",
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -45,7 +45,7 @@ public class ProductService {
         }else{
             throw new TechnicalException(
                     NOT_FOUND_ERROR_CODE,
-                    "Product not found",
+                    "No product found",
                     HttpStatus.NOT_FOUND);
         }
     }
@@ -59,7 +59,7 @@ public class ProductService {
             log.error("Unexpected error occurred while fetching all products", ex);
             throw new TechnicalException(
                     SYSTEM_ERROR,
-                    "Unexpected error occurred while fetching all products",
+                    "Unexpected error occurred",
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -76,7 +76,7 @@ public class ProductService {
         if (existingProduct == null) {
             throw new TechnicalException(
                     NOT_FOUND_ERROR_CODE,
-                    "Product not found",
+                    "No Product was found",
                     HttpStatus.NOT_FOUND
             );
         }
@@ -107,7 +107,7 @@ public class ProductService {
         try {
             productRepository.deleteById(productId);
         } catch (Exception ex) {
-            log.error("Unexpected error occurred while deleting product with ID {}", productId, ex);
+            log.error("Unexpected error occurred while deleting product with ID {}", productId);
             throw new TechnicalException(
                     DELETE_ERROR_CODE,
                     "Unexpected error occurred while deleting the product",

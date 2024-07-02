@@ -10,7 +10,7 @@ import org.springframework.http.HttpStatus;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ErrorResponse {
+public class ResponseInfo {
     private String errorCode;
     private String errorDescription ;
     private HttpStatus httpStatus;

@@ -1,25 +1,20 @@
 package com.errabi.sandbox.entities;
 
-
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-
-import java.util.List;
+import lombok.RequiredArgsConstructor;
 
 @Entity
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
+@RequiredArgsConstructor
 @EqualsAndHashCode(callSuper=false)
-public class Product extends BaseEntity{
+public class Release extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String description;
-    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
-    private List<Release> releases;
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Product product;
 }
