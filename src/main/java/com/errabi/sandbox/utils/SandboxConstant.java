@@ -10,5 +10,5 @@ public class SandboxConstant {
     public static final String UPDATE_ERROR_CODE = "996";
     public static final String DELETE_ERROR_CODE = "995";
     public static final String BEAN_VALIDATION_ERROR_CODE="994";
-
+    public static final String SUCCESS_CODE="000";
 }

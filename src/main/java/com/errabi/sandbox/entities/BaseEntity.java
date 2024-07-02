@@ -11,6 +11,9 @@ import java.time.LocalDateTime;
 @Data
 @MappedSuperclass
 public class BaseEntity {
+    protected String enabled ;
+    protected boolean visibility ;
+    protected String color ;
     @CreatedDate
     protected LocalDateTime created ;
     @LastModifiedDate
