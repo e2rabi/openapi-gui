@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.errabi.sandbox.utils.SandboxConstant.*;
 
@@ -43,6 +44,21 @@ public class ReleaseService {
         Optional<Release> optionalRelease =  releaseRepository.findById(releaseId);
         if(optionalRelease.isPresent()){
             return releaseMapper.toDto(optionalRelease.get());
+        }else{
+            throw new TechnicalException(
+                    NOT_FOUND_ERROR_CODE,
+                    "No release found",
+                    HttpStatus.NOT_FOUND);
+        }
+    }
+
+    public List<ReleaseDto> getReleaseByProductId(Long productId) {
+        log.info("Finding release with product id");
+        List<ReleaseDto> releases = releaseRepository.findReleasesByProductId(productId).stream()
+                .map(releaseMapper::toDto)
+                .toList();
+        if(!releases.isEmpty()){
+            return releases;
         }else{
             throw new TechnicalException(
                     NOT_FOUND_ERROR_CODE,
