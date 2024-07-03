@@ -2,11 +2,12 @@ package com.errabi.sandbox.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import javax.validation.ConstraintViolation;
 import java.util.List;
+
 import static com.errabi.sandbox.utils.SandboxConstant.BEAN_VALIDATION_ERROR_CODE;
 
 @RestControllerAdvice
@@ -21,12 +22,17 @@ public class SandboxExceptionController {
         return new ResponseEntity<>(responseInfo, responseInfo.getHttpStatus());
     }
 
-    @ExceptionHandler(value = {IllegalArgumentException.class})
+    @ExceptionHandler(value = {MethodArgumentNotValidException.class})
     public ResponseEntity<ResponseInfo> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex){
 
         List<String> messages = ex.getBindingResult().getAllErrors().stream()
-                .map(err -> err.unwrap(ConstraintViolation.class))
-                .map(err -> String.format("'%s' %s", err.getPropertyPath(), err.getMessage()))
+                .map(error -> {
+                    if (error instanceof FieldError fieldError) {
+                        return fieldError.getField() + ": " + fieldError.getDefaultMessage();
+                    } else {
+                        return error.getObjectName() + ": " + error.getDefaultMessage();
+                    }
+                })
                 .toList();
 
         ResponseInfo responseInfo = ResponseInfo.builder()

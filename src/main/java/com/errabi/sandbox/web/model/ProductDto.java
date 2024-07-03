@@ -1,10 +1,7 @@
 package com.errabi.sandbox.web.model;
 
-import com.errabi.sandbox.entities.Release;
 import lombok.*;
 import jakarta.validation.constraints.*;
-
-import java.util.List;
 
 @Builder
 @Data
