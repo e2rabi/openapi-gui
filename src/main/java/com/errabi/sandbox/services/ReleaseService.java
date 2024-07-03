@@ -102,7 +102,7 @@ public class ReleaseService {
             Release updatedRelease = releaseRepository.save(existingRelease);
             return releaseMapper.toDto(updatedRelease);
         } catch(Exception ex) {
-            log.error("Unexpected error occurred while updating product with ID {}", releaseDto.getId());
+            log.error("Unexpected error occurred while updating release with ID {}", releaseDto.getId());
             throw new TechnicalException(
                     UPDATE_ERROR_CODE,
                     "Unexpected error occurred while updating product",
