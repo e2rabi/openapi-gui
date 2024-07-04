@@ -32,6 +32,12 @@ public class ReleaseController {
         return new ResponseEntity<>(productDto, HttpStatus.OK);
     }
 
+    @GetMapping("/products/{id}/releases")
+    public ResponseEntity<List<ReleaseDto>> getReleaseByProductId(@PathVariable  Long id){
+        List<ReleaseDto> releasesDto = releaseService.getReleaseByProductId(id);
+        return new ResponseEntity<>(releasesDto, HttpStatus.OK);
+    }
+
     @PutMapping("/releases")
     public ResponseEntity<ReleaseDto> updateRelease(@RequestBody @Valid ReleaseDto releaseDto) {
         return new ResponseEntity<>(releaseService.updateRelease(releaseDto), HttpStatus.OK);
