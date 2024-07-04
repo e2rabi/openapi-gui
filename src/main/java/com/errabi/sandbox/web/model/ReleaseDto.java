@@ -1,5 +1,6 @@
 package com.errabi.sandbox.web.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -12,6 +13,7 @@ import lombok.*;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper=false)
 public class ReleaseDto extends AbstractMessageDto{
+    @JsonIgnore
     private Long id;
     @NotEmpty(message = "Release name is mandatory")
     @Size(max = 30, message = "Release name must not exceed 30 characters")
@@ -25,4 +27,5 @@ public class ReleaseDto extends AbstractMessageDto{
     @NotEmpty(message = "Color is mandatory")
     @Pattern(regexp = "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$", message = "Invalid color format. It should be a HEX color.")
     private String color;
+    private Long productId;
 }
