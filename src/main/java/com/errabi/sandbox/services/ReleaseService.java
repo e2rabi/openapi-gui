@@ -113,7 +113,7 @@ public class ReleaseService {
             log.error("Unexpected error occurred while updating release with ID {}", releaseDto.getId());
             throw new TechnicalException(
                     UPDATE_ERROR_CODE,
-                    "Unexpected error occurred while updating product",
+                    "Unexpected error occurred while updating release",
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }

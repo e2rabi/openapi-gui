@@ -57,6 +57,9 @@ public class SolutionService {
         }
     }
 
+    @Transactional
+    public Solution getSolutionById(Long solutionId){return solutionRepository.findById(solutionId).orElse(null);}
+
     public List<SolutionDto> getSolutionByReleaseId(Long releaseId){
         log.info("Finding solutions with release id");
         List<SolutionDto> solutionsDto = solutionRepository.findSolutionsByReleaseId(releaseId).stream()
@@ -86,7 +89,7 @@ public class SolutionService {
             );
         }
         if (solutions.isEmpty()) {
-            log.warn("No release found in the database.");
+            log.warn("No solutions found in the database.");
             return Collections.emptyList();
         }
         return solutions.stream().map(solutionMapper::toDto).toList();
@@ -110,7 +113,7 @@ public class SolutionService {
             log.error("Unexpected error occurred while updating solution with ID {}", solutionDto.getId());
             throw new TechnicalException(
                     UPDATE_ERROR_CODE,
-                    "Unexpected error occurred while updating product",
+                    "Unexpected error occurred while updating solution",
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -122,17 +125,17 @@ public class SolutionService {
             log.error("Solution not found");
             throw new TechnicalException(
                     NOT_FOUND_ERROR_CODE,
-                    "release not found",
+                    "solution not found",
                     HttpStatus.NOT_FOUND
             );
         }
         try {
             solutionRepository.deleteById(solutionId);
         } catch (Exception ex) {
-            log.error("Unexpected error occurred while deleting the release with ID {}", solutionId);
+            log.error("Unexpected error occurred while deleting the solution with ID {}", solutionId);
             throw new TechnicalException(
                     DELETE_ERROR_CODE,
-                    "Unexpected error occurred while deleting the release",
+                    "Unexpected error occurred while deleting the solution",
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
