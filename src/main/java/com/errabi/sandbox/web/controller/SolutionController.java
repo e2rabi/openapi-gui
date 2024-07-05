@@ -25,6 +25,12 @@ public class SolutionController {
         return new ResponseEntity<>(solutionService.findSolutionById(id), HttpStatus.OK);
     }
 
+    @GetMapping("/releases/{id}/solutions")
+    public ResponseEntity<List<SolutionDto>> getSolutionByReleaseId(@PathVariable Long id){
+        List<SolutionDto> solutionsDto = solutionService.getSolutionByReleaseId(id);
+        return new ResponseEntity<>(solutionsDto, HttpStatus.OK);
+    }
+
     @GetMapping("/solutions")
     public ResponseEntity<List<SolutionDto>> getAllSolutions() {
         List<SolutionDto> solutionDto = solutionService.findAllSolutions();

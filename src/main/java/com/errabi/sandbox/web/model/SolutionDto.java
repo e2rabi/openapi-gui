@@ -27,4 +27,5 @@ public class SolutionDto extends AbstractMessageDto{
     private String color;
     @NotEmpty(message = "Please add an image")
     private String image;
+    private Long releaseId;
 }
