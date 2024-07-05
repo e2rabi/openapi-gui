@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +22,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
 
+    @Transactional
     public ProductDto createProduct(ProductDto productDto){
         log.info("Creating product {} ..", productDto.getName());
         try {
@@ -37,6 +39,7 @@ public class ProductService {
         return productDto;
     }
 
+    @Transactional
     public ProductDto findProductById(Long productId) {
         log.info("Finding product with id {}",productId);
         Optional<Product> optionalProduct =  productRepository.findById(productId);

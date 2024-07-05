@@ -9,10 +9,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-
 import static com.errabi.sandbox.utils.SandboxConstant.*;
 
 @Slf4j
@@ -21,11 +21,16 @@ import static com.errabi.sandbox.utils.SandboxConstant.*;
 public class ReleaseService {
     private final ReleaseRepository releaseRepository;
     private final ReleaseMapper releaseMapper;
+    private final ProductService productService;
 
+    @Transactional
     public ReleaseDto createRelease(ReleaseDto releaseDto){
         log.info("Creating release {} ..", releaseDto.getName());
         try {
             Release release = releaseMapper.toEntity(releaseDto);
+            if (releaseDto.getProductId() != null) {
+                release.setProduct(productService.getProductById(releaseDto.getProductId()));
+            }
             releaseRepository.save(release);
         } catch(Exception ex) {
             log.error("Unexpected error occurred while saving the release", ex);
@@ -38,6 +43,7 @@ public class ReleaseService {
         return releaseDto;
     }
 
+    @Transactional
     public ReleaseDto findReleaseById(Long releaseId) {
         log.info("Finding release with id {}",releaseId);
         Optional<Release> optionalRelease =  releaseRepository.findById(releaseId);
