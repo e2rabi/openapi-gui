@@ -57,6 +57,9 @@ public class ReleaseService {
         }
     }
 
+    @Transactional
+    public Release getReleaseById(Long releaseId) {return releaseRepository.findById(releaseId).orElse(null);}
+
     public List<ReleaseDto> getReleaseByProductId(Long productId) {
         log.info("Finding release with product id");
         List<ReleaseDto> releases = releaseRepository.findReleasesByProductId(productId).stream()

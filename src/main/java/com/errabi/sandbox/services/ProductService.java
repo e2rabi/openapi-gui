@@ -53,9 +53,8 @@ public class ProductService {
         }
     }
 
-    public Product getProductById(Long productId) {
-        return productRepository.findById(productId).orElse(null);
-    }
+    @Transactional
+    public Product getProductById(Long productId){return productRepository.findById(productId).orElse(null);}
 
     public List<ProductDto> findAllProducts() {
         log.info("Fetching all products...");

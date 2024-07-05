@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -20,11 +21,16 @@ import static com.errabi.sandbox.utils.SandboxConstant.*;
 public class SolutionService {
     private final SolutionRepository solutionRepository;
     private final SolutionMapper solutionMapper;
+    private final ReleaseService releaseService;
 
+    @Transactional
     public SolutionDto createSolution(SolutionDto solutionDto){
         log.info("Creating solution {} ..", solutionDto.getName());
         try {
             Solution solution = solutionMapper.toEntity(solutionDto);
+            if(solutionDto.getReleaseId() != null){
+                solution.setRelease(releaseService.getReleaseById(solutionDto.getReleaseId()));
+            }
             solutionRepository.save(solution);
         } catch(Exception ex) {
             log.error("Unexpected error occurred while saving the solution", ex);
@@ -37,6 +43,7 @@ public class SolutionService {
         return solutionDto;
     }
 
+    @Transactional
     public SolutionDto findSolutionById(Long solutionId) {
         log.info("Finding solution with id {}",solutionId);
         Optional<Solution> optionalSolution =  solutionRepository.findById(solutionId);
@@ -46,6 +53,21 @@ public class SolutionService {
             throw new TechnicalException(
                     NOT_FOUND_ERROR_CODE,
                     "No solution found",
+                    HttpStatus.NOT_FOUND);
+        }
+    }
+
+    public List<SolutionDto> getSolutionByReleaseId(Long releaseId){
+        log.info("Finding solutions with release id");
+        List<SolutionDto> solutionsDto = solutionRepository.findSolutionsByReleaseId(releaseId).stream()
+                .map(solutionMapper::toDto)
+                .toList();
+        if(!solutionsDto.isEmpty()){
+            return solutionsDto;
+        }else{
+            throw new TechnicalException(
+                    NOT_FOUND_ERROR_CODE,
+                    "No solutions found",
                     HttpStatus.NOT_FOUND);
         }
     }

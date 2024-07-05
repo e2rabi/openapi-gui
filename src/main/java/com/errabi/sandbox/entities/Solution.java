@@ -1,5 +1,7 @@
 package com.errabi.sandbox.entities;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -7,6 +9,7 @@ import lombok.*;
 @Data
 @RequiredArgsConstructor
 @EqualsAndHashCode(callSuper=false)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Solution extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
