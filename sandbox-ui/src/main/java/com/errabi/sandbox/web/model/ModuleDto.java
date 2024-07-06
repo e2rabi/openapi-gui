@@ -3,6 +3,8 @@ package com.errabi.sandbox.web.model;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
+import java.util.List;
+
 @Builder
 @Data
 @AllArgsConstructor
@@ -15,9 +17,9 @@ public class ModuleDto extends AbstractMessageDto{
     private String name;
     @NotEmpty(message = "Please add a description")
     private String description;
-    @NotEmpty(message = "Please add Model status")
+    @NotEmpty(message = "Please add module status")
     private String enabled;
-    @NotNull(message = "Please add product visibility")
+    @NotNull(message = "Please add module visibility")
     private boolean visibility;
     @NotEmpty(message = "Color is mandatory")
     @Pattern(regexp = "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$", message = "Invalid color format. It should be a HEX color.")
@@ -25,4 +27,5 @@ public class ModuleDto extends AbstractMessageDto{
     @NotEmpty(message = "Please add an image")
     private String image;
     private Long solutionId;
+    private List<ApiDto> apis;
 }
