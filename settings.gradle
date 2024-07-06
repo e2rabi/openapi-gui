@@ -1,1 +1,3 @@
-rootProject.name = 'sandbox'
+rootProject.name = 'sandbox-api'
+include 'sandbox-ui'
+include 'infrastructure'
