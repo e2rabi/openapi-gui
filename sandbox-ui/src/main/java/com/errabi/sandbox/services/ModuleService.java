@@ -57,6 +57,9 @@ public class ModuleService {
         }
     }
 
+    @Transactional
+    public Module getModuleById(Long moduleId){return moduleRepository.findById(moduleId).orElse(null);}
+
     public List<ModuleDto> getModuleBySolutionId(Long solutionId){
         log.info("Finding Modules with solution id");
         List<ModuleDto> modulesDto = moduleRepository.findModulesBySolutionId(solutionId).stream()
