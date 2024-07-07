@@ -1,0 +1,24 @@
+plugins {
+	id 'java'
+	id 'io.spring.dependency-management' version '1.1.5'
+	id 'net.researchgate.release' version '2.8.1'
+}
+
+group = 'com.errabi'
+version = '1.1.0-SNAPSHOT'
+
+
+repositories {
+	mavenCentral()
+}
+
+release {
+	scmAdapters = [net.researchgate.release.GitAdapter]
+	git {
+		requireBranch = 'develop'
+	}
+}
+
+tasks.named('afterReleaseBuild') {
+	dependsOn 'publish'
+}
