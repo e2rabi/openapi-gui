@@ -1,4 +1,6 @@
 spring:
+  flyway:
+    enabled: true
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     url: jdbc:h2:mem:testdb
@@ -13,7 +15,7 @@ spring:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
   h2:
     console:
       enabled: true
