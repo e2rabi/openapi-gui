@@ -1,5 +1,5 @@
-drop table if exists product cascade ;
-create table product (
+drop table if exists workspace cascade ;
+create table workspace (
     version integer not null,
     visibility boolean not null,
     created timestamp(6),

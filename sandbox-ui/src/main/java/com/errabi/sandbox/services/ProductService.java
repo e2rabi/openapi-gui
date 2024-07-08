@@ -21,12 +21,16 @@ import static com.errabi.sandbox.utils.SandboxConstant.*;
 public class ProductService {
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
+    private final WorkspaceService workspaceService;
 
     @Transactional
     public ProductDto createProduct(ProductDto productDto){
         log.info("Creating product {} ..", productDto.getName());
         try {
             Product product = productMapper.toEntity(productDto);
+            if (productDto.getWorkspaceId() != null) {
+                product.setWorkspace(workspaceService.getWorkspaceById(productDto.getWorkspaceId()));
+            }
             productRepository.save(product);
         } catch(Exception ex) {
             log.error("Unexpected error occurred while saving the product", ex);

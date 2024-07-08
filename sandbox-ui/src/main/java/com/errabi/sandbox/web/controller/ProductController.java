@@ -41,6 +41,4 @@ public class ProductController {
         productService.deleteProduct(productId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
-
 }
