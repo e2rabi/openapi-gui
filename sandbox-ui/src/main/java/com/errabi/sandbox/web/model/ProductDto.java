@@ -25,5 +25,6 @@ public class ProductDto extends AbstractMessageDto {
     @NotEmpty(message = "Color is mandatory")
     @Pattern(regexp = "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$", message = "Invalid color format. It should be a HEX color.")
     private String color;
+    private Long workspaceId;
     private List<ReleaseDto> releases;
 }
