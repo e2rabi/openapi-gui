@@ -25,9 +25,10 @@ public class ProductService {
 
     @Transactional
     public ProductDto createProduct(ProductDto productDto){
-        log.info("Creating product {} ..", productDto.getName());
         try {
+            log.info("Creating product {} ..", productDto.getName());
             Product product = productMapper.toEntity(productDto);
+
             if (productDto.getWorkspaceId() != null) {
                 product.setWorkspace(workspaceService.getWorkspaceById(productDto.getWorkspaceId()));
             }
@@ -43,7 +44,7 @@ public class ProductService {
         return productDto;
     }
 
-    @Transactional
+
     public ProductDto findProductById(Long productId) {
         log.info("Finding product with id {}",productId);
         Optional<Product> optionalProduct =  productRepository.findById(productId);
@@ -57,8 +58,8 @@ public class ProductService {
         }
     }
 
-    @Transactional
-    public Product getProductById(Long productId){return productRepository.findById(productId).orElse(null);}
+    //@Transactional
+    //public Product getProductById(Long productId){return productRepository.findById(productId).orElse(null);}
 
     public List<ProductDto> getProductsByWorkspaceId(Long workspaceId) {
         log.info("Finding release with product id");
@@ -119,18 +120,11 @@ public class ProductService {
         }
     }
 
+    @Transactional
     public void deleteProduct(Long productId) {
-        log.info("Deleting product with ID {}", productId);
-        if (!productRepository.existsById(productId)) {
-            log.error("Product not found");
-            throw new TechnicalException(
-                    NOT_FOUND_ERROR_CODE,
-                    "Product not found",
-                    HttpStatus.NOT_FOUND
-            );
-        }
         try {
-            productRepository.deleteById(productId);
+            log.info("Deleting product with ID {}", productId);
+            productRepository.deleteById( findProductById(productId).getId());
         } catch (Exception ex) {
             log.error("Unexpected error occurred while deleting product with ID {}", productId);
             throw new TechnicalException(

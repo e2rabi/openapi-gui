@@ -1,8 +1,10 @@
 package com.errabi.sandbox.services;
 
+import com.errabi.sandbox.entities.Product;
 import com.errabi.sandbox.entities.Release;
 import com.errabi.sandbox.exception.TechnicalException;
 import com.errabi.sandbox.repositories.ReleaseRepository;
+import com.errabi.sandbox.web.mapper.ProductMapper;
 import com.errabi.sandbox.web.mapper.ReleaseMapper;
 import com.errabi.sandbox.web.model.ReleaseDto;
 import lombok.RequiredArgsConstructor;
@@ -22,14 +24,16 @@ public class ReleaseService {
     private final ReleaseRepository releaseRepository;
     private final ReleaseMapper releaseMapper;
     private final ProductService productService;
+    private final ProductMapper productMapper ;
 
     @Transactional
     public ReleaseDto createRelease(ReleaseDto releaseDto){
-        log.info("Creating release {} ..", releaseDto.getName());
         try {
+            log.info("Creating release {} ..", releaseDto.getName());
+            Product product = productMapper.toEntity(productService.findProductById(releaseDto.getProductId()));
             Release release = releaseMapper.toEntity(releaseDto);
             if (releaseDto.getProductId() != null) {
-                release.setProduct(productService.getProductById(releaseDto.getProductId()));
+                release.setProduct(product);
             }
             releaseRepository.save(release);
         } catch(Exception ex) {
