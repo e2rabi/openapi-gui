@@ -31,6 +31,12 @@ public class ProductController {
         return new ResponseEntity<>(productDto, HttpStatus.OK);
     }
 
+    @GetMapping("/workspace/{id}/products")
+    public ResponseEntity<List<ProductDto>> getReleaseByProductId(@PathVariable  Long id){
+        List<ProductDto> productsDto = productService.getProductsByWorkspaceId(id);
+        return new ResponseEntity<>(productsDto, HttpStatus.OK);
+    }
+
     @PutMapping("/products")
     public ResponseEntity<ProductDto> updateProduct(@RequestBody @Valid ProductDto productDto) {
         return new ResponseEntity<>(productService.updateProduct(productDto), HttpStatus.OK);
