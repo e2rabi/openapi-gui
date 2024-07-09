@@ -3,6 +3,7 @@ package com.errabi.sandbox.services;
 import com.errabi.sandbox.entities.Api;
 import com.errabi.sandbox.exception.TechnicalException;
 import com.errabi.sandbox.repositories.ApiRepository;
+import com.errabi.sandbox.repositories.ModuleRepository;
 import com.errabi.sandbox.web.mapper.ApiMapper;
 import com.errabi.sandbox.web.model.ApiDto;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,17 +23,18 @@ import static com.errabi.sandbox.utils.SandboxConstant.*;
 public class ApiService {
     private final ApiRepository apiRepository;
     private final ApiMapper apiMapper;
-    private final ModuleService moduleService;
+    private final ModuleRepository moduleRepository;
 
     @Transactional
     public ApiDto createApi(ApiDto apiDto){
-        log.info("Creating api {} ..", apiDto.getName());
         try {
+            log.info("Creating api {} ..", apiDto.getName());
             Api api = apiMapper.toEntity(apiDto);
             if(apiDto.getModuleId() != null){
-                api.setModule(moduleService.getModuleById(apiDto.getModuleId()));
+                api.setModule(moduleRepository.findById(apiDto.getModuleId()).orElse(null));
             }
             apiRepository.save(api);
+            return apiDto;
         } catch(Exception ex) {
             log.error("Unexpected error occurred while saving the Api", ex);
             throw new TechnicalException(
@@ -42,7 +43,6 @@ public class ApiService {
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
-        return apiDto;
     }
 
     public ApiDto findApiById(Long apiId) {
@@ -74,10 +74,10 @@ public class ApiService {
     }
 
     public List<ApiDto> findAllApi() {
-        log.info("Fetching all APIs...");
-        List<Api> apis;
         try {
-            apis = apiRepository.findAll();
+            log.info("Fetching all APIs...");
+            List<Api> apis = apiRepository.findAll();
+            return apis.stream().map(apiMapper::toDto).toList();
         } catch(Exception ex) {
             log.error("Unexpected error occurred while fetching all APIs", ex);
             throw new TechnicalException(
@@ -86,24 +86,12 @@ public class ApiService {
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
-        if (apis.isEmpty()) {
-            log.warn("No APIs found in the database.");
-            return Collections.emptyList();
-        }
-        return apis.stream().map(apiMapper::toDto).toList();
     }
 
     public ApiDto updateApi(ApiDto apiDto) {
-        log.info("Updating API {} ..", apiDto.getId());
-        Api existingApi = apiRepository.findById(apiDto.getId()).orElse(null);
-        if (existingApi == null) {
-            throw new TechnicalException(
-                    NOT_FOUND_ERROR_CODE,
-                    "No API was found",
-                    HttpStatus.NOT_FOUND
-            );
-        }
         try {
+            log.info("Updating API {} ..", apiDto.getId());
+            Api existingApi = apiMapper.toEntity(findApiById(apiDto.getId()));
             apiMapper.updateFromDto(apiDto, existingApi);
             Api updatedApi = apiRepository.save(existingApi);
             return apiMapper.toDto(updatedApi);
@@ -117,18 +105,11 @@ public class ApiService {
         }
     }
 
+    @Transactional
     public void deleteApi(Long apiId) {
-        log.info("Deleting API with ID {}", apiId);
-        if (!apiRepository.existsById(apiId)) {
-            log.error("API not found");
-            throw new TechnicalException(
-                    NOT_FOUND_ERROR_CODE,
-                    "No API found",
-                    HttpStatus.NOT_FOUND
-            );
-        }
         try {
-            apiRepository.deleteById(apiId);
+            log.info("Deleting API with ID {}", apiId);
+            apiRepository.deleteById(findApiById(apiId).getId());
         } catch (Exception ex) {
             log.error("Unexpected error occurred while deleting the API with ID {}", apiId);
             throw new TechnicalException(

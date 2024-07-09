@@ -1,6 +1,5 @@
 package com.errabi.sandbox.web.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import jakarta.validation.constraints.*;
 import java.util.List;
@@ -11,7 +10,6 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper=false)
 public class ProductDto extends AbstractMessageDto {
-    @JsonIgnore
     private Long id;
     @NotEmpty(message = "Product name is mandatory")
     @Size(max = 30, message = "Product name must not exceed 30 characters")

@@ -3,6 +3,7 @@ package com.errabi.sandbox.services;
 import com.errabi.sandbox.entities.Module;
 import com.errabi.sandbox.exception.TechnicalException;
 import com.errabi.sandbox.repositories.ModuleRepository;
+import com.errabi.sandbox.repositories.SolutionRepository;
 import com.errabi.sandbox.web.mapper.ModuleMapper;
 import com.errabi.sandbox.web.model.ModuleDto;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import static com.errabi.sandbox.utils.SandboxConstant.*;
@@ -21,17 +21,18 @@ import static com.errabi.sandbox.utils.SandboxConstant.*;
 public class ModuleService {
     private final ModuleRepository moduleRepository;
     private final ModuleMapper moduleMapper;
-    private final SolutionService solutionService;
+    private final SolutionRepository solutionRepository;
 
     @Transactional
     public ModuleDto createModule(ModuleDto moduleDto){
-        log.info("Creating module {} ..", moduleDto.getName());
         try {
+            log.info("Creating module {} ..", moduleDto.getName());
             Module module = moduleMapper.toEntity(moduleDto);
             if(moduleDto.getSolutionId() != null){
-                module.setSolution(solutionService.getSolutionById(moduleDto.getSolutionId()));
+                module.setSolution(solutionRepository.findById(moduleDto.getSolutionId()).orElse(null));
             }
             moduleRepository.save(module);
+            return moduleDto;
         } catch(Exception ex) {
             log.error("Unexpected error occurred while saving the module", ex);
             throw new TechnicalException(
@@ -40,10 +41,8 @@ public class ModuleService {
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
-        return moduleDto;
     }
 
-    @Transactional
     public ModuleDto findModuleById(Long moduleId) {
         log.info("Finding module with id {}",moduleId);
         Optional<Module> optionalModule = moduleRepository.findById(moduleId);
@@ -56,9 +55,6 @@ public class ModuleService {
                     HttpStatus.NOT_FOUND);
         }
     }
-
-    @Transactional
-    public Module getModuleById(Long moduleId){return moduleRepository.findById(moduleId).orElse(null);}
 
     public List<ModuleDto> getModuleBySolutionId(Long solutionId){
         log.info("Finding Modules with solution id");
@@ -76,10 +72,10 @@ public class ModuleService {
     }
 
     public List<ModuleDto> findAllModules() {
-        log.info("Fetching all modules...");
-        List<Module> modules;
         try {
-            modules = moduleRepository.findAll();
+            log.info("Fetching all modules...");
+            List<Module> modules = moduleRepository.findAll();
+            return modules.stream().map(moduleMapper::toDto).toList();
         } catch(Exception ex) {
             log.error("Unexpected error occurred while fetching all modules", ex);
             throw new TechnicalException(
@@ -88,24 +84,12 @@ public class ModuleService {
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
-        if (modules.isEmpty()) {
-            log.warn("No modules found in the database.");
-            return Collections.emptyList();
-        }
-        return modules.stream().map(moduleMapper::toDto).toList();
     }
 
     public ModuleDto updateModule(ModuleDto moduleDto) {
-        log.info("Updating module {} ..", moduleDto.getId());
-        Module existingModule = moduleRepository.findById(moduleDto.getId()).orElse(null);
-        if (existingModule == null) {
-            throw new TechnicalException(
-                    NOT_FOUND_ERROR_CODE,
-                    "No module was found",
-                    HttpStatus.NOT_FOUND
-            );
-        }
         try {
+            log.info("Updating module {} ..", moduleDto.getId());
+            Module existingModule = moduleMapper.toEntity(findModuleById(moduleDto.getId()));
             moduleMapper.updateFromDto(moduleDto, existingModule);
             Module updatedModule = moduleRepository.save(existingModule);
             return moduleMapper.toDto(updatedModule);
@@ -119,18 +103,11 @@ public class ModuleService {
         }
     }
 
+    @Transactional
     public void deleteModule(Long moduleId) {
-        log.info("Deleting module with ID {}", moduleId);
-        if (!moduleRepository.existsById(moduleId)) {
-            log.error("Module not found");
-            throw new TechnicalException(
-                    NOT_FOUND_ERROR_CODE,
-                    "No Module found",
-                    HttpStatus.NOT_FOUND
-            );
-        }
         try {
-            moduleRepository.deleteById(moduleId);
+            log.info("Deleting module with ID {}", moduleId);
+            moduleRepository.deleteById(findModuleById(moduleId).getId());
         } catch (Exception ex) {
             log.error("Unexpected error occurred while deleting the module with ID {}", moduleId);
             throw new TechnicalException(
