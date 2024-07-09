@@ -60,6 +60,21 @@ public class ProductService {
     @Transactional
     public Product getProductById(Long productId){return productRepository.findById(productId).orElse(null);}
 
+    public List<ProductDto> getProductsByWorkspaceId(Long workspaceId) {
+        log.info("Finding release with product id");
+        List<ProductDto> products = productRepository.findProductsByWorkspaceId(workspaceId).stream()
+                .map(productMapper::toDto)
+                .toList();
+        if(!products.isEmpty()){
+            return products;
+        }else{
+            throw new TechnicalException(
+                    NOT_FOUND_ERROR_CODE,
+                    "No products found",
+                    HttpStatus.NOT_FOUND);
+        }
+    }
+
     public List<ProductDto> findAllProducts() {
         log.info("Fetching all products...");
         List<Product> products;
