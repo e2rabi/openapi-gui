@@ -1,6 +1,5 @@
 package com.errabi.sandbox.web.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -13,7 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper=false)
 public class WorkspaceDto extends AbstractMessageDto{
-    @JsonIgnore
     private Long id;
     @NotEmpty(message = "Workspace name is mandatory")
     @Size(max = 30, message = "Workspace name must not exceed 30 characters")
