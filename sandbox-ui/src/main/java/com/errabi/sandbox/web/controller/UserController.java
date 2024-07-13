@@ -1,6 +1,7 @@
 package com.errabi.sandbox.web.controller;
 
 import com.errabi.sandbox.services.UserService;
+import com.errabi.sandbox.web.model.AuthDto;
 import com.errabi.sandbox.web.model.UserDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+
+    @PostMapping("/login")
+    public ResponseEntity<Void> login(@RequestBody AuthDto userDto){
+        return new ResponseEntity<>(userService.userLogin(userDto) ? HttpStatus.OK : HttpStatus.UNAUTHORIZED);
+    }
 
     @PostMapping("/users")
     public ResponseEntity<UserDto> createUser(@RequestBody @Valid UserDto userDto){

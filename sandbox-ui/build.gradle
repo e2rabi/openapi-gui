@@ -26,7 +26,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation "org.springframework.boot:spring-boot-starter-security:${springSecurity}"
 	implementation "javax.validation:validation-api:${javaxValidationVersion}"
+	implementation "org.apache.commons:commons-lang3:${apacheCommonsLang3}"
 	implementation "com.zaxxer:HikariCP:${hikariVersion}"
 	compileOnly 'org.projectlombok:lombok'
 	implementation "org.mapstruct:mapstruct:${mapstructVersion}"
