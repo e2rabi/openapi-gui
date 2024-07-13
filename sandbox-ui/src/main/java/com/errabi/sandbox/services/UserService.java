@@ -6,10 +6,13 @@ import com.errabi.sandbox.exception.TechnicalException;
 import com.errabi.sandbox.repositories.UserRepository;
 import com.errabi.sandbox.web.mapper.RoleMapper;
 import com.errabi.sandbox.web.mapper.UserMapper;
+import com.errabi.sandbox.web.model.AuthDto;
 import com.errabi.sandbox.web.model.UserDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,13 +29,36 @@ public class UserService {
     private final UserMapper userMapper;
     private final RoleService roleService;
     private final RoleMapper roleMapper;
+    private final BCryptPasswordEncoder passwordEncoder;
+
+    public boolean userLogin(AuthDto userDto){
+        Optional<User> user =  userRepository.findByUsername(userDto.getUsername());
+        if(user.isPresent()){
+            if(passwordEncoder.matches(userDto.getPassword(), user.get().getPassword())){
+                return true ;
+            }else{
+                throw new TechnicalException(INVALID_USERNAME_OR_PASSWORD_CODE,"Invalid password", HttpStatus.UNAUTHORIZED);
+            }
+        }else {
+            throw new TechnicalException(INVALID_USERNAME_OR_PASSWORD_CODE,"Invalid username", HttpStatus.UNAUTHORIZED);
+        }
+    }
 
     @Transactional
     public UserDto createUser(UserDto userDto){
+        if (userRepository.existsByUsername(userDto.getUsername())) {
+            log.error("Failed to save user. Username {} already exists.", userDto.getUsername());
+            throw new TechnicalException(
+                    USER_ALREADY_EXISTS_ERROR_CODE,
+                    "User already exists!",
+                    HttpStatus.CONFLICT);
+        }
         try {
             log.info("Creating User {} ..", userDto.getUsername());
+            userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
             User user = userMapper.toEntity(userDto);
             userRepository.save(user);
+            userDto.setPassword(StringUtils.EMPTY);
             return userDto;
         } catch(Exception ex) {
             log.error("Unexpected error occurred while saving the User", ex);
