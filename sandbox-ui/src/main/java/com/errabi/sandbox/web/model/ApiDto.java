@@ -17,8 +17,8 @@ public class ApiDto extends AbstractMessageDto{
     private String name;
     @NotEmpty(message = "Please add a description")
     private String description;
-    @NotEmpty(message = "Please add Model status")
-    private String enabled;
+    @NotNull(message = "Please add Model status")
+    private boolean enabled;
     @NotNull(message = "Please add Api visibility")
     private boolean visibility;
     @NotEmpty(message = "Please add url")

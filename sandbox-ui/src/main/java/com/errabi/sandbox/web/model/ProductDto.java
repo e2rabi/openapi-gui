@@ -16,8 +16,8 @@ public class ProductDto extends AbstractMessageDto {
     private String name;
     @NotEmpty(message = "Please add a description")
     private String description;
-    @NotEmpty(message = "Please add product status")
-    private String enabled;
+    @NotNull(message = "Please add product status")
+    private boolean enabled;
     @NotNull(message = "Please add product visibility")
     private boolean visibility;
     @NotEmpty(message = "Color is mandatory")

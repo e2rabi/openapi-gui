@@ -3,12 +3,13 @@ package com.errabi.sandbox.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 
+@SpringBootTest
 public class BaseControllerIT {
     @Autowired
     WebApplicationContext wac;
@@ -19,7 +20,7 @@ public class BaseControllerIT {
     public void setup() {
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(wac)
-                //.apply(springSecurity())// apply spring security on web context
+                .apply(springSecurity())// apply spring security on web context
                 .build();
     }
     protected static String asJsonString(final Object obj) {

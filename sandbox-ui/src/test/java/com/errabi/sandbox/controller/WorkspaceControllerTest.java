@@ -1,6 +1,6 @@
 package com.errabi.sandbox.controller;
 
-import com.errabi.sandbox.web.model.ProductDto;
+import com.errabi.sandbox.web.model.WorkspaceDto;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -17,18 +17,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @WithMockUser(username = "admin", password = "admin") // Mock user for authentication
-class ProductControllerTest extends BaseControllerIT{
+class WorkspaceControllerTest extends BaseControllerIT{
     @Test
     @Order(1)
-    void CreateProductOkTest() throws Exception {
-        mockMvc.perform(post("/sandbox-api/v1/products")
-                        .content(asJsonString(ProductDto.builder()
-                                                        .name("test")
-                                                        .description("test")
-                                                        .color("#FFFFFF")
-                                                        .enabled(true)
-                                                        .visibility(true)
-                                                        .build()))
+    void CreateWorkspaceOkTest() throws Exception {
+        mockMvc.perform(post("/sandbox-api/v1/workspace")
+                        .content(asJsonString(WorkspaceDto.builder()
+                                .name("e2rabi")
+                                .description("Amine")
+                                .enabled(true)
+                                .visibility(true)
+                                .build()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -36,29 +35,28 @@ class ProductControllerTest extends BaseControllerIT{
     }
     @Test
     @Order(2)
-    void FindProductByIdOkTest() throws Exception {
-        mockMvc.perform(get("/sandbox-api/v1/products/1"))
+    void FindWorkspaceByIdOkTest() throws Exception {
+        mockMvc.perform(get("/sandbox-api/v1/workspace/1"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
     @Test
     @Order(3)
-    void FindAllProductsOkTest() throws Exception {
-        mockMvc.perform(get("/sandbox-api/v1/products"))
+    void FindAllWorkspacesOkTest() throws Exception {
+        mockMvc.perform(get("/sandbox-api/v1/workspaces"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
     @Test
     @Order(4)
-    void UpdateProductOkTest() throws Exception {
-        mockMvc.perform(put("/sandbox-api/v1/products")
-                        .content(asJsonString(ProductDto.builder()
+    void UpdateWorkspaceOkTest() throws Exception {
+        mockMvc.perform(put("/sandbox-api/v1/workspace")
+                        .content(asJsonString(WorkspaceDto.builder()
                                 .id(1L)
-                                .name("card")
-                                .description("update")
-                                .color("#FFF1FF")
+                                .name("test")
+                                .description("test")
                                 .enabled(false)
-                                .visibility(false)
+                                .visibility(true)
                                 .build()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -67,8 +65,8 @@ class ProductControllerTest extends BaseControllerIT{
     }
     @Test
     @Order(5)
-    void DeleteProductOkTest() throws Exception {
-        mockMvc.perform(delete("/sandbox-api/v1/products/1"))
+    void DeleteWorkspaceOkTest() throws Exception {
+        mockMvc.perform(delete("/sandbox-api/v1/workspace/1"))
                 .andDo(print())
                 .andExpect(status().isNoContent());
     }
