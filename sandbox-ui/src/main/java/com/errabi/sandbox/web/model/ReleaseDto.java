@@ -20,8 +20,8 @@ public class ReleaseDto extends AbstractMessageDto{
     private String name;
     @NotEmpty(message = "Please add a description")
     private String description;
-    @NotEmpty(message = "Please add a release status")
-    private String enabled;
+    @NotNull(message = "Please add a release status")
+    private boolean enabled;
     @NotNull(message = "Please add release visibility")
     private boolean visibility;
     @NotEmpty(message = "Color is mandatory")

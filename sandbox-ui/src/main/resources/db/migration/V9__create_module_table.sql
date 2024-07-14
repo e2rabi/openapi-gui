@@ -9,7 +9,7 @@ create table module (
     color varchar(255),
     created_by varchar(255),
     description varchar(255),
-    enabled varchar(255),
+    enabled boolean not null,
     image varchar(255),
     last_modified_by varchar(255),
     name varchar(255),

@@ -9,7 +9,7 @@ create table product (
     color varchar(255),
     created_by varchar(255),
     description varchar(255),
-    enabled varchar(255),
+    enabled boolean not null,
     last_modified_by varchar(255),
     name varchar(255),
     primary key (id)
