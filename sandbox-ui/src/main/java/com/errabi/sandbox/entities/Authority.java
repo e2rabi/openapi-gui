@@ -12,6 +12,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @DynamicUpdate
+@EqualsAndHashCode(exclude = "roles")
 @Table(name = "authorities")
 public class Authority{
     @Id

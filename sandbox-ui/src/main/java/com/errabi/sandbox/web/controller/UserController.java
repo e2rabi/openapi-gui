@@ -2,6 +2,7 @@ package com.errabi.sandbox.web.controller;
 
 import com.errabi.sandbox.services.UserService;
 import com.errabi.sandbox.web.model.AuthDto;
+import com.errabi.sandbox.web.model.RoleDto;
 import com.errabi.sandbox.web.model.UserDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +19,9 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestBody AuthDto userDto){
-        return new ResponseEntity<>(userService.userLogin(userDto) ? HttpStatus.OK : HttpStatus.UNAUTHORIZED);
+    public ResponseEntity<String> login(@RequestBody AuthDto userDto){
+        String token = userService.userLogin(userDto);
+        return ResponseEntity.ok(token);
     }
 
     @PostMapping("/users")
@@ -39,7 +41,7 @@ public class UserController {
     }
 
     @PutMapping("/users/{userId}/roles/{roleId}")
-    public ResponseEntity<UserDto> assignRoleToUser(@PathVariable Long userId, @PathVariable Long roleId ){
+    public ResponseEntity<RoleDto> assignRoleToUser(@PathVariable Long userId, @PathVariable Long roleId ){
         return new ResponseEntity<>(userService.assignRoleToUser(userId, roleId), HttpStatus.OK);
     }
 

@@ -10,7 +10,6 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper=false)
 public class AuthorityDto {
     private Long id;
     @NotEmpty(message = "Please add permission")

@@ -10,8 +10,7 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper=false)
-public class RoleDto extends AbstractMessageDto{
+public class RoleDto {
     private Long id;
     @NotEmpty(message = "Please add role name")
     private String name;
