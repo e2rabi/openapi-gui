@@ -13,13 +13,15 @@ import static com.errabi.sandbox.utils.SandboxConstant.BEAN_VALIDATION_ERROR_COD
 @RestControllerAdvice
 public class SandboxExceptionController {
     @ExceptionHandler(value = {TechnicalException.class})
-    public ResponseEntity<ResponseInfo> handleTechnicalException(TechnicalException technicalException) {
+    public ResponseEntity<ErrorResponse> handleTechnicalException(TechnicalException technicalException) {
         ResponseInfo responseInfo = ResponseInfo.builder()
                 .errorCode(technicalException.getErrorCode())
                 .errorDescription(technicalException.getErrorDescription())
                 .httpStatus(technicalException.getHttpStatus())
                 .build();
-        return new ResponseEntity<>(responseInfo, responseInfo.getHttpStatus());
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setResponseInfo(responseInfo);
+        return new ResponseEntity<>(errorResponse, responseInfo.getHttpStatus());
     }
 
     @ExceptionHandler(value = {MethodArgumentNotValidException.class})

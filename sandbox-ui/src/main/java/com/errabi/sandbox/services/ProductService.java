@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import static com.errabi.sandbox.utils.SandboxConstant.*;
+import static com.errabi.sandbox.utils.SandboxUtils.buildSuccessInfo;
 
 @Slf4j
 @Service
@@ -33,6 +34,8 @@ public class ProductService {
             if (productDto.getWorkspaceId() != null) {
                 product.setWorkspace(workspaceRepository.findById(productDto.getWorkspaceId()).orElse(null));
             }
+            productDto.setResponseInfo(buildSuccessInfo());
+
             return productDto;
         } catch(Exception ex) {
             log.error("Unexpected error occurred while saving the product", ex);
