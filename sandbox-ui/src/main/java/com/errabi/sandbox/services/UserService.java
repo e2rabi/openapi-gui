@@ -7,7 +7,9 @@ import com.errabi.sandbox.repositories.UserRepository;
 import com.errabi.sandbox.web.mapper.RoleMapper;
 import com.errabi.sandbox.web.mapper.UserMapper;
 import com.errabi.sandbox.web.model.AuthDto;
+import com.errabi.sandbox.web.model.RoleDto;
 import com.errabi.sandbox.web.model.UserDto;
+import com.nimbusds.jose.JOSEException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -30,17 +32,23 @@ public class UserService {
     private final RoleService roleService;
     private final RoleMapper roleMapper;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final JwtTokenService jwtTokenService;
 
-    public boolean userLogin(AuthDto userDto){
-        Optional<User> user =  userRepository.findByUsername(userDto.getUsername());
-        if(user.isPresent()){
-            if(passwordEncoder.matches(userDto.getPassword(), user.get().getPassword())){
-                return true ;
+    public String userLogin(AuthDto userDto){
+        Optional<User> userOptional =  userRepository.findByUsername(userDto.getUsername());
+        if(userOptional.isPresent()){
+            User user = userOptional.get();
+            if(passwordEncoder.matches(userDto.getPassword(), user.getPassword())){
+                try {
+                    return jwtTokenService.generateToken(user);
+                } catch (JOSEException e) {
+                    throw new TechnicalException("TOKEN_GENERATION_FAILED", "Failed to generate token", HttpStatus.INTERNAL_SERVER_ERROR);
+                }
             }else{
-                throw new TechnicalException(INVALID_USERNAME_OR_PASSWORD_CODE,"Invalid password", HttpStatus.UNAUTHORIZED);
+                throw new TechnicalException(INVALID_USERNAME_OR_PASSWORD_CODE,"Invalid username or password", HttpStatus.UNAUTHORIZED);
             }
         }else {
-            throw new TechnicalException(INVALID_USERNAME_OR_PASSWORD_CODE,"Invalid username", HttpStatus.UNAUTHORIZED);
+            throw new TechnicalException(INVALID_USERNAME_OR_PASSWORD_CODE,"Invalid username or password", HttpStatus.UNAUTHORIZED);
         }
     }
 
@@ -99,13 +107,13 @@ public class UserService {
     }
 
     @Transactional
-    public UserDto assignRoleToUser(Long userId, Long roleId) {
+    public RoleDto assignRoleToUser(Long userId, Long roleId) {
         try {
             User user = userMapper.toEntity(findUserById(userId));
             Role role = roleMapper.toEntity(roleService.findRoleById(roleId));
             user.getRoles().add(role);
             userRepository.save(user);
-            return userMapper.toDto(user);
+            return roleMapper.toDto(role);
         } catch(Exception ex) {
             log.error("Unexpected error occurred while assigning the role to User", ex);
                 throw new TechnicalException(
