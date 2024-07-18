@@ -7,6 +7,7 @@ import com.nimbusds.jose.crypto.*;
 import com.nimbusds.jose.jwk.*;
 import com.nimbusds.jose.jwk.gen.*;
 import com.nimbusds.jwt.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -16,7 +17,8 @@ import java.util.stream.Collectors;
 public class JwtTokenService {
     private final RSAKey rsaJWK;
     private final JWSSigner signer;
-
+    @Value("${jwt.issuer}") // spring expression language
+    private String issuer ;
     public JwtTokenService() throws JOSEException {
         // Generate RSA key pair
         this.rsaJWK = new RSAKeyGenerator(2048).keyID("123").generate();
@@ -30,13 +32,12 @@ public class JwtTokenService {
                 .collect(Collectors.joining(","));
 
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
-                .issuer("Sandbox API")
+                .issuer(issuer)
                 .issueTime(new Date())
                 .expirationTime(new Date(new Date().getTime() + 60 * 60 * 1000)) // 1 hour expiration
                 .audience(user.getUsername())
                 .claim("scope", roles)
                 .claim("userLangage", "en_US")
-                .claim("institution", "ISS005")
                 .build();
 
         SignedJWT signedJWT = new SignedJWT(
