@@ -10,7 +10,8 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthorityDto {
+@EqualsAndHashCode(callSuper=false)
+public class AuthorityDto extends AbstractMessageDto {
     private Long id;
     @NotEmpty(message = "Please add permission")
     private String permission;

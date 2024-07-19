@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
 public class JwtTokenService {
     private final RSAKey rsaJWK;
     private final JWSSigner signer;
-    @Value("${jwt.issuer}") // spring expression language
-    private String issuer ;
+    @Value("${jwt.issuer}")
+    private String issuer;
     public JwtTokenService() throws JOSEException {
         // Generate RSA key pair
         this.rsaJWK = new RSAKeyGenerator(2048).keyID("123").generate();

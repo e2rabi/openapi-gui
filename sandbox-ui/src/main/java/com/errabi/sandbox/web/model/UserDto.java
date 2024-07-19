@@ -11,7 +11,8 @@ import java.util.Set;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDto {
+@EqualsAndHashCode(callSuper=false)
+public class UserDto extends AbstractMessageDto {
     private Long id;
     @NotEmpty(message = "Please add username")
     private  String username;

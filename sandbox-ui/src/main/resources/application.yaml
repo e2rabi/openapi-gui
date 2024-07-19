@@ -27,4 +27,4 @@ spring:
 jwt:
   issuer: errabi
   key-id: 123
-  expiry-time : 3600000 #1h
+  expiry-time: 3600000 #1h

@@ -11,10 +11,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static com.errabi.sandbox.utils.SandboxConstant.*;
+import static com.errabi.sandbox.utils.SandboxUtils.buildSuccessInfo;
 
 @Slf4j
 @Service
@@ -29,12 +31,13 @@ public class WorkspaceService {
             log.info("Creating Workspace {} ..", workspaceDto.getName());
             Workspace workspace = workspaceMapper.toEntity(workspaceDto);
             workspaceRepository.save(workspace);
+            workspaceDto.setResponseInfo(buildSuccessInfo());
             return workspaceDto;
         } catch(Exception ex) {
-            log.error("Unexpected error occurred while saving the Workspace", ex);
+            log.error("Unexpected error occurred while saving the Workspace");
             throw new TechnicalException(
                     SAVE_ERROR_CODE,
-                    "Unexpected error occurred while saving the Workspace",
+                    SAVE_ERROR_DESCRIPTION,
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -44,11 +47,14 @@ public class WorkspaceService {
         log.info("Finding Workspace with id {}",workspaceId);
         Optional<Workspace> optionalWorkspace =  workspaceRepository.findById(workspaceId);
         if(optionalWorkspace.isPresent()){
-            return workspaceMapper.toDto(optionalWorkspace.get());
+            WorkspaceDto workspaceDto = workspaceMapper.toDto(optionalWorkspace.get());
+            workspaceDto.setResponseInfo(buildSuccessInfo());
+            return workspaceDto;
         }else{
+            log.error("Unexpected error occurred while finding the Workspace");
             throw new TechnicalException(
                     NOT_FOUND_ERROR_CODE,
-                    "No Workspace found",
+                    NOT_FOUND_ERROR_DESCRIPTION,
                     HttpStatus.NOT_FOUND);
         }
     }
@@ -57,12 +63,16 @@ public class WorkspaceService {
         try {
             log.info("Fetching all Workspaces...");
             List<Workspace> workspaces = workspaceRepository.findAll();
-            return workspaces.stream().map(workspaceMapper::toDto).toList();
+            if(!workspaces.isEmpty()){
+                return workspaces.stream().map(workspaceMapper::toDto).toList();
+            }else{
+                return Collections.emptyList();
+            }
         } catch(Exception ex) {
             log.error("Unexpected error occurred while fetching all Workspaces", ex);
             throw new TechnicalException(
                     SYSTEM_ERROR,
-                    "Unexpected error occurred",
+                    SYSTEM_ERROR_DESCRIPTION,
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -73,13 +83,14 @@ public class WorkspaceService {
             log.info("Updating Workspace {} ..", workspaceDto.getId());
             Workspace existingWorkspace = workspaceMapper.toEntity(findWorkspaceById(workspaceDto.getId()));
             workspaceMapper.updateFromDto(workspaceDto, existingWorkspace);
-            Workspace updatedWorkspace = workspaceRepository.save(existingWorkspace);
-            return workspaceMapper.toDto(updatedWorkspace);
+            workspaceRepository.save(existingWorkspace);
+            workspaceDto.setResponseInfo(buildSuccessInfo());
+            return workspaceDto;
         } catch(Exception ex) {
             log.error("Unexpected error occurred while updating Workspace with ID {}", workspaceDto.getId());
             throw new TechnicalException(
                     UPDATE_ERROR_CODE,
-                    "Unexpected error occurred while updating Workspace",
+                    UPDATE_ERROR_DESCRIPTION,
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -94,7 +105,7 @@ public class WorkspaceService {
             log.error("Unexpected error occurred while deleting Workspace with ID {}", workspaceId);
             throw new TechnicalException(
                     DELETE_ERROR_CODE,
-                    "Unexpected error occurred while deleting the Workspace",
+                    DELETE_ERROR_DESCRIPTION,
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }

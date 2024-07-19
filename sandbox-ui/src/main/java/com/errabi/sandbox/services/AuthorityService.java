@@ -11,10 +11,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static com.errabi.sandbox.utils.SandboxConstant.*;
+import static com.errabi.sandbox.utils.SandboxUtils.buildSuccessInfo;
 
 @Slf4j
 @Service
@@ -29,12 +31,13 @@ public class AuthorityService {
             log.info("Creating Authority {} ..", authorityDto.getPermission());
             Authority authority = authorityMapper.toEntity(authorityDto);
             authorityRepository.save(authority);
+            authorityDto.setResponseInfo(buildSuccessInfo());
             return authorityDto;
         } catch(Exception ex) {
             log.error("Unexpected error occurred while saving the Authority", ex);
             throw new TechnicalException(
                     SAVE_ERROR_CODE,
-                    "Unexpected error occurred",
+                    SAVE_ERROR_DESCRIPTION,
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -44,11 +47,13 @@ public class AuthorityService {
         log.info("Finding Authority with id {}",authorityId);
         Optional<Authority> optionalAuthority =  authorityRepository.findById(authorityId);
         if(optionalAuthority.isPresent()){
-            return authorityMapper.toDto(optionalAuthority.get());
+            AuthorityDto authorityDto = authorityMapper.toDto(optionalAuthority.get());
+            authorityDto.setResponseInfo(buildSuccessInfo());
+            return authorityDto;
         }else{
             throw new TechnicalException(
                     NOT_FOUND_ERROR_CODE,
-                    "No Authority found",
+                    NOT_FOUND_ERROR_DESCRIPTION,
                     HttpStatus.NOT_FOUND);
         }
     }
@@ -57,12 +62,16 @@ public class AuthorityService {
         try {
             log.info("Fetching all authorities...");
             List<Authority> authorities = authorityRepository.findAll();
-            return authorities.stream().map(authorityMapper::toDto).toList();
+            if(!authorities.isEmpty()){
+                return authorities.stream().map(authorityMapper::toDto).toList();
+            }else{
+                return Collections.emptyList();
+            }
         } catch(Exception ex) {
             log.error("Unexpected error occurred while fetching all authorities", ex);
             throw new TechnicalException(
                     SYSTEM_ERROR,
-                    "Unexpected error occurred",
+                    SYSTEM_ERROR_DESCRIPTION,
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -73,13 +82,14 @@ public class AuthorityService {
             log.info("Updating authority {} ..", authorityDto.getId());
             Authority existingAuthority = authorityMapper.toEntity(findAuthorityById(authorityDto.getId()));
             authorityMapper.updateFromDto(authorityDto, existingAuthority);
-            Authority updatedAuthority = authorityRepository.save(existingAuthority);
-            return authorityMapper.toDto(updatedAuthority);
+            authorityRepository.save(existingAuthority);
+            authorityDto.setResponseInfo(buildSuccessInfo());
+            return authorityDto;
         } catch(Exception ex) {
             log.error("Unexpected error occurred while updating authority with ID {}", authorityDto.getId());
             throw new TechnicalException(
                     UPDATE_ERROR_CODE,
-                    "Unexpected error occurred while updating the authority",
+                    UPDATE_ERROR_DESCRIPTION,
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -94,7 +104,7 @@ public class AuthorityService {
             log.error("Unexpected error occurred while deleting authority with ID {}", authorityId);
             throw new TechnicalException(
                     DELETE_ERROR_CODE,
-                    "Unexpected error occurred while deleting the authority",
+                    DELETE_ERROR_DESCRIPTION,
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }

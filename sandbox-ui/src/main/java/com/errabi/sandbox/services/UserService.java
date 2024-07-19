@@ -18,10 +18,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static com.errabi.sandbox.utils.SandboxConstant.*;
+import static com.errabi.sandbox.utils.SandboxUtils.buildSuccessInfo;
 
 @Slf4j
 @Service
@@ -42,13 +44,19 @@ public class UserService {
                 try {
                     return jwtTokenService.generateToken(user);
                 } catch (JOSEException e) {
-                    throw new TechnicalException("TOKEN_GENERATION_FAILED", "Failed to generate token", HttpStatus.INTERNAL_SERVER_ERROR);
+                    throw new TechnicalException(TOKEN_GENERATION_ERROR_CODE,
+                            TOKEN_GENERATION_ERROR_DESCRIPTION,
+                            HttpStatus.INTERNAL_SERVER_ERROR);
                 }
             }else{
-                throw new TechnicalException(INVALID_USERNAME_OR_PASSWORD_CODE,"Invalid username or password", HttpStatus.UNAUTHORIZED);
+                throw new TechnicalException(INVALID_USERNAME_OR_PASSWORD_CODE,
+                        INVALID_USERNAME_OR_PASSWORD_DESCRIPTON,
+                        HttpStatus.UNAUTHORIZED);
             }
         }else {
-            throw new TechnicalException(INVALID_USERNAME_OR_PASSWORD_CODE,"Invalid username or password", HttpStatus.UNAUTHORIZED);
+            throw new TechnicalException(INVALID_USERNAME_OR_PASSWORD_CODE,
+                    INVALID_USERNAME_OR_PASSWORD_DESCRIPTON,
+                    HttpStatus.UNAUTHORIZED);
         }
     }
 
@@ -58,7 +66,7 @@ public class UserService {
             log.error("Failed to save user. Username {} already exists.", userDto.getUsername());
             throw new TechnicalException(
                     USER_ALREADY_EXISTS_ERROR_CODE,
-                    "User already exists!",
+                    USER_ALREADY_EXISTS_ERROR_DESCRIPTION,
                     HttpStatus.CONFLICT);
         }
         try {
@@ -67,12 +75,13 @@ public class UserService {
             User user = userMapper.toEntity(userDto);
             userRepository.save(user);
             userDto.setPassword(StringUtils.EMPTY);
+            userDto.setResponseInfo(buildSuccessInfo());
             return userDto;
         } catch(Exception ex) {
             log.error("Unexpected error occurred while saving the User", ex);
             throw new TechnicalException(
                     SAVE_ERROR_CODE,
-                    "Unexpected error occurred while saving the User",
+                    SAVE_ERROR_DESCRIPTION,
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -82,11 +91,13 @@ public class UserService {
         log.info("Finding User with id {}",userId);
         Optional<User> optionalUser =  userRepository.findById(userId);
         if(optionalUser.isPresent()){
-            return userMapper.toDto(optionalUser.get());
+            UserDto userDto = userMapper.toDto(optionalUser.get());
+            userDto.setResponseInfo(buildSuccessInfo());
+            return userDto;
         }else{
             throw new TechnicalException(
                     NOT_FOUND_ERROR_CODE,
-                    "No User found",
+                    NOT_FOUND_ERROR_DESCRIPTION,
                     HttpStatus.NOT_FOUND);
         }
     }
@@ -95,12 +106,16 @@ public class UserService {
         try {
             log.info("Fetching all users...");
             List<User> users = userRepository.findAll();
-            return users.stream().map(userMapper::toDto).toList();
+            if(!users.isEmpty()){
+                return users.stream().map(userMapper::toDto).toList();
+            }else{
+                return Collections.emptyList();
+            }
         } catch(Exception ex) {
             log.error("Unexpected error occurred while fetching all users", ex);
             throw new TechnicalException(
                     SYSTEM_ERROR,
-                    "Unexpected error occurred",
+                    SYSTEM_ERROR_DESCRIPTION,
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -113,12 +128,14 @@ public class UserService {
             Role role = roleMapper.toEntity(roleService.findRoleById(roleId));
             user.getRoles().add(role);
             userRepository.save(user);
-            return roleMapper.toDto(role);
+            RoleDto roleDto = roleMapper.toDto(role);
+            roleDto.setResponseInfo(buildSuccessInfo());
+            return roleDto;
         } catch(Exception ex) {
             log.error("Unexpected error occurred while assigning the role to User", ex);
                 throw new TechnicalException(
                     SAVE_ERROR_CODE,
-                    "Unexpected error occurred",
+                    SAVE_ERROR_DESCRIPTION,
                     HttpStatus.INTERNAL_SERVER_ERROR
                 );
         }
@@ -129,13 +146,14 @@ public class UserService {
             log.info("Updating user {} ..", userDto.getId());
             User existingUser = userMapper.toEntity(findUserById(userDto.getId()));
             userMapper.updateFromDto(userDto, existingUser);
-            User updatedUser = userRepository.save(existingUser);
-            return userMapper.toDto(updatedUser);
+            userRepository.save(existingUser);
+            userDto.setResponseInfo(buildSuccessInfo());
+            return userDto;
         } catch(Exception ex) {
             log.error("Unexpected error occurred while updating user with ID {}", userDto.getId());
             throw new TechnicalException(
                     UPDATE_ERROR_CODE,
-                    "Unexpected error occurred while updating the user",
+                    UPDATE_ERROR_DESCRIPTION,
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -150,7 +168,7 @@ public class UserService {
             log.error("Unexpected error occurred while deleting user with ID {}", userId);
             throw new TechnicalException(
                     DELETE_ERROR_CODE,
-                    "Unexpected error occurred while deleting the user",
+                    DELETE_ERROR_DESCRIPTION,
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }

@@ -14,18 +14,21 @@ import static com.errabi.sandbox.utils.SandboxConstant.BEAN_VALIDATION_ERROR_COD
 public class SandboxExceptionController {
     @ExceptionHandler(value = {TechnicalException.class})
     public ResponseEntity<ErrorResponse> handleTechnicalException(TechnicalException technicalException) {
+
         ResponseInfo responseInfo = ResponseInfo.builder()
                 .errorCode(technicalException.getErrorCode())
                 .errorDescription(technicalException.getErrorDescription())
                 .httpStatus(technicalException.getHttpStatus())
                 .build();
+
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setResponseInfo(responseInfo);
+
         return new ResponseEntity<>(errorResponse, responseInfo.getHttpStatus());
     }
 
     @ExceptionHandler(value = {MethodArgumentNotValidException.class})
-    public ResponseEntity<ResponseInfo> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex){
+    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex){
 
         List<String> messages = ex.getBindingResult().getAllErrors().stream()
                 .map(error -> {
@@ -43,6 +46,9 @@ public class SandboxExceptionController {
                 .httpStatus(HttpStatus.BAD_REQUEST)
                 .build();
 
-        return new ResponseEntity<>(responseInfo, responseInfo.getHttpStatus());
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setResponseInfo(responseInfo);
+
+        return new ResponseEntity<>(errorResponse, responseInfo.getHttpStatus());
     }
 }
