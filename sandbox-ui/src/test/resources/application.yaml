@@ -3,3 +3,7 @@ spring:
     user:
       name: admin
       password: $2a$10$IRnZTOm/slNNBGyA3ySoHORJtB1QzuvvnJk29ov29WyTsdSoONVN2
+jwt:
+  issuer: errabi
+  key-id: 123
+  expiry-time: 3600000 #1h
