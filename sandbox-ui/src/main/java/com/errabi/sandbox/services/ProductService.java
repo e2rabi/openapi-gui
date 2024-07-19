@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import static com.errabi.sandbox.utils.SandboxConstant.*;
@@ -35,13 +36,12 @@ public class ProductService {
                 product.setWorkspace(workspaceRepository.findById(productDto.getWorkspaceId()).orElse(null));
             }
             productDto.setResponseInfo(buildSuccessInfo());
-
             return productDto;
         } catch(Exception ex) {
-            log.error("Unexpected error occurred while saving the product", ex);
+            log.error("Unexpected error occurred while saving the product");
             throw new TechnicalException(
                     SAVE_ERROR_CODE,
-                    "Unexpected error occurred while saving the product",
+                    SAVE_ERROR_DESCRIPTION,
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -51,27 +51,35 @@ public class ProductService {
         log.info("Finding product with id {}",productId);
         Optional<Product> optionalProduct =  productRepository.findById(productId);
         if(optionalProduct.isPresent()){
-            return productMapper.toDto(optionalProduct.get());
+            ProductDto productDto = productMapper.toDto(optionalProduct.get());
+            productDto.setResponseInfo(buildSuccessInfo());
+            return productDto;
         }else{
             throw new TechnicalException(
                     NOT_FOUND_ERROR_CODE,
-                    "No product found",
+                    NOT_FOUND_ERROR_DESCRIPTION,
                     HttpStatus.NOT_FOUND);
         }
     }
 
     public List<ProductDto> getProductsByWorkspaceId(Long workspaceId) {
-        log.info("Finding release with product id");
-        List<ProductDto> products = productRepository.findProductsByWorkspaceId(workspaceId).stream()
-                .map(productMapper::toDto)
-                .toList();
-        if(!products.isEmpty()){
-            return products;
-        }else{
+        try {
+            log.info("Finding products with workspace id");
+            List<ProductDto> products = productRepository.findProductsByWorkspaceId(workspaceId).stream()
+                    .map(productMapper::toDto)
+                    .toList();
+            if (!products.isEmpty()) {
+                return products;
+            } else {
+                return Collections.emptyList();
+            }
+        }catch(Exception ex) {
+            log.error("Unexpected error occurred while fetching all products with workspace id");
             throw new TechnicalException(
-                    NOT_FOUND_ERROR_CODE,
-                    "No products found",
-                    HttpStatus.NOT_FOUND);
+                    SYSTEM_ERROR,
+                    SYSTEM_ERROR_DESCRIPTION,
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
         }
     }
 
@@ -79,12 +87,16 @@ public class ProductService {
         try {
             log.info("Fetching all products...");
             List<Product> products = productRepository.findAll();
-            return products.stream().map(productMapper::toDto).toList();
+            if(!products.isEmpty()){
+                return products.stream().map(productMapper::toDto).toList();
+            }else{
+                return Collections.emptyList();
+            }
         } catch(Exception ex) {
-            log.error("Unexpected error occurred while fetching all products", ex);
+            log.error("Unexpected error occurred while fetching all products");
             throw new TechnicalException(
                     SYSTEM_ERROR,
-                    "Unexpected error occurred",
+                    SYSTEM_ERROR_DESCRIPTION,
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -95,13 +107,14 @@ public class ProductService {
             log.info("Updating product {} ..", productDto.getId());
             Product existingProduct = productMapper.toEntity(findProductById(productDto.getId()));
             productMapper.updateFromDto(productDto, existingProduct);
-            Product updatedProduct = productRepository.save(existingProduct);
-            return productMapper.toDto(updatedProduct);
+            productRepository.save(existingProduct);
+            productDto.setResponseInfo(buildSuccessInfo());
+            return productDto;
         } catch(Exception ex) {
             log.error("Unexpected error occurred while updating product with ID {}", productDto.getId());
             throw new TechnicalException(
                     UPDATE_ERROR_CODE,
-                    "Unexpected error occurred while updating product",
+                    UPDATE_ERROR_DESCRIPTION,
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -116,7 +129,7 @@ public class ProductService {
             log.error("Unexpected error occurred while deleting product with ID {}", productId);
             throw new TechnicalException(
                     DELETE_ERROR_CODE,
-                    "Unexpected error occurred while deleting the product",
+                    DELETE_ERROR_DESCRIPTION,
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }

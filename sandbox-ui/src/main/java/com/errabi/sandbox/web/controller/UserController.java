@@ -1,6 +1,7 @@
 package com.errabi.sandbox.web.controller;
 
 import com.errabi.sandbox.services.UserService;
+import com.errabi.sandbox.utils.TokenInfo;
 import com.errabi.sandbox.web.model.AuthDto;
 import com.errabi.sandbox.web.model.RoleDto;
 import com.errabi.sandbox.web.model.UserDto;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static com.errabi.sandbox.utils.SandboxConstant.*;
+
 @RestController
 @RequestMapping("/sandbox-api/v1/")
 @RequiredArgsConstructor
@@ -19,9 +22,15 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody AuthDto userDto){
+    public ResponseEntity<TokenInfo> login(@RequestBody AuthDto userDto){
         String token = userService.userLogin(userDto);
-        return ResponseEntity.ok(token);
+        TokenInfo tokenInfo = TokenInfo.builder()
+                .errorCode(SUCCESS_CODE)
+                .errorDescription(SUCCESS_CODE_DESCRIPTION)
+                .httpStatus(HttpStatus.OK)
+                .token(token)
+                .build();
+        return ResponseEntity.ok(tokenInfo);
     }
 
     @PostMapping("/users")

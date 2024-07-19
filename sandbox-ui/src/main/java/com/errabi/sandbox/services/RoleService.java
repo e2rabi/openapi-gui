@@ -13,10 +13,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static com.errabi.sandbox.utils.SandboxConstant.*;
+import static com.errabi.sandbox.utils.SandboxUtils.buildSuccessInfo;
 
 @Slf4j
 @Service
@@ -33,12 +35,13 @@ public class RoleService {
             log.info("Creating Role {} ..", roleDto.getName());
             Role role = roleMapper.toEntity(roleDto);
             roleRepository.save(role);
+            roleDto.setResponseInfo(buildSuccessInfo());
             return roleDto;
         } catch(Exception ex) {
             log.error("Unexpected error occurred while saving the Role", ex);
             throw new TechnicalException(
                     SAVE_ERROR_CODE,
-                    "Unexpected error occurred!",
+                    SAVE_ERROR_DESCRIPTION,
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -48,11 +51,13 @@ public class RoleService {
         log.info("Finding Role with id {}",roleId);
         Optional<Role> optionalRole =  roleRepository.findById(roleId);
         if(optionalRole.isPresent()){
-            return roleMapper.toDto(optionalRole.get());
+            RoleDto roleDto = roleMapper.toDto(optionalRole.get());
+            roleDto.setResponseInfo(buildSuccessInfo());
+            return roleDto;
         }else{
             throw new TechnicalException(
                     NOT_FOUND_ERROR_CODE,
-                    "No Role found",
+                    NOT_FOUND_ERROR_DESCRIPTION,
                     HttpStatus.NOT_FOUND);
         }
     }
@@ -61,12 +66,16 @@ public class RoleService {
         try {
             log.info("Fetching all roles...");
             List<Role> roles = roleRepository.findAll();
-            return roles.stream().map(roleMapper::toDto).toList();
+            if(!roles.isEmpty()){
+                return roles.stream().map(roleMapper::toDto).toList();
+            }else{
+                return Collections.emptyList();
+            }
         } catch(Exception ex) {
             log.error("Unexpected error occurred while fetching all roles", ex);
             throw new TechnicalException(
                     SYSTEM_ERROR,
-                    "Unexpected error occurred",
+                    SYSTEM_ERROR_DESCRIPTION,
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -79,12 +88,14 @@ public class RoleService {
             Authority authority = authorityMapper.toEntity(authorityService.findAuthorityById(authorityId));
             role.getAuthorities().add(authority);
             roleRepository.save(role);
-            return roleMapper.toDto(role);
+            RoleDto roleDto = roleMapper.toDto(role);
+            roleDto.setResponseInfo(buildSuccessInfo());
+            return roleDto;
         } catch(Exception ex) {
             log.error("Unexpected error occurred while assigning the authority to role", ex);
             throw new TechnicalException(
                     SAVE_ERROR_CODE,
-                    "Unexpected error occurred",
+                    SAVE_ERROR_DESCRIPTION,
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -95,13 +106,14 @@ public class RoleService {
             log.info("Updating role {} ..", roleDto.getId());
             Role existingRole = roleMapper.toEntity(findRoleById(roleDto.getId()));
             roleMapper.updateFromDto(roleDto, existingRole);
-            Role updatedRole = roleRepository.save(existingRole);
-            return roleMapper.toDto(updatedRole);
+            roleRepository.save(existingRole);
+            roleDto.setResponseInfo(buildSuccessInfo());
+            return roleDto;
         } catch(Exception ex) {
             log.error("Unexpected error occurred while updating role with ID {}", roleDto.getId());
             throw new TechnicalException(
                     UPDATE_ERROR_CODE,
-                    "Unexpected error occurred while updating the role",
+                    UPDATE_ERROR_DESCRIPTION,
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -116,7 +128,7 @@ public class RoleService {
             log.error("Unexpected error occurred while deleting role with ID {}", roleId);
             throw new TechnicalException(
                     DELETE_ERROR_CODE,
-                    "Unexpected error occurred while deleting the role",
+                    DELETE_ERROR_DESCRIPTION,
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
