@@ -1,5 +1,6 @@
 package com.errabi.sandbox.controller;
 
+import com.errabi.sandbox.services.MailService;
 import com.errabi.sandbox.web.model.AuthDto;
 import com.errabi.sandbox.web.model.UserDto;
 import org.junit.jupiter.api.MethodOrderer;
@@ -7,6 +8,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 
@@ -16,8 +18,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@WithMockUser(username = "admin", password = "admin") // Mock user for authentication
+@WithMockUser(username = "admin", password = "admin")
 class UserControllerTest extends BaseControllerIT{
+    @MockBean
+    private MailService mailService ;
     @Test
     @Order(1)
     void CreateUserOkTest() throws Exception {
@@ -26,7 +30,7 @@ class UserControllerTest extends BaseControllerIT{
                                 .username("e2rabi")
                                 .firstName("Amine")
                                 .lastName("errabi")
-                                .email("true")
+                                .email("amine@errabi.com")
                                 .password("123456")
                                 .phone("06131")
                                 .address("casa")
@@ -74,7 +78,7 @@ class UserControllerTest extends BaseControllerIT{
                                 .username("update")
                                 .firstName("test")
                                 .lastName("test")
-                                .email("true")
+                                .email("ayoub@test.com")
                                 .password("654321")
                                 .phone("06131")
                                 .address("essa")

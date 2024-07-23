@@ -27,6 +27,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation "org.springframework.boot:spring-boot-starter-security:${springSecurity}"
+	implementation "org.springframework.boot:spring-boot-starter-mail:${springMail}"
 	implementation "com.nimbusds:nimbus-jose-jwt:${nimbus}"
 	implementation "javax.validation:validation-api:${javaxValidationVersion}"
 	implementation "org.apache.commons:commons-lang3:${apacheCommonsLang3}"

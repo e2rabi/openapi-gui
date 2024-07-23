@@ -1,5 +1,6 @@
 package com.errabi.sandbox.web.model;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -20,7 +21,7 @@ public class UserDto extends AbstractMessageDto {
     private  String firstName ;
     @NotEmpty(message = "Please add lastname")
     private  String lastName ;
-    @NotEmpty(message = "Please add email")
+    @Email(message = "Please add a valid email")
     private  String email ;
     @NotEmpty(message = "Please add password")
     private  String password;
