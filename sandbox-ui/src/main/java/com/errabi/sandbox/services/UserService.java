@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static com.errabi.sandbox.utils.SandboxConstant.*;
@@ -35,6 +36,7 @@ public class UserService {
     private final RoleMapper roleMapper;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtTokenService jwtTokenService;
+    private final MailService mailService;
 
     public String userLogin(AuthDto userDto){
         Optional<User> userOptional =  userRepository.findByUsername(userDto.getUsername());
@@ -74,6 +76,16 @@ public class UserService {
             userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
             User user = userMapper.toEntity(userDto);
             userRepository.save(user);
+            Map<String, String> templateParams = Map.of(
+                    "firstName", userDto.getFirstName(),
+                    "lastName", userDto.getLastName()
+            );
+            mailService.sendEmail(
+                    userDto.getEmail(),
+                    "Welcome to our platform!",
+                    "welcomeEmail",
+                    templateParams
+            );
             userDto.setPassword(StringUtils.EMPTY);
             userDto.setResponseInfo(buildSuccessInfo());
             return userDto;
