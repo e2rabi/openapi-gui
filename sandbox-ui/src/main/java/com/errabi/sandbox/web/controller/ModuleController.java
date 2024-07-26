@@ -1,9 +1,11 @@
 package com.errabi.sandbox.web.controller;
 
+import com.errabi.sandbox.exception.ErrorResponse;
 import com.errabi.sandbox.services.ModuleService;
 import com.errabi.sandbox.web.model.ModuleDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,9 +22,10 @@ public class ModuleController {
         return new ResponseEntity<>(moduleService.createModule(moduleDto), HttpStatus.CREATED);
     }
 
-    @GetMapping("/modules/{id}")
-    public ResponseEntity<ModuleDto> getModuleById(@PathVariable  Long id){
-        return new ResponseEntity<>(moduleService.findModuleById(id), HttpStatus.OK);
+    @GetMapping("/modules/{moduleId}")
+    @Cacheable(value = "sandbox", key = "#moduleId")
+    public ResponseEntity<ModuleDto> getModuleById(@PathVariable  Long moduleId){
+        return new ResponseEntity<>(moduleService.findModuleById(moduleId), HttpStatus.OK);
     }
 
     @GetMapping("/solutions/{id}/modules")
@@ -43,9 +46,8 @@ public class ModuleController {
     }
 
     @DeleteMapping("/modules/{moduleId}")
-    public ResponseEntity<Void> deleteSolution(@PathVariable Long moduleId){
-        moduleService.deleteModule(moduleId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<ErrorResponse> deleteSolution(@PathVariable Long moduleId){
+        return new ResponseEntity<>(moduleService.deleteModule(moduleId), HttpStatus.OK);
     }
 }
 

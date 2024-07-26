@@ -1,12 +1,15 @@
 package com.errabi.sandbox.web.controller;
 
+import com.errabi.sandbox.exception.ErrorResponse;
 import com.errabi.sandbox.services.UserService;
 import com.errabi.sandbox.utils.TokenInfo;
+import com.errabi.sandbox.utils.TokenResponse;
 import com.errabi.sandbox.web.model.AuthDto;
 import com.errabi.sandbox.web.model.RoleDto;
 import com.errabi.sandbox.web.model.UserDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,15 +25,8 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/login")
-    public ResponseEntity<TokenInfo> login(@RequestBody AuthDto userDto){
-        String token = userService.userLogin(userDto);
-        TokenInfo tokenInfo = TokenInfo.builder()
-                .errorCode(SUCCESS_CODE)
-                .errorDescription(SUCCESS_CODE_DESCRIPTION)
-                .httpStatus(HttpStatus.OK)
-                .token(token)
-                .build();
-        return ResponseEntity.ok(tokenInfo);
+    public ResponseEntity<TokenResponse> login(@RequestBody AuthDto userDto){
+        return new ResponseEntity<>(userService.userLogin(userDto), HttpStatus.OK);
     }
 
     @PostMapping("/users")
@@ -38,9 +34,10 @@ public class UserController {
         return new ResponseEntity<>(userService.createUser(userDto), HttpStatus.CREATED);
     }
 
-    @GetMapping("/users/{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable Long id){
-        return new ResponseEntity<>(userService.findUserById(id), HttpStatus.OK);
+    @GetMapping("/users/{userId}")
+    @Cacheable(value = "sandbox", key = "#userId")
+    public ResponseEntity<UserDto> getUserById(@PathVariable Long userId){
+        return new ResponseEntity<>(userService.findUserById(userId), HttpStatus.OK);
     }
 
     @GetMapping("/users")
@@ -60,8 +57,7 @@ public class UserController {
     }
 
     @DeleteMapping("/users/{userId}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long userId){
-        userService.deleteUser(userId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<ErrorResponse> deleteUser(@PathVariable Long userId){
+        return new ResponseEntity<>(userService.deleteUser(userId), HttpStatus.OK);
     }
 }

@@ -2,8 +2,11 @@ package com.errabi.sandbox.services;
 
 import com.errabi.sandbox.entities.Role;
 import com.errabi.sandbox.entities.User;
+import com.errabi.sandbox.exception.ErrorResponse;
 import com.errabi.sandbox.exception.TechnicalException;
 import com.errabi.sandbox.repositories.UserRepository;
+import com.errabi.sandbox.utils.TokenInfo;
+import com.errabi.sandbox.utils.TokenResponse;
 import com.errabi.sandbox.web.mapper.RoleMapper;
 import com.errabi.sandbox.web.mapper.UserMapper;
 import com.errabi.sandbox.web.model.AuthDto;
@@ -38,27 +41,49 @@ public class UserService {
     private final JwtTokenService jwtTokenService;
     private final MailService mailService;
 
-    public String userLogin(AuthDto userDto){
-        Optional<User> userOptional =  userRepository.findByUsername(userDto.getUsername());
-        if(userOptional.isPresent()){
+    public TokenResponse userLogin(AuthDto userDto) {
+        User user = validateUserCredentials(userDto);
+        String token = generateJwtToken(user);
+        TokenResponse tokenResponse = new TokenResponse();
+        tokenResponse.setTokenInfo(TokenInfo.builder()
+                .errorCode(SUCCESS_CODE)
+                .errorDescription(SUCCESS_CODE_DESCRIPTION)
+                .token(token)
+                .build());
+        return tokenResponse;
+    }
+
+    private User validateUserCredentials(AuthDto userDto) {
+        Optional<User> userOptional = userRepository.findByUsername(userDto.getUsername());
+        if (userOptional.isPresent()) {
             User user = userOptional.get();
-            if(passwordEncoder.matches(userDto.getPassword(), user.getPassword())){
-                try {
-                    return jwtTokenService.generateToken(user);
-                } catch (JOSEException e) {
-                    throw new TechnicalException(TOKEN_GENERATION_ERROR_CODE,
-                            TOKEN_GENERATION_ERROR_DESCRIPTION,
-                            HttpStatus.INTERNAL_SERVER_ERROR);
-                }
-            }else{
-                throw new TechnicalException(INVALID_USERNAME_OR_PASSWORD_CODE,
+            if (passwordEncoder.matches(userDto.getPassword(), user.getPassword())) {
+                return user;
+            } else {
+                throw new TechnicalException(
+                        INVALID_USERNAME_OR_PASSWORD_CODE,
                         INVALID_USERNAME_OR_PASSWORD_DESCRIPTON,
-                        HttpStatus.UNAUTHORIZED);
+                        HttpStatus.UNAUTHORIZED
+                );
             }
-        }else {
-            throw new TechnicalException(INVALID_USERNAME_OR_PASSWORD_CODE,
+        } else {
+            throw new TechnicalException(
+                    INVALID_USERNAME_OR_PASSWORD_CODE,
                     INVALID_USERNAME_OR_PASSWORD_DESCRIPTON,
-                    HttpStatus.UNAUTHORIZED);
+                    HttpStatus.UNAUTHORIZED
+            );
+        }
+    }
+
+    private String generateJwtToken(User user) {
+        try {
+            return jwtTokenService.generateToken(user);
+        } catch (JOSEException e) {
+            throw new TechnicalException(
+                    TOKEN_GENERATION_ERROR_CODE,
+                    TOKEN_GENERATION_ERROR_DESCRIPTION,
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
         }
     }
 
@@ -74,8 +99,7 @@ public class UserService {
         try {
             log.info("Creating User {} ..", userDto.getUsername());
             userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
-            User user = userMapper.toEntity(userDto);
-            userRepository.save(user);
+            User user = userRepository.save(userMapper.toEntity(userDto));
             Map<String, String> templateParams = Map.of(
                     "firstName", userDto.getFirstName(),
                     "lastName", userDto.getLastName()
@@ -86,6 +110,7 @@ public class UserService {
                     "welcomeEmail",
                     templateParams
             );
+            userDto = userMapper.toDto(user);
             userDto.setPassword(StringUtils.EMPTY);
             userDto.setResponseInfo(buildSuccessInfo());
             return userDto;
@@ -119,7 +144,10 @@ public class UserService {
             log.info("Fetching all users...");
             List<User> users = userRepository.findAll();
             if(!users.isEmpty()){
-                return users.stream().map(userMapper::toDto).toList();
+                return users.stream()
+                        .map(userMapper::toDto)
+                        .peek(userDto -> userDto.setResponseInfo(buildSuccessInfo()))
+                        .toList();
             }else{
                 return Collections.emptyList();
             }
@@ -172,10 +200,12 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUser(Long userId) {
+    public ErrorResponse deleteUser(Long userId) {
+        ErrorResponse errorResponse = new ErrorResponse();
         try {
             log.info("Deleting user with ID {}", userId);
             userRepository.deleteById(findUserById(userId).getId());
+            errorResponse.setResponseInfo(buildSuccessInfo());
         } catch (Exception ex) {
             log.error("Unexpected error occurred while deleting user with ID {}", userId);
             throw new TechnicalException(
@@ -184,5 +214,6 @@ public class UserService {
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
+        return errorResponse;
     }
 }

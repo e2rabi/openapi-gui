@@ -1,9 +1,11 @@
 package com.errabi.sandbox.web.controller;
 
+import com.errabi.sandbox.exception.ErrorResponse;
 import com.errabi.sandbox.services.ConfigurationService;
 import com.errabi.sandbox.web.model.ConfigurationDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +22,10 @@ public class ConfigurationController {
         return new ResponseEntity<>(configurationService.createConfig(configurationDto), HttpStatus.CREATED);
     }
 
-    @GetMapping("/configurations/{id}")
-    public ResponseEntity<ConfigurationDto> getConfigById(@PathVariable Long id){
-        return new ResponseEntity<>(configurationService.findConfigById(id), HttpStatus.OK);
+    @GetMapping("/configurations/{configId}")
+    @Cacheable(value = "sandbox", key = "#configId")
+    public ResponseEntity<ConfigurationDto> getConfigById(@PathVariable Long configId){
+        return new ResponseEntity<>(configurationService.findConfigById(configId), HttpStatus.OK);
     }
 
     @GetMapping("/configurations/keys/{key}")
@@ -39,8 +42,7 @@ public class ConfigurationController {
     }
 
     @DeleteMapping("/configurations/{configId}")
-    public ResponseEntity<Void> deleteConfig(@PathVariable Long configId){
-        configurationService.deleteConfiguration(configId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<ErrorResponse> deleteConfig(@PathVariable Long configId){
+        return new ResponseEntity<>(configurationService.deleteConfiguration(configId), HttpStatus.OK);
     }
 }

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.List;
 
-import static com.errabi.sandbox.utils.SandboxConstant.BEAN_VALIDATION_ERROR_CODE;
+import static com.errabi.sandbox.utils.SandboxConstant.*;
 
 @RestControllerAdvice
 public class SandboxExceptionController {
@@ -44,6 +44,20 @@ public class SandboxExceptionController {
                 .errorCode(BEAN_VALIDATION_ERROR_CODE)
                 .errorDescription(messages.toString())
                 .httpStatus(HttpStatus.BAD_REQUEST)
+                .build();
+
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setResponseInfo(responseInfo);
+
+        return new ResponseEntity<>(errorResponse, responseInfo.getHttpStatus());
+    }
+
+    @ExceptionHandler(value = {Exception.class})
+    public ResponseEntity<ErrorResponse> handleException(Exception ex) {
+        ResponseInfo responseInfo = ResponseInfo.builder()
+                .errorCode(SYSTEM_ERROR)
+                .errorDescription(ex.getMessage())
+                .httpStatus(HttpStatus.INTERNAL_SERVER_ERROR)
                 .build();
 
         ErrorResponse errorResponse = new ErrorResponse();

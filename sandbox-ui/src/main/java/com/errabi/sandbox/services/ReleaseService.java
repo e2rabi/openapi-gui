@@ -1,6 +1,7 @@
 package com.errabi.sandbox.services;
 
 import com.errabi.sandbox.entities.Release;
+import com.errabi.sandbox.exception.ErrorResponse;
 import com.errabi.sandbox.exception.TechnicalException;
 import com.errabi.sandbox.repositories.ProductRepository;
 import com.errabi.sandbox.repositories.ReleaseRepository;
@@ -11,9 +12,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import static com.errabi.sandbox.utils.SandboxConstant.*;
+import static com.errabi.sandbox.utils.SandboxUtils.buildSuccessInfo;
 
 @Slf4j
 @Service
@@ -31,13 +35,15 @@ public class ReleaseService {
             if (releaseDto.getProductId() != null) {
                 release.setProduct(productRepository.findById(releaseDto.getProductId()).orElse(null));
             }
-            releaseRepository.save(release);
+            release = releaseRepository.save(release);
+            releaseDto = releaseMapper.toDto(release);
+            releaseDto.setResponseInfo(buildSuccessInfo());
             return releaseDto;
         } catch(Exception ex) {
-            log.error("Unexpected error occurred while saving the release", ex);
+            log.error("Unexpected error occurred while saving the release");
             throw new TechnicalException(
                     SAVE_ERROR_CODE,
-                    "Unexpected error occurred while saving the release",
+                    SAVE_ERROR_DESCRIPTION,
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -47,26 +53,35 @@ public class ReleaseService {
         log.info("Finding release with id {}",releaseId);
         Optional<Release> optionalRelease =  releaseRepository.findById(releaseId);
         if(optionalRelease.isPresent()){
-            return releaseMapper.toDto(optionalRelease.get());
+            ReleaseDto releaseDto = releaseMapper.toDto(optionalRelease.get());
+            releaseDto.setResponseInfo(buildSuccessInfo());
+            return releaseDto;
         }else{
+            log.info("Could not find release with id {}",releaseId);
             throw new TechnicalException(
                     NOT_FOUND_ERROR_CODE,
-                    "No release found",
+                    NOT_FOUND_ERROR_DESCRIPTION,
                     HttpStatus.NOT_FOUND);
         }
     }
 
     public List<ReleaseDto> getReleaseByProductId(Long productId) {
-        log.info("Finding release with product id");
-        List<ReleaseDto> releases = releaseRepository.findReleasesByProductId(productId).stream()
-                .map(releaseMapper::toDto)
-                .toList();
-        if(!releases.isEmpty()){
-            return releases;
-        }else{
+        try {
+            log.info("Finding release with product id");
+            List<Release> releases = releaseRepository.findReleasesByProductId(productId);
+            if (!releases.isEmpty()) {
+                return releases.stream()
+                        .map(releaseMapper::toDto)
+                        .peek(releaseDto -> releaseDto.setResponseInfo(buildSuccessInfo()))
+                        .toList();
+            }else{
+                return Collections.emptyList();
+            }
+        } catch (Exception ex) {
+            log.error("Unexpected error occurred while fetching all releases by product id");
             throw new TechnicalException(
-                    NOT_FOUND_ERROR_CODE,
-                    "No release found",
+                    SYSTEM_ERROR,
+                    SYSTEM_ERROR_DESCRIPTION,
                     HttpStatus.NOT_FOUND);
         }
     }
@@ -75,12 +90,19 @@ public class ReleaseService {
         try {
             log.info("Fetching all releases...");
             List<Release> releases = releaseRepository.findAll();
-            return releases.stream().map(releaseMapper::toDto).toList();
+            if (!releases.isEmpty()) {
+                return releases.stream()
+                        .map(releaseMapper::toDto)
+                        .peek(releaseDto -> releaseDto.setResponseInfo(buildSuccessInfo()))
+                        .toList();
+            }else{
+                return Collections.emptyList();
+            }
         } catch(Exception ex) {
-            log.error("Unexpected error occurred while fetching all releases", ex);
+            log.error("Unexpected error occurred while fetching all releases");
             throw new TechnicalException(
                     SYSTEM_ERROR,
-                    "Unexpected error occurred",
+                    NOT_FOUND_ERROR_DESCRIPTION,
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -88,33 +110,37 @@ public class ReleaseService {
 
     public ReleaseDto updateRelease(ReleaseDto releaseDto) {
         try {
-            log.info("Updating release {} ..", releaseDto.getId());
+            log.info("Updating release");
             Release existingRelease = releaseMapper.toEntity(findReleaseById(releaseDto.getId()));
             releaseMapper.updateFromDto(releaseDto, existingRelease);
-            Release updatedRelease = releaseRepository.save(existingRelease);
-            return releaseMapper.toDto(updatedRelease);
+            releaseRepository.save(existingRelease);
+            releaseDto.setResponseInfo(buildSuccessInfo());
+            return releaseDto;
         } catch(Exception ex) {
-            log.error("Unexpected error occurred while updating release with ID {}", releaseDto.getId());
+            log.error("Unexpected error occurred while updating release");
             throw new TechnicalException(
                     UPDATE_ERROR_CODE,
-                    "Unexpected error occurred while updating release",
+                    UPDATE_ERROR_DESCRIPTION,
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
     }
 
     @Transactional
-    public void deleteRelease(Long releaseId) {
+    public ErrorResponse deleteRelease(Long releaseId) {
+        ErrorResponse errorResponse = new ErrorResponse();
         try {
             log.info("Deleting release with ID {}", releaseId);
             releaseRepository.deleteById(findReleaseById(releaseId).getId());
+            errorResponse.setResponseInfo(buildSuccessInfo());
         } catch (Exception ex) {
             log.error("Unexpected error occurred while deleting the release with ID {}", releaseId);
             throw new TechnicalException(
                     DELETE_ERROR_CODE,
-                    "Unexpected error occurred while deleting the release",
+                    DELETE_ERROR_DESCRIPTION,
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
+        return errorResponse;
     }
 }

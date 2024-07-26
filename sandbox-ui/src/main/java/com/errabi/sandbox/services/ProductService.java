@@ -1,6 +1,7 @@
 package com.errabi.sandbox.services;
 
 import com.errabi.sandbox.entities.Product;
+import com.errabi.sandbox.exception.ErrorResponse;
 import com.errabi.sandbox.exception.TechnicalException;
 import com.errabi.sandbox.repositories.ProductRepository;
 import com.errabi.sandbox.repositories.WorkspaceRepository;
@@ -31,10 +32,11 @@ public class ProductService {
         try {
             log.info("Creating product {} ..", productDto.getName());
             Product product = productMapper.toEntity(productDto);
-            productRepository.save(product);
             if (productDto.getWorkspaceId() != null) {
                 product.setWorkspace(workspaceRepository.findById(productDto.getWorkspaceId()).orElse(null));
             }
+            product = productRepository.save(product);
+            productDto = productMapper.toDto(product);
             productDto.setResponseInfo(buildSuccessInfo());
             return productDto;
         } catch(Exception ex) {
@@ -55,6 +57,7 @@ public class ProductService {
             productDto.setResponseInfo(buildSuccessInfo());
             return productDto;
         }else{
+            log.info("Could not find product with id {}",productId);
             throw new TechnicalException(
                     NOT_FOUND_ERROR_CODE,
                     NOT_FOUND_ERROR_DESCRIPTION,
@@ -65,11 +68,12 @@ public class ProductService {
     public List<ProductDto> getProductsByWorkspaceId(Long workspaceId) {
         try {
             log.info("Finding products with workspace id");
-            List<ProductDto> products = productRepository.findProductsByWorkspaceId(workspaceId).stream()
-                    .map(productMapper::toDto)
-                    .toList();
+            List<Product> products = productRepository.findProductsByWorkspaceId(workspaceId);
             if (!products.isEmpty()) {
-                return products;
+                return products.stream()
+                        .map(productMapper::toDto)
+                        .peek(productDto -> productDto.setResponseInfo(buildSuccessInfo()))
+                        .toList();
             } else {
                 return Collections.emptyList();
             }
@@ -88,7 +92,10 @@ public class ProductService {
             log.info("Fetching all products...");
             List<Product> products = productRepository.findAll();
             if(!products.isEmpty()){
-                return products.stream().map(productMapper::toDto).toList();
+                return products.stream()
+                        .map(productMapper::toDto)
+                        .peek(productDto -> productDto.setResponseInfo(buildSuccessInfo()))
+                        .toList();
             }else{
                 return Collections.emptyList();
             }
@@ -121,10 +128,12 @@ public class ProductService {
     }
 
     @Transactional
-    public void deleteProduct(Long productId) {
+    public ErrorResponse deleteProduct(Long productId) {
+        ErrorResponse errorResponse = new ErrorResponse();
         try {
             log.info("Deleting product with ID {}", productId);
             productRepository.deleteById(findProductById(productId).getId());
+            errorResponse.setResponseInfo(buildSuccessInfo());
         } catch (Exception ex) {
             log.error("Unexpected error occurred while deleting product with ID {}", productId);
             throw new TechnicalException(
@@ -133,5 +142,6 @@ public class ProductService {
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
+        return errorResponse;
     }
 }

@@ -1,6 +1,7 @@
 package com.errabi.sandbox.services;
 
 import com.errabi.sandbox.entities.Api;
+import com.errabi.sandbox.exception.ErrorResponse;
 import com.errabi.sandbox.exception.TechnicalException;
 import com.errabi.sandbox.repositories.ApiRepository;
 import com.errabi.sandbox.repositories.ModuleRepository;
@@ -12,10 +13,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static com.errabi.sandbox.utils.SandboxConstant.*;
+import static com.errabi.sandbox.utils.SandboxUtils.buildSuccessInfo;
 
 @Slf4j
 @Service
@@ -33,13 +36,15 @@ public class ApiService {
             if(apiDto.getModuleId() != null){
                 api.setModule(moduleRepository.findById(apiDto.getModuleId()).orElse(null));
             }
-            apiRepository.save(api);
+            api = apiRepository.save(api);
+            apiDto = apiMapper.toDto(api);
+            apiDto.setResponseInfo(buildSuccessInfo());
             return apiDto;
         } catch(Exception ex) {
-            log.error("Unexpected error occurred while saving the Api", ex);
+            log.error("Unexpected error occurred while saving the Api");
             throw new TechnicalException(
                     SAVE_ERROR_CODE,
-                    "Unexpected error occurred while saving the Api",
+                    SAVE_ERROR_DESCRIPTION,
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -49,26 +54,35 @@ public class ApiService {
         log.info("Finding Api with id {}",apiId);
         Optional<Api> optionalApi = apiRepository.findById(apiId);
         if(optionalApi.isPresent()){
-            return apiMapper.toDto(optionalApi.get());
+            ApiDto apiDto = apiMapper.toDto(optionalApi.get());
+            apiDto.setResponseInfo(buildSuccessInfo());
+            return apiDto;
         }else{
+            log.info("Could not find module with id {}",apiId);
             throw new TechnicalException(
                     NOT_FOUND_ERROR_CODE,
-                    "No Api found",
+                    NOT_FOUND_ERROR_DESCRIPTION,
                     HttpStatus.NOT_FOUND);
         }
     }
 
     public List<ApiDto> getApiByModuleId(Long moduleId){
-        log.info("Finding APIs with module id");
-        List<ApiDto> apisDto = apiRepository.findApisByModuleId(moduleId).stream()
-                .map(apiMapper::toDto)
-                .toList();
-        if(!apisDto.isEmpty()){
-            return apisDto;
-        }else{
+        try {
+            log.info("Finding APIs with module id");
+            List<Api> apis = apiRepository.findApisByModuleId(moduleId);
+            if (!apis.isEmpty()) {
+                return apis.stream()
+                        .map(apiMapper::toDto)
+                        .peek(apiDto -> apiDto.setResponseInfo(buildSuccessInfo()))
+                        .toList();
+            } else {
+                return Collections.emptyList();
+            }
+        }catch (Exception ex){
+            log.error("Unexpected error occurred while fetching all api with module id");
             throw new TechnicalException(
-                    NOT_FOUND_ERROR_CODE,
-                    "No APIs found",
+                    SYSTEM_ERROR,
+                    SYSTEM_ERROR_DESCRIPTION,
                     HttpStatus.NOT_FOUND);
         }
     }
@@ -77,12 +91,19 @@ public class ApiService {
         try {
             log.info("Fetching all APIs...");
             List<Api> apis = apiRepository.findAll();
-            return apis.stream().map(apiMapper::toDto).toList();
+            if (!apis.isEmpty()) {
+                return apis.stream()
+                        .map(apiMapper::toDto)
+                        .peek(apiDto -> apiDto.setResponseInfo(buildSuccessInfo()))
+                        .toList();
+            } else {
+                return Collections.emptyList();
+            }
         } catch(Exception ex) {
-            log.error("Unexpected error occurred while fetching all APIs", ex);
+            log.error("Unexpected error occurred while fetching all APIs");
             throw new TechnicalException(
                     SYSTEM_ERROR,
-                    "Unexpected error occurred",
+                    SYSTEM_ERROR_DESCRIPTION,
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -90,33 +111,37 @@ public class ApiService {
 
     public ApiDto updateApi(ApiDto apiDto) {
         try {
-            log.info("Updating API {} ..", apiDto.getId());
+            log.info("Updating API");
             Api existingApi = apiMapper.toEntity(findApiById(apiDto.getId()));
             apiMapper.updateFromDto(apiDto, existingApi);
-            Api updatedApi = apiRepository.save(existingApi);
-            return apiMapper.toDto(updatedApi);
+            apiRepository.save(existingApi);
+            apiDto.setResponseInfo(buildSuccessInfo());
+            return apiDto;
         } catch(Exception ex) {
-            log.error("Unexpected error occurred while updating API with ID {}", apiDto.getId());
+            log.error("Unexpected error occurred while updating API");
             throw new TechnicalException(
                     UPDATE_ERROR_CODE,
-                    "Unexpected error occurred while updating API",
+                    UPDATE_ERROR_DESCRIPTION,
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
     }
 
     @Transactional
-    public void deleteApi(Long apiId) {
+    public ErrorResponse deleteApi(Long apiId) {
+        ErrorResponse errorResponse = new ErrorResponse();
         try {
             log.info("Deleting API with ID {}", apiId);
             apiRepository.deleteById(findApiById(apiId).getId());
+            errorResponse.setResponseInfo(buildSuccessInfo());
         } catch (Exception ex) {
             log.error("Unexpected error occurred while deleting the API with ID {}", apiId);
             throw new TechnicalException(
                     DELETE_ERROR_CODE,
-                    "Unexpected error occurred while deleting the API",
+                    DELETE_ERROR_DESCRIPTION,
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
+        return errorResponse;
     }
 }

@@ -1,8 +1,10 @@
 package com.errabi.sandbox.web.controller;
 
+import com.errabi.sandbox.exception.ErrorResponse;
 import com.errabi.sandbox.services.ProductService;
 import com.errabi.sandbox.web.model.ProductDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,9 +22,10 @@ public class ProductController {
         return new ResponseEntity<>(productService.createProduct(productDto), HttpStatus.CREATED);
     }
 
-    @GetMapping("/products/{id}")
-    public ResponseEntity<ProductDto> getProductById(@PathVariable  Long id){
-        return new ResponseEntity<>(productService.findProductById(id), HttpStatus.OK);
+    @GetMapping("/products/{productId}")
+    @Cacheable(value = "sandbox", key = "#productId")
+    public ResponseEntity<ProductDto> getProductById(@PathVariable  Long productId){
+        return new ResponseEntity<>(productService.findProductById(productId), HttpStatus.OK);
     }
 
     @GetMapping("/products")
@@ -43,8 +46,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/products/{productId}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long productId){
-        productService.deleteProduct(productId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<ErrorResponse> deleteProduct(@PathVariable Long productId){
+        return new ResponseEntity<>(productService.deleteProduct(productId), HttpStatus.OK);
     }
 }

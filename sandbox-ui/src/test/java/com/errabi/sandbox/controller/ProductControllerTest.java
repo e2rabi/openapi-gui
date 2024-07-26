@@ -70,6 +70,6 @@ class ProductControllerTest extends BaseControllerIT{
     void DeleteProductOkTest() throws Exception {
         mockMvc.perform(delete("/sandbox-api/v1/products/1"))
                 .andDo(print())
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
     }
 }

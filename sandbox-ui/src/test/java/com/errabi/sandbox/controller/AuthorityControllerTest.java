@@ -62,6 +62,6 @@ class AuthorityControllerTest extends BaseControllerIT{
     void DeleteAuthorityOkTest() throws Exception {
         mockMvc.perform(delete("/sandbox-api/v1/authorities/1"))
                 .andDo(print())
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
     }
 }

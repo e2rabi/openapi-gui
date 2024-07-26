@@ -57,6 +57,6 @@ class ConfigControllerTest extends BaseControllerIT{
     void DeleteConfigOkTest() throws Exception {
         mockMvc.perform(delete("/sandbox-api/v1/configurations/1"))
                 .andDo(print())
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
     }
 }

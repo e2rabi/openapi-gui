@@ -1,9 +1,11 @@
 package com.errabi.sandbox.web.controller;
 
+import com.errabi.sandbox.exception.ErrorResponse;
 import com.errabi.sandbox.services.ReleaseService;
 import com.errabi.sandbox.web.model.ReleaseDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,9 +23,10 @@ public class ReleaseController {
         return new ResponseEntity<>(releaseService.createRelease(releaseDto), HttpStatus.CREATED);
     }
 
-    @GetMapping("/releases/{id}")
-    public ResponseEntity<ReleaseDto> getReleaseById(@PathVariable  Long id){
-        return new ResponseEntity<>(releaseService.findReleaseById(id), HttpStatus.OK);
+    @GetMapping("/releases/{releaseId}")
+    @Cacheable(value = "sandbox", key = "#releaseId")
+    public ResponseEntity<ReleaseDto> getReleaseById(@PathVariable  Long releaseId){
+        return new ResponseEntity<>(releaseService.findReleaseById(releaseId), HttpStatus.OK);
     }
 
     @GetMapping("/releases")
@@ -44,8 +47,7 @@ public class ReleaseController {
     }
 
     @DeleteMapping("/releases/{releaseId}")
-    public ResponseEntity<Void> deleteRelease(@PathVariable Long releaseId){
-        releaseService.deleteRelease(releaseId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<ErrorResponse> deleteRelease(@PathVariable Long releaseId){
+        return new ResponseEntity<>(releaseService.deleteRelease(releaseId), HttpStatus.OK);
     }
 }

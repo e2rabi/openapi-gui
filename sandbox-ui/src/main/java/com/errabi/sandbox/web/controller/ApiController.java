@@ -1,9 +1,11 @@
 package com.errabi.sandbox.web.controller;
 
+import com.errabi.sandbox.exception.ErrorResponse;
 import com.errabi.sandbox.services.ApiService;
 import com.errabi.sandbox.web.model.ApiDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,9 +22,10 @@ public class ApiController {
         return new ResponseEntity<>(apiService.createApi(apiDto), HttpStatus.CREATED);
     }
 
-    @GetMapping("/api/{id}")
-    public ResponseEntity<ApiDto> getApiById(@PathVariable  Long id){
-        return new ResponseEntity<>(apiService.findApiById(id), HttpStatus.OK);
+    @GetMapping("/api/{apiId}")
+    @Cacheable(value = "sandbox", key = "#apiId")
+    public ResponseEntity<ApiDto> getApiById(@PathVariable  Long apiId){
+        return new ResponseEntity<>(apiService.findApiById(apiId), HttpStatus.OK);
     }
 
     @GetMapping("/modules/{id}/api")
@@ -43,8 +46,7 @@ public class ApiController {
     }
 
     @DeleteMapping("/api/{apiId}")
-    public ResponseEntity<Void> deleteApi(@PathVariable Long apiId){
-        apiService.deleteApi(apiId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<ErrorResponse> deleteApi(@PathVariable Long apiId){
+        return new ResponseEntity<>(apiService.deleteApi(apiId), HttpStatus.OK);
     }
 }
