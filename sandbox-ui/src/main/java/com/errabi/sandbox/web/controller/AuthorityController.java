@@ -1,9 +1,11 @@
 package com.errabi.sandbox.web.controller;
 
+import com.errabi.sandbox.exception.ErrorResponse;
 import com.errabi.sandbox.services.AuthorityService;
 import com.errabi.sandbox.web.model.AuthorityDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,9 +23,10 @@ public class AuthorityController {
         return new ResponseEntity<>(authorityService.createAuthority(authorityDto), HttpStatus.CREATED);
     }
 
-    @GetMapping("/authorities/{id}")
-    public ResponseEntity<AuthorityDto> getAuthorityById(@PathVariable  Long id){
-        return new ResponseEntity<>(authorityService.findAuthorityById(id), HttpStatus.OK);
+    @GetMapping("/authorities/{authId}")
+    @Cacheable(value = "sandbox", key = "#authId")
+    public ResponseEntity<AuthorityDto> getAuthorityById(@PathVariable  Long authId){
+        return new ResponseEntity<>(authorityService.findAuthorityById(authId), HttpStatus.OK);
     }
 
     @GetMapping("/authorities")
@@ -38,8 +41,7 @@ public class AuthorityController {
     }
 
     @DeleteMapping("/authorities/{authorityId}")
-    public ResponseEntity<Void> deleteAuthority(@PathVariable Long authorityId){
-        authorityService.deleteAuthority(authorityId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<ErrorResponse> deleteAuthority(@PathVariable Long authorityId){
+        return new ResponseEntity<>(authorityService.deleteAuthority(authorityId), HttpStatus.OK);
     }
 }

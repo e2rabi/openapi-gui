@@ -2,6 +2,7 @@ package com.errabi.sandbox.services;
 
 import com.errabi.sandbox.entities.Authority;
 import com.errabi.sandbox.entities.Role;
+import com.errabi.sandbox.exception.ErrorResponse;
 import com.errabi.sandbox.exception.TechnicalException;
 import com.errabi.sandbox.repositories.RoleRepository;
 import com.errabi.sandbox.web.mapper.AuthorityMapper;
@@ -33,8 +34,8 @@ public class RoleService {
     public RoleDto createRole(RoleDto roleDto){
         try {
             log.info("Creating Role {} ..", roleDto.getName());
-            Role role = roleMapper.toEntity(roleDto);
-            roleRepository.save(role);
+            Role role = roleRepository.save(roleMapper.toEntity(roleDto));
+            roleDto = roleMapper.toDto(role);
             roleDto.setResponseInfo(buildSuccessInfo());
             return roleDto;
         } catch(Exception ex) {
@@ -67,7 +68,10 @@ public class RoleService {
             log.info("Fetching all roles...");
             List<Role> roles = roleRepository.findAll();
             if(!roles.isEmpty()){
-                return roles.stream().map(roleMapper::toDto).toList();
+                return roles.stream()
+                        .map(roleMapper::toDto)
+                        .peek(roleDto -> roleDto.setResponseInfo(buildSuccessInfo()))
+                        .toList();
             }else{
                 return Collections.emptyList();
             }
@@ -120,10 +124,12 @@ public class RoleService {
     }
 
     @Transactional
-    public void deleteRole(Long roleId) {
+    public ErrorResponse deleteRole(Long roleId) {
+        ErrorResponse errorResponse = new ErrorResponse();
         try {
             log.info("Deleting role with ID {}", roleId);
             roleRepository.deleteById(findRoleById(roleId).getId());
+            errorResponse.setResponseInfo(buildSuccessInfo());
         } catch (Exception ex) {
             log.error("Unexpected error occurred while deleting role with ID {}", roleId);
             throw new TechnicalException(
@@ -132,5 +138,6 @@ public class RoleService {
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
+        return errorResponse;
     }
 }

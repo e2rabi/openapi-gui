@@ -74,6 +74,6 @@ class ApiControllerTest extends BaseControllerIT{
     void DeleteApiOkTest() throws Exception {
         mockMvc.perform(delete("/sandbox-api/v1/api/1"))
                 .andDo(print())
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
     }
 }

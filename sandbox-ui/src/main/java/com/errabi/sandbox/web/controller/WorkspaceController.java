@@ -1,9 +1,11 @@
 package com.errabi.sandbox.web.controller;
 
+import com.errabi.sandbox.exception.ErrorResponse;
 import com.errabi.sandbox.services.WorkspaceService;
 import com.errabi.sandbox.web.model.WorkspaceDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,9 +23,10 @@ public class WorkspaceController {
         return new ResponseEntity<>(workspaceService.createWorkspace(workspaceDto), HttpStatus.CREATED);
     }
 
-    @GetMapping("/workspace/{id}")
-    public ResponseEntity<WorkspaceDto> getWorkspaceById(@PathVariable  Long id){
-        return new ResponseEntity<>(workspaceService.findWorkspaceById(id), HttpStatus.OK);
+    @GetMapping("/workspace/{workspaceId}")
+    @Cacheable(value = "sandbox", key = "#workspaceId")
+    public ResponseEntity<WorkspaceDto> getWorkspaceById(@PathVariable  Long workspaceId){
+        return new ResponseEntity<>(workspaceService.findWorkspaceById(workspaceId), HttpStatus.OK);
     }
 
     @GetMapping("/workspaces")
@@ -38,8 +41,7 @@ public class WorkspaceController {
     }
 
     @DeleteMapping("/workspace/{workspaceId}")
-    public ResponseEntity<Void> deleteWorkspace(@PathVariable Long workspaceId){
-        workspaceService.deleteWorkspace(workspaceId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<ErrorResponse> deleteWorkspace(@PathVariable Long workspaceId){
+        return new ResponseEntity<>(workspaceService.deleteWorkspace(workspaceId), HttpStatus.OK);
     }
 }

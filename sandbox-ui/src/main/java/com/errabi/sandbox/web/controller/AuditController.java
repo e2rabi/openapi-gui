@@ -1,9 +1,11 @@
 package com.errabi.sandbox.web.controller;
 
+import com.errabi.sandbox.exception.ErrorResponse;
 import com.errabi.sandbox.services.AuditService;
 import com.errabi.sandbox.web.model.AuditDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,9 +23,10 @@ public class AuditController {
         return new ResponseEntity<>(auditService.createAudit(auditDto), HttpStatus.CREATED);
     }
 
-    @GetMapping("/audits/{id}")
-    public ResponseEntity<AuditDto> getAuditById(@PathVariable  Long id){
-        return new ResponseEntity<>(auditService.findAuditById(id), HttpStatus.OK);
+    @GetMapping("/audits/{auditId}")
+    @Cacheable(value = "sandbox", key = "#auditId")
+    public ResponseEntity<AuditDto> getAuditById(@PathVariable  Long auditId){
+        return new ResponseEntity<>(auditService.findAuditById(auditId), HttpStatus.OK);
     }
 
     @GetMapping("/audits")
@@ -38,8 +41,7 @@ public class AuditController {
     }
 
     @DeleteMapping("/audits/{auditId}")
-    public ResponseEntity<Void> deleteAudit(@PathVariable Long auditId){
-        auditService.deleteAudit(auditId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<ErrorResponse> deleteAudit(@PathVariable Long auditId){
+        return new ResponseEntity<>(auditService.deleteAudit(auditId), HttpStatus.OK);
     }
 }

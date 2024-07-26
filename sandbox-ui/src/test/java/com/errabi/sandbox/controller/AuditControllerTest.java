@@ -66,6 +66,6 @@ class AuditControllerTest extends BaseControllerIT {
     void DeleteAuditOkTest() throws Exception {
         mockMvc.perform(delete("/sandbox-api/v1/audits/1"))
                 .andDo(print())
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
     }
 }

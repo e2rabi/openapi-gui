@@ -72,6 +72,6 @@ class SolutionControllerTest extends BaseControllerIT{
     void DeleteSolutionOkTest() throws Exception {
         mockMvc.perform(delete("/sandbox-api/v1/solutions/1"))
                 .andDo(print())
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
     }
 }

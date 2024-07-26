@@ -1,9 +1,11 @@
 package com.errabi.sandbox.web.controller;
 
+import com.errabi.sandbox.exception.ErrorResponse;
 import com.errabi.sandbox.services.RoleService;
 import com.errabi.sandbox.web.model.RoleDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,9 +23,10 @@ public class RoleController {
         return new ResponseEntity<>(roleService.createRole(roleDto), HttpStatus.CREATED);
     }
 
-    @GetMapping("/roles/{id}")
-    public ResponseEntity<RoleDto> getRoleById(@PathVariable  Long id){
-        return new ResponseEntity<>(roleService.findRoleById(id), HttpStatus.OK);
+    @GetMapping("/roles/{roleId}")
+    @Cacheable(value = "sandbox", key = "#roleId")
+    public ResponseEntity<RoleDto> getRoleById(@PathVariable  Long roleId){
+        return new ResponseEntity<>(roleService.findRoleById(roleId), HttpStatus.OK);
     }
 
     @GetMapping("/roles")
@@ -43,8 +46,7 @@ public class RoleController {
     }
 
     @DeleteMapping("/roles/{roleId}")
-    public ResponseEntity<Void> deleteRole(@PathVariable Long roleId){
-        roleService.deleteRole(roleId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<ErrorResponse> deleteRole(@PathVariable Long roleId){
+        return new ResponseEntity<>(roleService.deleteRole(roleId), HttpStatus.OK);
     }
 }

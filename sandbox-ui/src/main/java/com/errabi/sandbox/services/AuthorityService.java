@@ -1,6 +1,7 @@
 package com.errabi.sandbox.services;
 
 import com.errabi.sandbox.entities.Authority;
+import com.errabi.sandbox.exception.ErrorResponse;
 import com.errabi.sandbox.exception.TechnicalException;
 import com.errabi.sandbox.repositories.AuthorityRepository;
 import com.errabi.sandbox.web.mapper.AuthorityMapper;
@@ -29,8 +30,8 @@ public class AuthorityService {
     public AuthorityDto createAuthority(AuthorityDto authorityDto){
         try {
             log.info("Creating Authority {} ..", authorityDto.getPermission());
-            Authority authority = authorityMapper.toEntity(authorityDto);
-            authorityRepository.save(authority);
+            Authority authority = authorityRepository.save(authorityMapper.toEntity(authorityDto));
+            authorityDto = authorityMapper.toDto(authority);
             authorityDto.setResponseInfo(buildSuccessInfo());
             return authorityDto;
         } catch(Exception ex) {
@@ -63,7 +64,10 @@ public class AuthorityService {
             log.info("Fetching all authorities...");
             List<Authority> authorities = authorityRepository.findAll();
             if(!authorities.isEmpty()){
-                return authorities.stream().map(authorityMapper::toDto).toList();
+                return authorities.stream()
+                        .map(authorityMapper::toDto)
+                        .peek(authorityDto -> authorityDto.setResponseInfo(buildSuccessInfo()))
+                        .toList();
             }else{
                 return Collections.emptyList();
             }
@@ -96,10 +100,12 @@ public class AuthorityService {
     }
 
     @Transactional
-    public void deleteAuthority(Long authorityId) {
+    public ErrorResponse deleteAuthority(Long authorityId) {
+        ErrorResponse errorResponse = new ErrorResponse();
         try {
             log.info("Deleting authority with ID {}", authorityId);
             authorityRepository.deleteById(findAuthorityById(authorityId).getId());
+            errorResponse.setResponseInfo(buildSuccessInfo());
         } catch (Exception ex) {
             log.error("Unexpected error occurred while deleting authority with ID {}", authorityId);
             throw new TechnicalException(
@@ -108,5 +114,6 @@ public class AuthorityService {
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
+        return errorResponse;
     }
 }

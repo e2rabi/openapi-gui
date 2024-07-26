@@ -1,6 +1,7 @@
 package com.errabi.sandbox.services;
 
 import com.errabi.sandbox.entities.Workspace;
+import com.errabi.sandbox.exception.ErrorResponse;
 import com.errabi.sandbox.exception.TechnicalException;
 import com.errabi.sandbox.repositories.WorkspaceRepository;
 import com.errabi.sandbox.web.mapper.WorkspaceMapper;
@@ -29,8 +30,8 @@ public class WorkspaceService {
     public WorkspaceDto createWorkspace(WorkspaceDto workspaceDto){
         try {
             log.info("Creating Workspace {} ..", workspaceDto.getName());
-            Workspace workspace = workspaceMapper.toEntity(workspaceDto);
-            workspaceRepository.save(workspace);
+            Workspace workspace = workspaceRepository.save(workspaceMapper.toEntity(workspaceDto));
+            workspaceDto = workspaceMapper.toDto(workspace);
             workspaceDto.setResponseInfo(buildSuccessInfo());
             return workspaceDto;
         } catch(Exception ex) {
@@ -64,12 +65,15 @@ public class WorkspaceService {
             log.info("Fetching all Workspaces...");
             List<Workspace> workspaces = workspaceRepository.findAll();
             if(!workspaces.isEmpty()){
-                return workspaces.stream().map(workspaceMapper::toDto).toList();
+                return workspaces.stream()
+                        .map(workspaceMapper::toDto)
+                        .peek(workspaceDto -> workspaceDto.setResponseInfo(buildSuccessInfo()))
+                        .toList();
             }else{
                 return Collections.emptyList();
             }
         } catch(Exception ex) {
-            log.error("Unexpected error occurred while fetching all Workspaces", ex);
+            log.error("Unexpected error occurred while fetching all Workspaces");
             throw new TechnicalException(
                     SYSTEM_ERROR,
                     SYSTEM_ERROR_DESCRIPTION,
@@ -80,14 +84,14 @@ public class WorkspaceService {
 
     public WorkspaceDto updateWorkspace(WorkspaceDto workspaceDto) {
         try {
-            log.info("Updating Workspace {} ..", workspaceDto.getId());
+            log.info("Updating Workspace");
             Workspace existingWorkspace = workspaceMapper.toEntity(findWorkspaceById(workspaceDto.getId()));
             workspaceMapper.updateFromDto(workspaceDto, existingWorkspace);
             workspaceRepository.save(existingWorkspace);
             workspaceDto.setResponseInfo(buildSuccessInfo());
             return workspaceDto;
         } catch(Exception ex) {
-            log.error("Unexpected error occurred while updating Workspace with ID {}", workspaceDto.getId());
+            log.error("Unexpected error occurred while updating Workspace");
             throw new TechnicalException(
                     UPDATE_ERROR_CODE,
                     UPDATE_ERROR_DESCRIPTION,
@@ -97,10 +101,12 @@ public class WorkspaceService {
     }
 
     @Transactional
-    public void deleteWorkspace(Long workspaceId) {
+    public ErrorResponse deleteWorkspace(Long workspaceId) {
+        ErrorResponse errorResponse = new ErrorResponse();
         try {
             log.info("Deleting Workspace with ID {}", workspaceId);
             workspaceRepository.deleteById(findWorkspaceById(workspaceId).getId());
+            errorResponse.setResponseInfo(buildSuccessInfo());
         } catch (Exception ex) {
             log.error("Unexpected error occurred while deleting Workspace with ID {}", workspaceId);
             throw new TechnicalException(
@@ -109,5 +115,6 @@ public class WorkspaceService {
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
+        return errorResponse;
     }
 }

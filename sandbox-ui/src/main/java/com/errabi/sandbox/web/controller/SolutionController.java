@@ -1,9 +1,11 @@
 package com.errabi.sandbox.web.controller;
 
+import com.errabi.sandbox.exception.ErrorResponse;
 import com.errabi.sandbox.services.SolutionService;
 import com.errabi.sandbox.web.model.SolutionDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,9 +22,10 @@ public class SolutionController {
         return new ResponseEntity<>(solutionService.createSolution(solutionDto), HttpStatus.CREATED);
     }
 
-    @GetMapping("/solutions/{id}")
-    public ResponseEntity<SolutionDto> getSolutionById(@PathVariable  Long id){
-        return new ResponseEntity<>(solutionService.findSolutionById(id), HttpStatus.OK);
+    @GetMapping("/solutions/{solutionId}")
+    @Cacheable(value = "sandbox", key = "#solutionId")
+    public ResponseEntity<SolutionDto> getSolutionById(@PathVariable  Long solutionId){
+        return new ResponseEntity<>(solutionService.findSolutionById(solutionId), HttpStatus.OK);
     }
 
     @GetMapping("/releases/{id}/solutions")
@@ -43,9 +46,7 @@ public class SolutionController {
     }
 
     @DeleteMapping("/solutions/{solutionId}")
-    public ResponseEntity<Void> deleteSolution(@PathVariable Long solutionId){
-        solutionService.deleteSolution(solutionId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    public ResponseEntity<ErrorResponse> deleteSolution(@PathVariable Long solutionId){
+        return new ResponseEntity<>(solutionService.deleteSolution(solutionId),HttpStatus.OK);
     }
-
 }

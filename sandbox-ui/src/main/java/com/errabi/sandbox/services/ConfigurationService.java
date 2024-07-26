@@ -1,6 +1,7 @@
 package com.errabi.sandbox.services;
 
 import com.errabi.sandbox.entities.Configuration;
+import com.errabi.sandbox.exception.ErrorResponse;
 import com.errabi.sandbox.exception.TechnicalException;
 import com.errabi.sandbox.repositories.ConfigurationRepository;
 import com.errabi.sandbox.web.mapper.ConfigurationMapper;
@@ -31,8 +32,8 @@ public class ConfigurationService {
     public ConfigurationDto createConfig(ConfigurationDto configurationDto){
         try {
             log.info("Creating Configuration {} ..", configurationDto.getKey());
-            Configuration configuration = configurationMapper.toEntity(configurationDto);
-            configurationRepository.save(configuration);
+            Configuration configuration =  configurationRepository.save(configurationMapper.toEntity(configurationDto));
+            configurationDto = configurationMapper.toDto(configuration);
             configurationDto.setResponseInfo(buildSuccessInfo());
             return configurationDto;
         } catch(Exception ex) {
@@ -94,10 +95,12 @@ public class ConfigurationService {
     }
 
     @Transactional
-    public void deleteConfiguration(Long configId) {
+    public ErrorResponse deleteConfiguration(Long configId) {
+        ErrorResponse errorResponse = new ErrorResponse();
         try {
             log.info("Deleting configuration with ID {}", configId);
             configurationRepository.deleteById(findConfigById(configId).getId());
+            errorResponse.setResponseInfo(buildSuccessInfo());
         } catch (Exception ex) {
             log.error("Unexpected error occurred while deleting configuration with ID {}", configId);
             throw new TechnicalException(
@@ -106,5 +109,6 @@ public class ConfigurationService {
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
+        return errorResponse;
     }
 }
