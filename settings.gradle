@@ -1,3 +1,4 @@
 rootProject.name = 'sandbox-api'
+include 'sandbox-backend'
 include 'sandbox-ui'
 include 'infrastructure'
