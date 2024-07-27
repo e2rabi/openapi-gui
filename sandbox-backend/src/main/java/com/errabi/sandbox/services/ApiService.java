@@ -109,6 +109,7 @@ public class ApiService {
         }
     }
 
+    @Transactional
     public ApiDto updateApi(ApiDto apiDto) {
         try {
             log.info("Updating API");

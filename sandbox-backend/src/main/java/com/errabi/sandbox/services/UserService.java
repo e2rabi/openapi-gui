@@ -62,14 +62,14 @@ public class UserService {
             } else {
                 throw new TechnicalException(
                         INVALID_USERNAME_OR_PASSWORD_CODE,
-                        INVALID_USERNAME_OR_PASSWORD_DESCRIPTON,
+                        INVALID_USERNAME_OR_PASSWORD_DESCRIPTION,
                         HttpStatus.UNAUTHORIZED
                 );
             }
         } else {
             throw new TechnicalException(
                     INVALID_USERNAME_OR_PASSWORD_CODE,
-                    INVALID_USERNAME_OR_PASSWORD_DESCRIPTON,
+                    INVALID_USERNAME_OR_PASSWORD_DESCRIPTION,
                     HttpStatus.UNAUTHORIZED
             );
         }
@@ -181,6 +181,7 @@ public class UserService {
         }
     }
 
+    @Transactional
     public UserDto updateUser(UserDto userDto) {
         try {
             log.info("Updating user {} ..", userDto.getId());

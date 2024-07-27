@@ -82,6 +82,7 @@ public class WorkspaceService {
         }
     }
 
+    @Transactional
     public WorkspaceDto updateWorkspace(WorkspaceDto workspaceDto) {
         try {
             log.info("Updating Workspace");

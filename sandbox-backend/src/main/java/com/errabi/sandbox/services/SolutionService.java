@@ -108,6 +108,7 @@ public class SolutionService {
         }
     }
 
+    @Transactional
     public SolutionDto updateSolution(SolutionDto solutionDto) {
         try {
             log.info("Updating solution");

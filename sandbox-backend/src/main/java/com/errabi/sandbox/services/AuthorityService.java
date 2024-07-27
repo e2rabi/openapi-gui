@@ -81,6 +81,7 @@ public class AuthorityService {
         }
     }
 
+    @Transactional
     public AuthorityDto updateAuthority(AuthorityDto authorityDto) {
         try {
             log.info("Updating authority {} ..", authorityDto.getId());
