@@ -109,6 +109,7 @@ public class ProductService {
         }
     }
 
+    @Transactional
     public ProductDto updateProduct(ProductDto productDto) {
         try {
             log.info("Updating product {} ..", productDto.getId());

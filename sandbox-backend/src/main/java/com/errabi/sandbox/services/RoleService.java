@@ -105,6 +105,7 @@ public class RoleService {
         }
     }
 
+    @Transactional
     public RoleDto updateRole(RoleDto roleDto) {
         try {
             log.info("Updating role {} ..", roleDto.getId());

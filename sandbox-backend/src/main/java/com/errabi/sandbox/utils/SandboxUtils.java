@@ -9,7 +9,6 @@ import static com.errabi.sandbox.utils.SandboxConstant.SUCCESS_CODE_DESCRIPTION;
 
 @UtilityClass
 public class SandboxUtils {
-
     public static ResponseInfo buildSuccessInfo(){
         return ResponseInfo.builder()
                 .errorCode(SUCCESS_CODE)

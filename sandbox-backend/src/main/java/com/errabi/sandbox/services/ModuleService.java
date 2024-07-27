@@ -108,6 +108,7 @@ public class ModuleService {
         }
     }
 
+    @Transactional
     public ModuleDto updateModule(ModuleDto moduleDto) {
         try {
             log.info("Updating module");

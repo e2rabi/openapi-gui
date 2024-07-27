@@ -82,6 +82,7 @@ public class AuditService {
         }
     }
 
+    @Transactional
     public AuditDto updateAudit(AuditDto auditDto) {
         try {
             log.info("Updating Audit {} ..", auditDto.getId());

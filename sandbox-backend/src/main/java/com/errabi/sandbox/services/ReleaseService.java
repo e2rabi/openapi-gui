@@ -108,6 +108,7 @@ public class ReleaseService {
         }
     }
 
+    @Transactional
     public ReleaseDto updateRelease(ReleaseDto releaseDto) {
         try {
             log.info("Updating release");
