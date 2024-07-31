@@ -1,10 +1,8 @@
 
-import Header from "./components/layout/Header/Header.jsx"
-import Footer from "./components/layout/Footer/Footer.jsx"
-import Navbar from "./components/layout/Navbar/Navbar.jsx"
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Home from "./components/home/Home.jsx";
 import Login from "./components/login/Login.jsx";
+import Home from "./components/dashboard/Dashboard.jsx";
+import { ThemeProvider } from "./components/theme/theme-provider"
 const router = createBrowserRouter([
   {
     path: "/",
@@ -19,12 +17,11 @@ function App() {
 
   return (
     <div className="container">
-      <Header />
-      <Navbar />
-      <main className="main" >
-        <RouterProvider router={router} />
-      </main>
-      <Footer />
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <main className="main" >
+          <RouterProvider router={router} />
+        </main>
+      </ThemeProvider>
     </div>
 
   )
