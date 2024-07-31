@@ -70,11 +70,6 @@
     }
 }
 
-#root {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.container {
+    max-width: 100%;
 }
