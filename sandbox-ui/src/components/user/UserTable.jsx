@@ -33,7 +33,7 @@ const UserTable = ({ isLoading, users }) => {
                                 <TableCell>{user.username}</TableCell>
                                 <TableCell>{user.email}</TableCell>
                                 <TableCell>
-                                    <Badge className="text-xs" variant="outline">
+                                    <Badge className="text-xs" variant={user.enabled ? "enabled" : "disabled"}>
                                         {user.enabled ? "Active" : "Disabled"}
                                     </Badge>
                                 </TableCell>
