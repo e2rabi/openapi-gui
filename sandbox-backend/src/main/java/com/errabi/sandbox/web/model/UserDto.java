@@ -21,6 +21,7 @@ public class UserDto extends AbstractMessageDto {
     private  String firstName ;
     @NotEmpty(message = "Please add lastname")
     private  String lastName ;
+    private  Boolean enabled ;
     @Email(message = "Please add a valid email")
     private  String email ;
     @NotEmpty(message = "Please add password")

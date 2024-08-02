@@ -2,16 +2,18 @@ import { useEffect, useState } from "react";
 import Header from "../layout/Header";
 import Logo from "../layout/Logo";
 import Navbar from "../layout/Navbar";
-//import { Button } from "../ui/button";
+
 import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHeader,
-  TableHead,
-  TableRow,
-} from "../ui/table";
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card"
+
+import UserTableFilter from "./UserTableFilter";
+
+import UserTablePagination from "./UserTablePagination";
+import UserTable from "./UserTable";
 export default function User() {
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -54,48 +56,18 @@ export default function User() {
       <div className="flex flex-col">
         <Header />
         <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
-          <div className="flex items-center">
-            <h1 className="text-lg font-semibold md:text-2xl">Users</h1>
-          </div>
-          <div
-            className="flex flex-1 justify-center rounded-lg border border-dashed shadow-sm"
-            x-chunk="dashboard-02-chunk-1"
-          >
-            {isLoading ? (
-              <p>Loading users...</p>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="w-[100px]">ID</TableHead>
-                    <TableHead>Username</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Account Non-Expired</TableHead>
-                    <TableHead>Account Non-Locked</TableHead>
-                    <TableHead>Credentials Non-Expired</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {users.map((user) => (
-                    <TableRow key={user.id}>
-                      <TableCell className="font-medium">{user.id}</TableCell>
-                      <TableCell>{user.username}</TableCell>
-                      <TableCell>{user.email}</TableCell>
-                      <TableCell>
-                        {user.accountNonExpired ? "Yes" : "No"}
-                      </TableCell>
-                      <TableCell>
-                        {user.accountNonLocked ? "Yes" : "No"}
-                      </TableCell>
-                      <TableCell>
-                        {user.credentialsNonExpired ? "Yes" : "No"}
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </div>
+          <Card x-chunk="dashboard-06-chunk-0" className=" rounded-lg border border-dashed shadow-sm">
+            <CardHeader>
+              <UserTableFilter />
+            </CardHeader>
+            <CardContent>
+              <UserTable isLoading={isLoading} users={users} />
+            </CardContent>
+            <CardFooter className="flex justify-between">
+              <UserTablePagination />
+            </CardFooter>
+          </Card>
+
         </main>
       </div>
     </div>

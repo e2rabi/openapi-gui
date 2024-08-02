@@ -4,6 +4,7 @@ import Login from "./components/login/Login.jsx";
 import Home from "./components/dashboard/Dashboard.jsx";
 import { ThemeProvider } from "./components/theme/theme-provider"
 import User from "./components/user/User.jsx";
+import Configuration from "./components/configuration/Configuration.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -16,6 +17,10 @@ const router = createBrowserRouter([
   {
     path: "/users",
     element: <User />,
+  },
+  {
+    path: "/config",
+    element: <Configuration />,
   },
 ]);
 function App() {
