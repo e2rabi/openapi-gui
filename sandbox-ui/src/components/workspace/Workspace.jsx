@@ -3,10 +3,17 @@ import Header from "../layout/Header";
 import Logo from "../layout/Logo";
 import Navbar from "../layout/Navbar";
 
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardFooter,
+} from "@/components/ui/card";
 
 import WorkspaceTable from "./WorkspaceTable";
 import { fetchApi } from "@/services/apiService";
+import WorkspaceTableFilter from "./WorkspaceTableFilter";
+import WorkspaceTablePagination from "./WorkspaceTablePagination";
 
 export default function Workspace() {
   const [workspaces, setWorkspaces] = useState([]);
@@ -43,18 +50,14 @@ export default function Workspace() {
             className=" rounded-lg border border-dashed shadow-sm"
           >
             <CardHeader>
-              <div className="block items-center">
-                <h1 className="text-lg font-semibold md:text-2xl">
-                  Workspaces
-                </h1>
-                <p className="text-sm text-muted-foreground">
-                  Recent workspaces from your sandbox.
-                </p>
-              </div>
+              <WorkspaceTableFilter />
             </CardHeader>
             <CardContent>
               <WorkspaceTable isLoading={isLoading} workspaces={workspaces} />
             </CardContent>
+            <CardFooter className="flex justify-between">
+              <WorkspaceTablePagination />
+            </CardFooter>
           </Card>
         </main>
       </div>
