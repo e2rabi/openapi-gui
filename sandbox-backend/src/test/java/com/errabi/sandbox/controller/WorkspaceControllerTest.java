@@ -52,7 +52,7 @@ class WorkspaceControllerTest extends BaseControllerIT{
     void UpdateWorkspaceOkTest() throws Exception {
         mockMvc.perform(put("/sandbox-api/v1/workspace")
                         .content(asJsonString(WorkspaceDto.builder()
-                                .id(1L)
+                                .id(6L)
                                 .name("test")
                                 .description("test")
                                 .enabled(false)

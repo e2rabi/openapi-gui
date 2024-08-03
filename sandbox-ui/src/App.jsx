@@ -1,10 +1,10 @@
-
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login from "./components/login/Login.jsx";
 import Home from "./components/dashboard/Dashboard.jsx";
-import { ThemeProvider } from "./components/theme/theme-provider"
+import { ThemeProvider } from "./components/theme/theme-provider";
 import User from "./components/user/User.jsx";
 import Configuration from "./components/configuration/Configuration.jsx";
+import Workspace from "./components/workspace/Workspace.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -13,6 +13,10 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
+  },
+  {
+    path: "/workspaces",
+    element: <Workspace />,
   },
   {
     path: "/users",
@@ -24,17 +28,15 @@ const router = createBrowserRouter([
   },
 ]);
 function App() {
-
   return (
     <div className="container">
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <main className="main" >
+        <main className="main">
           <RouterProvider router={router} />
         </main>
       </ThemeProvider>
     </div>
-
-  )
+  );
 }
 
-export default App
+export default App;
