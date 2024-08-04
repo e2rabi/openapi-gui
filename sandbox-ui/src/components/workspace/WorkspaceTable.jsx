@@ -8,37 +8,8 @@ import {
 } from "../ui/table";
 
 import { Badge } from "../ui/badge";
-import { useState, useEffect } from "react";
-import { fetchApi } from "@/services/apiService";
 
 const WorkspaceTable = ({ isLoading, workspaces }) => {
-  const [userCounts, setUserCounts] = useState({});
-  useEffect(() => {
-    const fetchUserCounts = async () => {
-      try {
-        const counts = await Promise.all(
-          workspaces.map(async (workspace) => {
-            const count = await fetchApi(
-              `users/workspace/${workspace.id}/count`
-            );
-            return { workspaceId: workspace.id, count };
-          })
-        );
-        const countsMap = counts.reduce((acc, { workspaceId, count }) => {
-          acc[workspaceId] = count;
-          return acc;
-        }, {});
-        setUserCounts(countsMap);
-      } catch (error) {
-        console.error("Error fetching user counts:", error);
-      }
-    };
-
-    if (!isLoading) {
-      fetchUserCounts();
-    }
-  }, [isLoading, workspaces]);
-
   return (
     <>
       {isLoading ? (
@@ -70,11 +41,7 @@ const WorkspaceTable = ({ isLoading, workspaces }) => {
                   </Badge>
                 </TableCell>
                 <TableCell>{workspace.visibility ? "Yes" : "No"}</TableCell>
-                <TableCell>
-                  {userCounts[workspace.id] !== undefined
-                    ? userCounts[workspace.id]
-                    : "Loading..."}
-                </TableCell>
+                <TableCell>{workspace.nbOfUsers}</TableCell>
               </TableRow>
             ))}
           </TableBody>

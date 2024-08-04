@@ -2,7 +2,6 @@ package com.errabi.sandbox.web.controller;
 
 import com.errabi.sandbox.exception.ErrorResponse;
 import com.errabi.sandbox.services.UserService;
-import com.errabi.sandbox.utils.TokenInfo;
 import com.errabi.sandbox.utils.TokenResponse;
 import com.errabi.sandbox.web.model.AuthDto;
 import com.errabi.sandbox.web.model.RoleDto;
@@ -15,8 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-import static com.errabi.sandbox.utils.SandboxConstant.*;
 
 @RestController
 @RequestMapping("/sandbox-api/v1/")
@@ -50,13 +47,6 @@ public class UserController {
     public ResponseEntity<List<UserDto>> getUsersByWorkspaceId(@PathVariable Long workspaceId) {
         List<UserDto> usersDto = userService.getUsersInWorkspace(workspaceId);
         return new ResponseEntity<>(usersDto, HttpStatus.OK);
-    }
-
-    @GetMapping("/users/workspace/{workspaceId}/count")
-    @Cacheable(value = "sandbox", key = "#workspaceId")
-    public ResponseEntity<Long> getNumberOfUsersInWorkspace(@PathVariable Long workspaceId) {
-        long count = userService.getNumberOfUsersInWorkspace(workspaceId);
-        return ResponseEntity.ok(count);
     }
 
     @PutMapping("/users/{userId}/roles/{roleId}")
