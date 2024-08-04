@@ -37,4 +37,5 @@ public class UserDto extends AbstractMessageDto {
     @NotNull(message = "Please add the credential")
     private  boolean credentialsNonExpired;
     private Set<RoleDto> roles;
+    private Long workspaceId;
 }

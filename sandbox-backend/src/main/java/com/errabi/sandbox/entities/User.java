@@ -36,4 +36,7 @@ public class User{
             inverseJoinColumns = {@JoinColumn(name = "ROLE_ID",referencedColumnName = "ID")}
     )
     private Set<Role> roles = new HashSet<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "workspace_id")
+    private Workspace workspace;
 }

@@ -7,3 +7,5 @@ alter table if exists role_authority add constraint FK78r7yh1uqg30liv2n75ay99j f
 alter table if exists solution add constraint FK4ln641thhajd02d0b98vl9tbl foreign key (release_id) references release;
 alter table if exists user_role add constraint FKt7e7djp752sqn6w22i6ocqy6q foreign key (role_id) references roles;
 alter table if exists user_role add constraint FKj345gk1bovqvfame88rcx7yyx foreign key (user_id) references users;
+ALTER TABLE users ADD CONSTRAINT fk_user_workspace FOREIGN KEY (workspace_id) REFERENCES workspace(id);
+/*alter table if exists users add constraint FKibojclo9rb1sdyjthplhypauy foreign key (workspace_id) references workspace; */
