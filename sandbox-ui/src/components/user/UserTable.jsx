@@ -19,11 +19,13 @@ const UserTable = ({ isLoading, users }) => {
                         <TableRow>
                             <TableHead className="w-[100px]">ID</TableHead>
                             <TableHead>Username</TableHead>
+                            <TableHead>FirstName</TableHead>
+                            <TableHead>LastName</TableHead>
                             <TableHead>Email</TableHead>
+                            <TableHead>Phone</TableHead>
                             <TableHead>Status</TableHead>
-                            <TableHead>Account Non-Expired</TableHead>
-                            <TableHead>Account Non-Locked</TableHead>
-                            <TableHead>Credentials Non-Expired</TableHead>
+                            <TableHead>Account Expired</TableHead>
+                            <TableHead>Account Locked</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -31,7 +33,10 @@ const UserTable = ({ isLoading, users }) => {
                             <TableRow key={user.id}>
                                 <TableCell className="font-medium">{user.id}</TableCell>
                                 <TableCell>{user.username}</TableCell>
+                                <TableCell>{user.firstName}</TableCell>
+                                <TableCell>{user.lastName}</TableCell>
                                 <TableCell>{user.email}</TableCell>
+                                <TableCell>{user.phone}</TableCell>
                                 <TableCell>
                                     <Badge className="text-xs" variant={user.enabled ? "enabled" : "disabled"}>
                                         {user.enabled ? "Active" : "Disabled"}
@@ -42,9 +47,6 @@ const UserTable = ({ isLoading, users }) => {
                                 </TableCell>
                                 <TableCell>
                                     {user.accountNonLocked ? "Yes" : "No"}
-                                </TableCell>
-                                <TableCell>
-                                    {user.credentialsNonExpired ? "Yes" : "No"}
                                 </TableCell>
                             </TableRow>
                         ))}

@@ -1,8 +1,8 @@
-import { useEffect, useState, useMemo } from "react";
+import { useState, useMemo } from "react";
 import Header from "../layout/Header";
 import Logo from "../layout/Logo";
 import Navbar from "../layout/Navbar";
-
+import { getAllUser } from "../../services/userService";
 import {
   Card,
   CardContent,
@@ -27,19 +27,10 @@ export default function User() {
 
   const fetchUsers = async (page, pageSize) => {
     try {
-      const response = await fetch(`http://localhost:8080/sandbox-api/v1/users?page=${page}&pageSize=${pageSize}`,
-        {
-          headers: {
-            Authorization: "Basic " + btoa("admin:admin"),
-          },
-        }
-      );
-      if (response.ok) {
-        const data = await response.json();
-        setUsers(() => data.content);
-        setTotalPages(() => data.page.totalPages)
-        setTotalElements(() => data.page.totalElements)
-      }
+      const data = await getAllUser(page, pageSize)
+      setUsers(() => data.content);
+      setTotalPages(() => data.page.totalPages)
+      setTotalElements(() => data.page.totalElements)
     } catch (error) {
       console.error("Error fetching users:", error);
     } finally {
