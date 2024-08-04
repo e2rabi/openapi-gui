@@ -161,6 +161,42 @@ public class UserService {
         }
     }
 
+    public List<UserDto> getUsersInWorkspace(Long workspaceId) {
+        try {
+            log.info("Finding Users with workspace id {}",workspaceId);
+            List<User> users = userRepository.findUsersByWorkspaceId(workspaceId);
+            if(!users.isEmpty()){
+                return users.stream()
+                        .map(userMapper::toDto)
+                        .peek(userDto -> userDto.setResponseInfo(buildSuccessInfo()))
+                        .toList();
+            }else {
+                return Collections.emptyList();
+            }
+        } catch(Exception ex) {
+            log.error("Unexpected error occurred while finding users with workspace ID {}", workspaceId);
+            throw new TechnicalException(
+                    SYSTEM_ERROR,
+                    SYSTEM_ERROR_DESCRIPTION,
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
+    public long getNumberOfUsersInWorkspace(Long workspaceId) {
+        try {
+            log.info("Counting users numbers with workspace id {}",workspaceId);
+            return userRepository.countUsersByWorkspaceId(workspaceId);
+        } catch(Exception ex) {
+            log.error("Unexpected error occurred while counting users numbers with workspace ID {}", workspaceId);
+            throw new TechnicalException(
+                    SYSTEM_ERROR,
+                    SYSTEM_ERROR_DESCRIPTION,
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
+    }
+
     @Transactional
     public RoleDto assignRoleToUser(Long userId, Long roleId) {
         try {

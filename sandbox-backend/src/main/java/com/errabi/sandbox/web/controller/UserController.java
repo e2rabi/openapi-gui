@@ -46,6 +46,19 @@ public class UserController {
         return new ResponseEntity<>(usersDto, HttpStatus.OK);
     }
 
+    @GetMapping("/users/workspace/{workspaceId}")
+    public ResponseEntity<List<UserDto>> getUsersByWorkspaceId(@PathVariable Long workspaceId) {
+        List<UserDto> usersDto = userService.getUsersInWorkspace(workspaceId);
+        return new ResponseEntity<>(usersDto, HttpStatus.OK);
+    }
+
+    @GetMapping("/users/workspace/{workspaceId}/count")
+    @Cacheable(value = "sandbox", key = "#workspaceId")
+    public ResponseEntity<Long> getNumberOfUsersInWorkspace(@PathVariable Long workspaceId) {
+        long count = userService.getNumberOfUsersInWorkspace(workspaceId);
+        return ResponseEntity.ok(count);
+    }
+
     @PutMapping("/users/{userId}/roles/{roleId}")
     public ResponseEntity<RoleDto> assignRoleToUser(@PathVariable Long userId, @PathVariable Long roleId ){
         return new ResponseEntity<>(userService.assignRoleToUser(userId, roleId), HttpStatus.OK);
