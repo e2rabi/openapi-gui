@@ -1,4 +1,5 @@
 
+import React from 'react';
 import { Link } from 'react-router-dom';
 import {
     Bell,
@@ -22,4 +23,4 @@ const Logo = () => {
     )
 }
 
-export default Logo
+export default React.memo(Logo)

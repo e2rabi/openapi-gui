@@ -16,6 +16,8 @@ import com.nimbusds.jose.JOSEException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -139,18 +141,15 @@ public class UserService {
         }
     }
 
-    public List<UserDto> findAllUsers() {
+    public Page<UserDto> findAllUsers(Pageable pageable) {
         try {
             log.info("Fetching all users...");
-            List<User> users = userRepository.findAll();
+            Page<User> users = userRepository.findAll(pageable);
             if(!users.isEmpty()){
-                return users.stream()
-                        .map(userMapper::toDto)
-                        .peek(userDto -> userDto.setResponseInfo(buildSuccessInfo()))
-                        .toList();
-            }else{
-                return Collections.emptyList();
+                return users.map(userMapper::toDto);
+
             }
+             return Page.empty();
         } catch(Exception ex) {
             log.error("Unexpected error occurred while fetching all users", ex);
             throw new TechnicalException(

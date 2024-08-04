@@ -9,6 +9,9 @@ import com.errabi.sandbox.web.model.UserDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,9 +41,9 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<UserDto>> getAllUsers() {
-        List<UserDto> usersDto = userService.findAllUsers();
-        return new ResponseEntity<>(usersDto, HttpStatus.OK);
+    public ResponseEntity<Page<UserDto>> getAllUsers( @RequestParam(defaultValue = "0") int page,
+                                                      @RequestParam(defaultValue = "10") int pageSize) {
+        return new ResponseEntity<>(userService.findAllUsers(PageRequest.of(page,pageSize)), HttpStatus.OK);
     }
 
     @GetMapping("/users/workspace/{workspaceId}")
