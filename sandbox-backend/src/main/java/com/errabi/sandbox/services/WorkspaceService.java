@@ -25,6 +25,7 @@ import static com.errabi.sandbox.utils.SandboxUtils.buildSuccessInfo;
 public class WorkspaceService {
     private final WorkspaceRepository workspaceRepository;
     private final WorkspaceMapper workspaceMapper;
+    private final UserService userService;
 
     @Transactional
     public WorkspaceDto createWorkspace(WorkspaceDto workspaceDto){
@@ -67,7 +68,8 @@ public class WorkspaceService {
             if(!workspaces.isEmpty()){
                 return workspaces.stream()
                         .map(workspaceMapper::toDto)
-                        .peek(workspaceDto -> workspaceDto.setResponseInfo(buildSuccessInfo()))
+                        .peek(workspaceDto -> workspaceDto.
+                                setNbOfUsers(userService.getNumberOfUsersInWorkspace(workspaceDto.getId())))
                         .toList();
             }else{
                 return Collections.emptyList();
