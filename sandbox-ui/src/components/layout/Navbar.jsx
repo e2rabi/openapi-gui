@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-
+import React from "react";
 import {
   Home,
   LineChart,
@@ -94,4 +94,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default React.memo(Navbar);

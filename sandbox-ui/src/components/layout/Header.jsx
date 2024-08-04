@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import React from "react";
 import {
   CircleUser,
   Home,
@@ -153,4 +154,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default React.memo(Header);

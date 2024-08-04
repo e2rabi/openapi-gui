@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Header from "../layout/Header";
 import Logo from "../layout/Logo";
 import Navbar from "../layout/Navbar";
@@ -12,38 +12,43 @@ import {
 
 import UserTableFilter from "./UserTableFilter";
 
-import UserTablePagination from "./UserTablePagination";
+import TablePagination from "../shared/TablePagination";
 import UserTable from "./UserTable";
+const page = {
+  "pageSize": 10,
+  "pageNumber": 0,
+}
 export default function User() {
   const [users, setUsers] = useState([]);
+  const [pageInfo, setPageInfo] = useState(page);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:8080/sandbox-api/v1/users",
-          {
-            headers: {
-              Authorization: "Basic " + btoa("admin:admin"),
-            },
-          }
-        );
-        if (response.ok) {
-          const data = await response.json();
-          setUsers(data);
-        } else {
-          console.error("Failed to fetch users");
+  const fetchUsers = async (page, pageSize) => {
+    try {
+      const response = await fetch(`http://localhost:8080/sandbox-api/v1/users?page=${page}&pageSize=${pageSize}`,
+        {
+          headers: {
+            Authorization: "Basic " + btoa("admin:admin"),
+          },
         }
-      } catch (error) {
-        console.error("Error fetching users:", error);
-      } finally {
-        setIsLoading(false);
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setUsers(() => data.content);
+        setTotalPages(() => data.page.totalPages)
+        setTotalElements(() => data.page.totalElements)
       }
-    };
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    } finally {
+      setIsLoading(false);
+    }
 
-    fetchUsers();
-  }, []);
+  }
+
+  useMemo(() => fetchUsers(pageInfo.pageNumber, pageInfo.pageSize), [pageInfo.pageNumber, pageInfo.pageSize]);
 
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
@@ -64,7 +69,7 @@ export default function User() {
               <UserTable isLoading={isLoading} users={users} />
             </CardContent>
             <CardFooter className="flex justify-between">
-              <UserTablePagination />
+              <TablePagination pageInfo={pageInfo} changePage={setPageInfo} totalPages={totalPages} totalElements={totalElements} />
             </CardFooter>
           </Card>
 
