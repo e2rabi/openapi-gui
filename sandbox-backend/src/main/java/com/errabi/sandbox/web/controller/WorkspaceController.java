@@ -6,11 +6,11 @@ import com.errabi.sandbox.web.model.WorkspaceDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/sandbox-api/v1/")
@@ -30,9 +30,9 @@ public class WorkspaceController {
     }
 
     @GetMapping("/workspaces")
-    public ResponseEntity<List<WorkspaceDto>> getAllWorkspaces() {
-        List<WorkspaceDto> workspaceDto = workspaceService.findAllWorkspaces();
-        return new ResponseEntity<>(workspaceDto, HttpStatus.OK);
+    public ResponseEntity<Page<WorkspaceDto>> getAllWorkspaces(@RequestParam(defaultValue = "0") int page,
+                                                               @RequestParam(defaultValue = "10") int pageSize) {
+        return new ResponseEntity<>(workspaceService.findAllWorkspaces(PageRequest.of(page,pageSize)), HttpStatus.OK);
     }
 
     @PutMapping("/workspace")

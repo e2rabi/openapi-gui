@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Header from "../layout/Header";
 import Logo from "../layout/Logo";
 import Navbar from "../layout/Navbar";
+import { getAllWorkspaces } from "../../services/workspaceService.js";
 
 import {
   Card,
@@ -10,29 +11,38 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 
+import TablePagination from "../shared/TablePagination";
 import WorkspaceTable from "./WorkspaceTable";
-import { fetchApi } from "@/services/apiService";
 import WorkspaceTableFilter from "./WorkspaceTableFilter";
-import WorkspaceTablePagination from "./WorkspaceTablePagination";
+
+const page = {
+  pageSize: 10,
+  pageNumber: 0,
+};
 
 export default function Workspace() {
   const [workspaces, setWorkspaces] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [pageInfo, setPageInfo] = useState(page);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
+
+  const fetchWorkspaces = async (page, pageSize) => {
+    try {
+      const data = await getAllWorkspaces(page, pageSize);
+      setWorkspaces(() => data.content);
+      setTotalPages(() => data.page.totalPages);
+      setTotalElements(() => data.page.totalElements);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const loadWorkspaces = async () => {
-      try {
-        const workspacesData = await fetchApi("workspaces");
-        setWorkspaces(workspacesData);
-      } catch (error) {
-        console.error("Failed to load workspaces:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadWorkspaces();
-  }, []);
+    fetchWorkspaces(pageInfo.pageNumber, pageInfo.pageSize);
+  }, [pageInfo.pageNumber, pageInfo.pageSize]);
 
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
@@ -56,7 +66,12 @@ export default function Workspace() {
               <WorkspaceTable isLoading={isLoading} workspaces={workspaces} />
             </CardContent>
             <CardFooter className="flex justify-between">
-              <WorkspaceTablePagination />
+              <TablePagination
+                pageInfo={pageInfo}
+                changePage={setPageInfo}
+                totalPages={totalPages}
+                totalElements={totalElements}
+              />
             </CardFooter>
           </Card>
         </main>
