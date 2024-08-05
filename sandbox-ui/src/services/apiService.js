@@ -1,6 +1,5 @@
 export async function fetchApi(endpoint, options = {}) {
-  const rootUrl = "http://localhost:8080/sandbox-api/v1/";
-
+  const rootUrl = import.meta.env.VITE_API_URL;
   try {
     const response = await fetch(`${rootUrl}${endpoint}`, {
       headers: {

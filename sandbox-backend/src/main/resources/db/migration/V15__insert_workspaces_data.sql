@@ -1,8 +1,28 @@
 INSERT INTO
     workspace (name, description, enabled, visibility, created, last_modified, created_by, last_modified_by, version)
 VALUES
-    ('Workspace Alpha', 'Description for Workspace Alpha', true, true, NOW(), NOW(), 'admin', 'admin', 1),
-    ('Workspace Beta', 'Description for Workspace Beta', false, true, NOW(), NOW(), 'admin', 'admin', 2),
-    ('Workspace Gamma', 'Description for Workspace Gamma', true, false, NOW(), NOW(), 'admin', 'admin', 3),
-    ('Workspace Delta', 'Description for Workspace Delta', false, false, NOW(), NOW(), 'admin', 'admin', 4),
-    ('Workspace Epsilon', 'Description for Workspace Epsilon', true, true, NOW(), NOW(), 'admin', 'admin', 5);
+    ('Workspace 1', 'Description for Workspace 1', true, true, NOW(), NOW(), 'admin', 'admin', 1),
+    ('Workspace 2', 'Description for Workspace 2', false, true, NOW(), NOW(), 'admin', 'admin', 2),
+    ('Workspace 3', 'Description for Workspace 3', true, false, NOW(), NOW(), 'admin', 'admin', 3),
+    ('Workspace 4', 'Description for Workspace 4', false, false, NOW(), NOW(), 'admin', 'admin', 4),
+    ('Workspace 5', 'Description for Workspace 5', true, true, NOW(), NOW(), 'admin', 'admin', 5),
+    ('Workspace 6', 'Description for Workspace 6', false, true, NOW(), NOW(), 'admin', 'admin', 6),
+    ('Workspace 7', 'Description for Workspace 7', true, false, NOW(), NOW(), 'admin', 'admin', 7),
+    ('Workspace 8', 'Description for Workspace 8', false, false, NOW(), NOW(), 'admin', 'admin', 8),
+    ('Workspace 9', 'Description for Workspace 9', true, true, NOW(), NOW(), 'admin', 'admin', 9),
+    ('Workspace 10', 'Description for Workspace 10', false, true, NOW(), NOW(), 'admin', 'admin', 10),
+    ('Workspace 11', 'Description for Workspace 11', true, false, NOW(), NOW(), 'admin', 'admin', 11),
+    ('Workspace 12', 'Description for Workspace 12', false, false, NOW(), NOW(), 'admin', 'admin', 12),
+    ('Workspace 13', 'Description for Workspace 13', true, true, NOW(), NOW(), 'admin', 'admin', 13),
+    ('Workspace 14', 'Description for Workspace 14', false, true, NOW(), NOW(), 'admin', 'admin', 14),
+    ('Workspace 15', 'Description for Workspace 15', true, false, NOW(), NOW(), 'admin', 'admin', 15),
+    ('Workspace 16', 'Description for Workspace 16', false, false, NOW(), NOW(), 'admin', 'admin', 16),
+    ('Workspace 17', 'Description for Workspace 17', true, true, NOW(), NOW(), 'admin', 'admin', 17),
+    ('Workspace 18', 'Description for Workspace 18', false, true, NOW(), NOW(), 'admin', 'admin', 18),
+    ('Workspace 19', 'Description for Workspace 19', true, false, NOW(), NOW(), 'admin', 'admin', 19),
+    ('Workspace 20', 'Description for Workspace 20', false, false, NOW(), NOW(), 'admin', 'admin', 20),
+    ('Workspace 21', 'Description for Workspace 21', true, true, NOW(), NOW(), 'admin', 'admin', 21),
+    ('Workspace 22', 'Description for Workspace 22', false, true, NOW(), NOW(), 'admin', 'admin', 22),
+    ('Workspace 23', 'Description for Workspace 23', true, false, NOW(), NOW(), 'admin', 'admin', 23),
+    ('Workspace 24', 'Description for Workspace 24', false, false, NOW(), NOW(), 'admin', 'admin', 24),
+    ('Workspace 25', 'Description for Workspace 25', true, true, NOW(), NOW(), 'admin', 'admin', 25);
