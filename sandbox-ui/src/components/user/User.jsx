@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useEffect } from "react";
 import Header from "../layout/Header";
 import Logo from "../layout/Logo";
 import Navbar from "../layout/Navbar";
@@ -39,7 +39,7 @@ export default function User() {
 
   }
 
-  useMemo(() => fetchUsers(pageInfo.pageNumber, pageInfo.pageSize), [pageInfo.pageNumber, pageInfo.pageSize]);
+  useEffect(() => { fetchUsers(pageInfo.pageNumber, pageInfo.pageSize) }, [pageInfo.pageNumber, pageInfo.pageSize]);
 
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
