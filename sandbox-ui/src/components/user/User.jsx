@@ -15,7 +15,7 @@ import UserTableFilter from "./UserTableFilter";
 import TablePagination from "../shared/TablePagination";
 import UserTable from "./UserTable";
 const page = {
-  "pageSize": 10,
+  "pageSize": 7,
   "pageNumber": 0,
 }
 export default function User() {
@@ -24,6 +24,7 @@ export default function User() {
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => { fetchUsers(pageInfo.pageNumber, pageInfo.pageSize) }, [pageInfo.pageNumber, pageInfo.pageSize]);
 
   const fetchUsers = async (page, pageSize) => {
     try {
@@ -38,8 +39,6 @@ export default function User() {
     }
 
   }
-
-  useEffect(() => { fetchUsers(pageInfo.pageNumber, pageInfo.pageSize) }, [pageInfo.pageNumber, pageInfo.pageSize]);
 
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
