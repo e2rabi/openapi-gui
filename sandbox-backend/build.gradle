@@ -16,7 +16,12 @@ jib {
 		image = "europe-southwest1-docker.pkg.dev/sandbox-431715/sandbox-docker/sandbox-ui:$version"
 		auth {
 			username =getEnvVariable('docker_user','_json_key')
-			password = file(getEnvVariable('docker_password','/var/tmp')).text
+			def dockerPassword = getEnvVariable('docker_password', '')
+			if (dockerPassword) {
+				password = file(dockerPassword).text
+			} else {
+				password = ''
+			}
 		}
 	}
 }
