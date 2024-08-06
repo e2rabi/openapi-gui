@@ -8,7 +8,7 @@ pipelines:
           - gradle
         script:
           - rm -rf node_modules package-lock.json
-          - apt-get update && apt-get install -y findutils
+          - apt-get update && apt-get install -y findutils && apt-get install -y gnupg
           - apt install -y curl software-properties-common
           - curl -fsSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | gpg --dearmor -o /usr/share/keyrings/nodesource-archive-keyring.gpg
           - echo "deb [signed-by=/usr/share/keyrings/nodesource-archive-keyring.gpg] https://deb.nodesource.com/node_20.x $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/nodesource.list
