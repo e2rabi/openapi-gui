@@ -8,7 +8,6 @@ pipelines:
           - gradle
         script:
           - rm -rf node_modules package-lock.json
-          - npm install -g npm@latest
           - apt-get update && apt-get install -y findutils
           - chmod +x gradlew
           - ./gradlew clean build
