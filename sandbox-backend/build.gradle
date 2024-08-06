@@ -3,9 +3,23 @@ plugins {
 	id 'org.springframework.boot' version '3.3.1'
 	id 'io.spring.dependency-management' version '1.1.5'
 	id 'org.flywaydb.flyway' version '10.1.0'
+	id 'com.google.cloud.tools.jib' version '3.3.1'
 }
-
-
+def getEnvVariable(String name, String defaultValue) {
+	return System.getenv(name) ?: defaultValue
+}
+jib {
+	from {
+		image = 'gcr.io/distroless/java17-debian12'
+	}
+	to {
+		image = "europe-southwest1-docker.pkg.dev/sandbox-431715/sandbox-docker/sandbox-ui:$version"
+		auth {
+			username =getEnvVariable('docker_user','_json_key')
+			password = file(getEnvVariable('docker_password','')).text
+		}
+	}
+}
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(17)
