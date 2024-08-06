@@ -26,3 +26,12 @@ publishing {
 tasks.named('afterReleaseBuild') {
 	dependsOn 'publish'
 }
+subprojects {
+	apply plugin: 'java'
+}
+
+project(':sandbox-backend') {
+	dependencies {
+		implementation project(':sandbox-ui')
+	}
+}
