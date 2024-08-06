@@ -61,6 +61,16 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation "org.springframework.security:spring-security-test:${springSecurityTest}"
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	implementation project(':sandbox-ui')
+}
+task copyReactBuild(type: Copy) {
+	dependsOn ':sandbox-ui:buildReactApp'
+	from file('../sandbox-ui/dist')
+	into file('src/main/resources/static')
+}
+
+processResources {
+	dependsOn copyReactBuild
 }
 
 tasks.named('test') {
