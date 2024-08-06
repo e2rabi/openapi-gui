@@ -5,6 +5,8 @@ import com.errabi.sandbox.services.ProductService;
 import com.errabi.sandbox.web.model.ProductDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,9 +31,9 @@ public class ProductController {
     }
 
     @GetMapping("/products")
-    public ResponseEntity<List<ProductDto>> getAllProducts() {
-        List<ProductDto> productDto = productService.findAllProducts();
-        return new ResponseEntity<>(productDto, HttpStatus.OK);
+    public ResponseEntity<Page<ProductDto>> getAllProducts(@RequestParam(defaultValue = "0") int page,
+                                                           @RequestParam(defaultValue = "10") int pageSize) {
+        return new ResponseEntity<>(productService.findAllProducts(PageRequest.of(page,pageSize)), HttpStatus.OK);
     }
 
     @GetMapping("/workspace/{id}/products")

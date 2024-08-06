@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Header from "../layout/Header";
 import Logo from "../layout/Logo";
 import Navbar from "../layout/Navbar";
-import { getAllWorkspaces } from "../../services/workspaceService.js";
+import { getAllProducts } from "../../services/productService.js";
 
 import {
   Card,
@@ -12,36 +12,36 @@ import {
 } from "@/components/ui/card";
 
 import TablePagination from "../shared/TablePagination";
-import WorkspaceTable from "./WorkspaceTable";
-import WorkspaceTableFilter from "./WorkspaceTableFilter";
+import ProductTable from "./ProductTable";
+import ProductTableFilter from "./ProductTableFilter.jsx";
 
 const page = {
   pageSize: 10,
   pageNumber: 0,
 };
 
-export default function Workspace() {
-  const [workspaces, setWorkspaces] = useState([]);
+export default function Product() {
+  const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [pageInfo, setPageInfo] = useState(page);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
 
-  const fetchWorkspaces = async (page, pageSize) => {
+  const fetchProducts = async (page, pageSize) => {
     try {
-      const data = await getAllWorkspaces(page, pageSize);
-      setWorkspaces(() => data.content);
+      const data = await getAllProducts(page, pageSize);
+      setProducts(() => data.content);
       setTotalPages(() => data.page.totalPages);
       setTotalElements(() => data.page.totalElements);
     } catch (error) {
-      console.error("Error fetching workspaces:", error);
+      console.error("Error fetching products:", error);
     } finally {
       setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchWorkspaces(pageInfo.pageNumber, pageInfo.pageSize);
+    fetchProducts(pageInfo.pageNumber, pageInfo.pageSize);
   }, [pageInfo.pageNumber, pageInfo.pageSize]);
 
   return (
@@ -60,10 +60,10 @@ export default function Workspace() {
             className=" rounded-lg border border-dashed shadow-sm"
           >
             <CardHeader>
-              <WorkspaceTableFilter />
+              <ProductTableFilter />
             </CardHeader>
             <CardContent>
-              <WorkspaceTable isLoading={isLoading} workspaces={workspaces} />
+              <ProductTable isLoading={isLoading} products={products} />
             </CardContent>
             <CardFooter className="flex justify-between">
               <TablePagination

@@ -53,7 +53,7 @@ class ProductControllerTest extends BaseControllerIT{
     void UpdateProductOkTest() throws Exception {
         mockMvc.perform(put("/sandbox-api/v1/products")
                         .content(asJsonString(ProductDto.builder()
-                                .id(1L)
+                                .id(26L)
                                 .name("card")
                                 .description("update")
                                 .color("#FFF1FF")
@@ -68,7 +68,7 @@ class ProductControllerTest extends BaseControllerIT{
     @Test
     @Order(5)
     void DeleteProductOkTest() throws Exception {
-        mockMvc.perform(delete("/sandbox-api/v1/products/1"))
+        mockMvc.perform(delete("/sandbox-api/v1/products/26"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }

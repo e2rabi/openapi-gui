@@ -9,6 +9,8 @@ import com.errabi.sandbox.web.mapper.ProductMapper;
 import com.errabi.sandbox.web.model.ProductDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -87,17 +89,18 @@ public class ProductService {
         }
     }
 
-    public List<ProductDto> findAllProducts() {
+    public Page<ProductDto> findAllProducts(Pageable pageable) {
         try {
             log.info("Fetching all products...");
-            List<Product> products = productRepository.findAll();
+            Page<Product> products = productRepository.findAll(pageable);
             if(!products.isEmpty()){
-                return products.stream()
-                        .map(productMapper::toDto)
-                        .peek(productDto -> productDto.setResponseInfo(buildSuccessInfo()))
-                        .toList();
+                return products.map(product -> {
+                    ProductDto productDto = productMapper.toDto(product);
+                    productDto.setResponseInfo(buildSuccessInfo());
+                    return productDto;
+                });
             }else{
-                return Collections.emptyList();
+                return Page.empty();
             }
         } catch(Exception ex) {
             log.error("Unexpected error occurred while fetching all products");
