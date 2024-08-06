@@ -5,6 +5,7 @@ import { ThemeProvider } from "./components/theme/theme-provider";
 import User from "./components/user/User.jsx";
 import Configuration from "./components/configuration/Configuration.jsx";
 import Workspace from "./components/workspace/Workspace.jsx";
+import Product from "./components/product/Product.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
   {
     path: "/workspaces",
     element: <Workspace />,
+  },
+  {
+    path: "/products",
+    element: <Product />,
   },
   {
     path: "/users",

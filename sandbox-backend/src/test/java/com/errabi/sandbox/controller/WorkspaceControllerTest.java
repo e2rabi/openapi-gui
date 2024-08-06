@@ -66,7 +66,7 @@ class WorkspaceControllerTest extends BaseControllerIT{
     @Test
     @Order(5)
     void DeleteWorkspaceOkTest() throws Exception {
-        mockMvc.perform(delete("/sandbox-api/v1/workspace/1"))
+        mockMvc.perform(delete("/sandbox-api/v1/workspace/26"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
