@@ -1,19 +1,14 @@
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+---
+apiVersion: "networking.k8s.io/v1"
+kind: "Ingress"
 metadata:
-  name: sandbox-ui-ingress
-  namespace: dev
-  annotations:
-    kubernetes.io/ingress.class: "nginx"
+  name: "sandbox-ui-ext-ingress"
+  namespace: "dev"
 spec:
-  rules:
-    - host: sandbox-ui-errabi.com
-      http:
-        paths:
-          - backend:
-              service:
-                name: sandbox-ui-service
-                port:
-                  number: 8080
-            path: /
-            pathType: Prefix
+  defaultBackend:
+    service:
+      name: "sandbox-ui-service"
+      port:
+        number: 80
+status:
+  loadBalancer: {}
