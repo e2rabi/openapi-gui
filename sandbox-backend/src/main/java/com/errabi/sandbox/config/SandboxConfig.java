@@ -20,7 +20,7 @@ public class SandboxConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:5173") // React app origin
+                        .allowedOrigins("http://localhost:5173","http://34.149.15.94") // React app origin
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
