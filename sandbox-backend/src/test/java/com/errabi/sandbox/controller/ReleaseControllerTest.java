@@ -53,7 +53,7 @@ class ReleaseControllerTest extends BaseControllerIT{
     void UpdateReleaseOkTest() throws Exception {
         mockMvc.perform(put("/sandbox-api/v1/releases")
                         .content(asJsonString(ReleaseDto.builder()
-                                .id(1L)
+                                .id(26L)
                                 .name("card")
                                 .description("update")
                                 .color("#FFF1FF")
@@ -68,7 +68,7 @@ class ReleaseControllerTest extends BaseControllerIT{
     @Test
     @Order(5)
     void DeleteReleaseOkTest() throws Exception {
-        mockMvc.perform(delete("/sandbox-api/v1/releases/1"))
+        mockMvc.perform(delete("/sandbox-api/v1/releases/26"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }

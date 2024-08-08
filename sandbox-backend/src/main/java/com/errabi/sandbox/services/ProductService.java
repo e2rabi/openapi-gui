@@ -28,6 +28,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
     private final WorkspaceRepository workspaceRepository;
+    private final WorkspaceService workspaceService;
 
     @Transactional
     public ProductDto createProduct(ProductDto productDto){
@@ -74,7 +75,6 @@ public class ProductService {
             if (!products.isEmpty()) {
                 return products.stream()
                         .map(productMapper::toDto)
-                        .peek(productDto -> productDto.setResponseInfo(buildSuccessInfo()))
                         .toList();
             } else {
                 return Collections.emptyList();
@@ -96,7 +96,7 @@ public class ProductService {
             if(!products.isEmpty()){
                 return products.map(product -> {
                     ProductDto productDto = productMapper.toDto(product);
-                    productDto.setResponseInfo(buildSuccessInfo());
+                    productDto.setWorkspaceName(workspaceService.findWorkspaceById(product.getWorkspace().getId()).getName());
                     return productDto;
                 });
             }else{
