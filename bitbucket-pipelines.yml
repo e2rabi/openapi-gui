@@ -15,7 +15,7 @@ pipelines:
           - apt update
           - apt install -y nodejs
           - chmod +x gradlew
-          - ./gradlew clean build
+          - ./gradlew clean jib
 
   branches:
     master:
