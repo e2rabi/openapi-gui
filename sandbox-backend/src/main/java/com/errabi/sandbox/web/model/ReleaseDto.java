@@ -28,5 +28,6 @@ public class ReleaseDto extends AbstractMessageDto{
     @Pattern(regexp = "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$", message = "Invalid color format. It should be a HEX color.")
     private String color;
     private Long productId;
+    private String productName;
     private List<SolutionDto> solutions;
 }

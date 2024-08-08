@@ -9,6 +9,8 @@ import com.errabi.sandbox.web.mapper.ReleaseMapper;
 import com.errabi.sandbox.web.model.ReleaseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,7 @@ public class ReleaseService {
     private final ReleaseRepository releaseRepository;
     private final ReleaseMapper releaseMapper;
     private final ProductRepository productRepository;
+    private final ProductService productService;
 
     @Transactional
     public ReleaseDto createRelease(ReleaseDto releaseDto){
@@ -72,7 +75,6 @@ public class ReleaseService {
             if (!releases.isEmpty()) {
                 return releases.stream()
                         .map(releaseMapper::toDto)
-                        .peek(releaseDto -> releaseDto.setResponseInfo(buildSuccessInfo()))
                         .toList();
             }else{
                 return Collections.emptyList();
@@ -86,17 +88,18 @@ public class ReleaseService {
         }
     }
 
-    public List<ReleaseDto> findAllReleases() {
+    public Page<ReleaseDto> findAllReleases(Pageable pageable) {
         try {
             log.info("Fetching all releases...");
-            List<Release> releases = releaseRepository.findAll();
+            Page<Release> releases = releaseRepository.findAll(pageable);
             if (!releases.isEmpty()) {
-                return releases.stream()
-                        .map(releaseMapper::toDto)
-                        .peek(releaseDto -> releaseDto.setResponseInfo(buildSuccessInfo()))
-                        .toList();
+                return releases.map(release -> {
+                    ReleaseDto releaseDto = releaseMapper.toDto(release);
+                    releaseDto.setProductName(productService.findProductById(release.getProduct().getId()).getName());
+                    return releaseDto;
+                });
             }else{
-                return Collections.emptyList();
+                return Page.empty();
             }
         } catch(Exception ex) {
             log.error("Unexpected error occurred while fetching all releases");
