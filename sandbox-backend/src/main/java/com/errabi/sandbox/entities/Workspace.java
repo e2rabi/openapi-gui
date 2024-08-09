@@ -24,6 +24,7 @@ public class Workspace extends BaseEntity{
     private Long id;
     private String name;
     private String description;
+    private String image ;
     @OneToMany(mappedBy = "workspace", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Product> products;
     @OneToMany(mappedBy = "workspace", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

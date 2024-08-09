@@ -18,6 +18,9 @@ const WorkspaceTable = ({ isLoading, workspaces }) => {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="hidden w-[100px] sm:table-cell">
+                <span className="sr-only">Image</span>
+              </TableHead>
               <TableHead className="w-[100px]">ID</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Description</TableHead>
@@ -29,6 +32,14 @@ const WorkspaceTable = ({ isLoading, workspaces }) => {
           <TableBody>
             {workspaces.map((workspace) => (
               <TableRow key={workspace.id}>
+                <TableCell className="hidden sm:table-cell">
+                  <img
+                    className="aspect-square rounded-md object-cover"
+                    height="32"
+                    src={`data:image/png;base64,${workspace.image}`}
+                    width="32"
+                  />
+                </TableCell>
                 <TableCell className="font-medium">{workspace.id}</TableCell>
                 <TableCell>{workspace.name}</TableCell>
                 <TableCell>{workspace.description}</TableCell>

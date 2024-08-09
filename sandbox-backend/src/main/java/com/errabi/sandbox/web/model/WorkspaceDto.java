@@ -22,6 +22,7 @@ public class WorkspaceDto extends AbstractMessageDto{
     private boolean enabled;
     @NotNull(message = "Please add Workspace visibility")
     private boolean visibility;
+    private String image ;
     private List<ProductDto> products;
     private Long nbOfUsers;
 }
