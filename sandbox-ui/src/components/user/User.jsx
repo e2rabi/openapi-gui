@@ -10,10 +10,8 @@ import {
   CardHeader,
 } from "@/components/ui/card"
 
-import UserTableFilter from "./UserTableFilter";
-
 import TablePagination from "../shared/TablePagination";
-import UserTable from "./UserTable";
+import UserTableFiltred from "./UserTableFiltred";
 const page = {
   "pageSize": 7,
   "pageNumber": 0,
@@ -53,10 +51,13 @@ export default function User() {
         <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
           <Card x-chunk="dashboard-06-chunk-0" className=" rounded-lg border border-dashed shadow-sm">
             <CardHeader>
-              <UserTableFilter />
+              <div>
+                <h1 className="text-lg font-semibold md:text-2xl">Users</h1>
+                <p className="text-sm text-muted-foreground">Recent users from your sandbox.</p>
+              </div>
             </CardHeader>
             <CardContent>
-              <UserTable isLoading={isLoading} users={users} />
+              <UserTableFiltred isLoading={isLoading} users={users} />
             </CardContent>
             <CardFooter className="flex justify-between">
               <TablePagination pageInfo={pageInfo} changePage={setPageInfo} totalPages={totalPages} totalElements={totalElements} />

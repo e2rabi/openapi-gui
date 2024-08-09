@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import {
     Table,
     TableBody,
@@ -19,10 +19,11 @@ import { Button } from "../ui/button"
 import { Badge } from "../ui/badge"
 import { MoreHorizontal } from 'lucide-react';
 import UserEdit from './UserEdit';
-const UserTable = ({ isLoading, users }) => {
+
+const MemoizedUserTable = ({ isLoading, users }) => {
 
     const [isOpen, setIsOpen] = useState(false);
-    const openDialog = () => setIsOpen(true);
+    const editUserHandler = () => setIsOpen(true);
 
     return (
         <>
@@ -80,7 +81,7 @@ const UserTable = ({ isLoading, users }) => {
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
                                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                            <DropdownMenuItem onClick={() => openDialog()}>
+                                            <DropdownMenuItem onClick={() => editUserHandler()} className="cursor-pointer">
                                                 Edit
                                             </DropdownMenuItem>
                                             <DropdownMenuItem>Delete</DropdownMenuItem>
@@ -97,4 +98,5 @@ const UserTable = ({ isLoading, users }) => {
     )
 }
 
-export default UserTable
+const UserTable = React.memo(MemoizedUserTable);
+export default UserTable;

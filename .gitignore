@@ -35,3 +35,4 @@ out/
 
 ### VS Code ###
 .vscode/
+/sandbox-backend/src/main/resources/static/
