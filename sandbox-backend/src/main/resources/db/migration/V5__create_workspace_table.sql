@@ -11,5 +11,6 @@ create table workspace (
     enabled boolean not null,
     last_modified_by varchar(255),
     name varchar(255),
+    image varchar(5000),
     primary key (id)
 );
