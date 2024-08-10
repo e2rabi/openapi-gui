@@ -16,7 +16,7 @@ import WorkspaceTable from "./WorkspaceTable";
 import WorkspaceTableFilter from "./WorkspaceTableFilter";
 
 const page = {
-  pageSize: 10,
+  pageSize: 7,
   pageNumber: 0,
 };
 

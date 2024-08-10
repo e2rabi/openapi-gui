@@ -52,7 +52,7 @@ export default function User() {
           <Card x-chunk="dashboard-06-chunk-0" className=" rounded-lg border border-dashed shadow-sm">
             <CardHeader>
               <div>
-                <h1 className="text-lg font-semibold md:text-2xl">Users</h1>
+                <h1 className="text-lg font-semibold md:text-2xl">Accounts</h1>
                 <p className="text-sm text-muted-foreground">Recent users from your sandbox.</p>
               </div>
             </CardHeader>
