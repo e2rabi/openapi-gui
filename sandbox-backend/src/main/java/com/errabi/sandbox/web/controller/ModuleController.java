@@ -6,6 +6,8 @@ import com.errabi.sandbox.web.model.ModuleDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,9 +37,9 @@ public class ModuleController {
     }
 
     @GetMapping("/modules")
-    public ResponseEntity<List<ModuleDto>> getAllModules() {
-        List<ModuleDto> modulesDto = moduleService.findAllModules();
-        return new ResponseEntity<>(modulesDto, HttpStatus.OK);
+    public ResponseEntity<Page<ModuleDto>> getAllModules(@RequestParam(defaultValue = "0") int page,
+                                                         @RequestParam(defaultValue = "10") int pageSize) {
+        return new ResponseEntity<>(moduleService.findAllModules(PageRequest.of(page,pageSize)), HttpStatus.OK);
     }
 
     @PutMapping("/modules")

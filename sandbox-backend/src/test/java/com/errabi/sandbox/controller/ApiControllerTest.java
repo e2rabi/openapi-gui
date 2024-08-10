@@ -55,7 +55,7 @@ class ApiControllerTest extends BaseControllerIT{
     void UpdateApiOkTest() throws Exception {
         mockMvc.perform(put("/sandbox-api/v1/api")
                         .content(asJsonString(ApiDto.builder()
-                                .id(1L)
+                                .id(26L)
                                 .name("card")
                                 .description("update")
                                 .url("test")
@@ -72,7 +72,7 @@ class ApiControllerTest extends BaseControllerIT{
     @Test
     @Order(5)
     void DeleteApiOkTest() throws Exception {
-        mockMvc.perform(delete("/sandbox-api/v1/api/1"))
+        mockMvc.perform(delete("/sandbox-api/v1/api/26"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }

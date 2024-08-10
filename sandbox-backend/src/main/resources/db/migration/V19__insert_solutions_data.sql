@@ -1,0 +1,28 @@
+INSERT INTO
+    solution (version, visibility, created, last_modified, release_id, color, created_by, description, enabled, image, last_modified_by, name)
+VALUES
+    (1, true, NOW(), NOW(), 1, '#FF5733', 'user1', 'Solution 1 description', true, 'image1.png', 'user1', 'Solution 1'),
+    (1, true, NOW(), NOW(), 2, '#33FF57', 'user2', 'Solution 2 description', true, 'image2.png', 'user2', 'Solution 2'),
+    (1, true, NOW(), NOW(), 3, '#3357FF', 'user3', 'Solution 3 description', true, 'image3.png', 'user3', 'Solution 3'),
+    (1, true, NOW(), NOW(), 4, '#FF33A5', 'user4', 'Solution 4 description', true, 'image4.png', 'user4', 'Solution 4'),
+    (1, true, NOW(), NOW(), 5, '#FF8C33', 'user5', 'Solution 5 description', true, 'image5.png', 'user5', 'Solution 5'),
+    (1, true, NOW(), NOW(), 6, '#33FF8C', 'user6', 'Solution 6 description', true, 'image6.png', 'user6', 'Solution 6'),
+    (1, true, NOW(), NOW(), 7, '#8C33FF', 'user7', 'Solution 7 description', true, 'image7.png', 'user7', 'Solution 7'),
+    (1, true, NOW(), NOW(), 8, '#FF338C', 'user8', 'Solution 8 description', true, 'image8.png', 'user8', 'Solution 8'),
+    (1, true, NOW(), NOW(), 9, '#33A5FF', 'user9', 'Solution 9 description', true, 'image9.png', 'user9', 'Solution 9'),
+    (1, true, NOW(), NOW(), 10, '#A5FF33', 'user10', 'Solution 10 description', true, 'image10.png', 'user10', 'Solution 10'),
+    (1, true, NOW(), NOW(), 11, '#FF57A5', 'user11', 'Solution 11 description', true, 'image11.png', 'user11', 'Solution 11'),
+    (1, true, NOW(), NOW(), 12, '#57A5FF', 'user12', 'Solution 12 description', true, 'image12.png', 'user12', 'Solution 12'),
+    (1, true, NOW(), NOW(), 13, '#A533FF', 'user13', 'Solution 13 description', true, 'image13.png', 'user13', 'Solution 13'),
+    (1, true, NOW(), NOW(), 14, '#33FF57', 'user14', 'Solution 14 description', true, 'image14.png', 'user14', 'Solution 14'),
+    (1, true, NOW(), NOW(), 15, '#FF8C57', 'user15', 'Solution 15 description', true, 'image15.png', 'user15', 'Solution 15'),
+    (1, true, NOW(), NOW(), 16, '#8C57FF', 'user16', 'Solution 16 description', true, 'image16.png', 'user16', 'Solution 16'),
+    (1, true, NOW(), NOW(), 17, '#33FF8C', 'user17', 'Solution 17 description', true, 'image17.png', 'user17', 'Solution 17'),
+    (1, true, NOW(), NOW(), 18, '#FF33A5', 'user18', 'Solution 18 description', true, 'image18.png', 'user18', 'Solution 18'),
+    (1, true, NOW(), NOW(), 19, '#FF5733', 'user19', 'Solution 19 description', true, 'image19.png', 'user19', 'Solution 19'),
+    (1, true, NOW(), NOW(), 20, '#33A5FF', 'user20', 'Solution 20 description', true, 'image20.png', 'user20', 'Solution 20'),
+    (1, true, NOW(), NOW(), 21, '#A5FF33', 'user21', 'Solution 21 description', true, 'image21.png', 'user21', 'Solution 21'),
+    (1, true, NOW(), NOW(), 22, '#8C33FF', 'user22', 'Solution 22 description', true, 'image22.png', 'user22', 'Solution 22'),
+    (1, true, NOW(), NOW(), 23, '#FF8C33', 'user23', 'Solution 23 description', true, 'image23.png', 'user23', 'Solution 23'),
+    (1, true, NOW(), NOW(), 24, '#33FF57', 'user24', 'Solution 24 description', true, 'image24.png', 'user24', 'Solution 24'),
+    (1, true, NOW(), NOW(), 25, '#57A5FF', 'user25', 'Solution 25 description', true, 'image25.png', 'user25', 'Solution 25');

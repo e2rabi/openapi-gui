@@ -9,6 +9,8 @@ import com.errabi.sandbox.web.mapper.ApiMapper;
 import com.errabi.sandbox.web.model.ApiDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +29,7 @@ public class ApiService {
     private final ApiRepository apiRepository;
     private final ApiMapper apiMapper;
     private final ModuleRepository moduleRepository;
+    private final ModuleService moduleService;
 
     @Transactional
     public ApiDto createApi(ApiDto apiDto){
@@ -87,17 +90,19 @@ public class ApiService {
         }
     }
 
-    public List<ApiDto> findAllApi() {
+    public Page<ApiDto> findAllApi(Pageable pageable) {
         try {
             log.info("Fetching all APIs...");
-            List<Api> apis = apiRepository.findAll();
+            Page<Api> apis = apiRepository.findAll(pageable);
             if (!apis.isEmpty()) {
-                return apis.stream()
-                        .map(apiMapper::toDto)
-                        .peek(apiDto -> apiDto.setResponseInfo(buildSuccessInfo()))
-                        .toList();
+                return apis.map(api -> {
+                    ApiDto apiDto = apiMapper.toDto(api);
+                    apiDto.setModuleName(moduleService.findModuleById(api.getModule().getId()).getName());
+                    return apiDto;
+                });
+
             } else {
-                return Collections.emptyList();
+                return Page.empty();
             }
         } catch(Exception ex) {
             log.error("Unexpected error occurred while fetching all APIs");

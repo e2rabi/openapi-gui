@@ -27,5 +27,6 @@ public class ModuleDto extends AbstractMessageDto{
     @NotEmpty(message = "Please add an image")
     private String image;
     private Long solutionId;
+    private String solutionName;
     private List<ApiDto> apis;
 }

@@ -9,6 +9,8 @@ import com.errabi.sandbox.web.mapper.ModuleMapper;
 import com.errabi.sandbox.web.model.ModuleDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,7 @@ public class ModuleService {
     private final ModuleRepository moduleRepository;
     private final ModuleMapper moduleMapper;
     private final SolutionRepository solutionRepository;
+    private final SolutionService solutionService;
 
     @Transactional
     public ModuleDto createModule(ModuleDto moduleDto){
@@ -86,17 +89,19 @@ public class ModuleService {
         }
     }
 
-    public List<ModuleDto> findAllModules() {
+    public Page<ModuleDto> findAllModules(Pageable pageable) {
         try {
             log.info("Fetching all modules...");
-            List<Module> modules = moduleRepository.findAll();
+            Page<Module> modules = moduleRepository.findAll(pageable);
             if (!modules.isEmpty()) {
-                return modules.stream()
-                        .map(moduleMapper::toDto)
-                        .peek(moduleDto -> moduleDto.setResponseInfo(buildSuccessInfo()))
-                        .toList();
+                return modules.map(module -> {
+                    ModuleDto moduleDto = moduleMapper.toDto(module);
+                    moduleDto.setSolutionName(solutionService.findSolutionById(module.getSolution().getId()).getName());
+                    return moduleDto;
+                });
+
             } else {
-                return Collections.emptyList();
+                return Page.empty();
             }
         } catch(Exception ex) {
             log.error("Unexpected error occurred while fetching all modules");

@@ -6,6 +6,8 @@ import com.errabi.sandbox.web.model.SolutionDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,9 +37,9 @@ public class SolutionController {
     }
 
     @GetMapping("/solutions")
-    public ResponseEntity<List<SolutionDto>> getAllSolutions() {
-        List<SolutionDto> solutionDto = solutionService.findAllSolutions();
-        return new ResponseEntity<>(solutionDto, HttpStatus.OK);
+    public ResponseEntity<Page<SolutionDto>> getAllSolutions(@RequestParam(defaultValue = "0") int page,
+                                                             @RequestParam(defaultValue = "10") int pageSize) {
+        return new ResponseEntity<>(solutionService.findAllSolutions(PageRequest.of(page,pageSize)), HttpStatus.OK);
     }
 
     @PutMapping("/solutions")

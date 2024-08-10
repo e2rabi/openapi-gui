@@ -1,0 +1,28 @@
+INSERT INTO
+    api (version, visibility, created, last_modified, module_id, color, created_by, description, enabled, http_verb, last_modified_by, name, open_api_schema, url)
+VALUES
+    (1, true, NOW(), NOW(), 1, '#FF5733', 'user1', 'API 1 description', true, 'GET', 'user1', 'API 1', 'schema1.json', '/api/v1/resource1'),
+    (1, true, NOW(), NOW(), 2, '#33FF57', 'user2', 'API 2 description', true, 'POST', 'user2', 'API 2', 'schema2.json', '/api/v1/resource2'),
+    (1, true, NOW(), NOW(), 3, '#3357FF', 'user3', 'API 3 description', true, 'PUT', 'user3', 'API 3', 'schema3.json', '/api/v1/resource3'),
+    (1, true, NOW(), NOW(), 4, '#FF33A5', 'user4', 'API 4 description', true, 'DELETE', 'user4', 'API 4', 'schema4.json', '/api/v1/resource4'),
+    (1, true, NOW(), NOW(), 5, '#FF8C33', 'user5', 'API 5 description', true, 'PATCH', 'user5', 'API 5', 'schema5.json', '/api/v1/resource5'),
+    (1, true, NOW(), NOW(), 6, '#33FF8C', 'user6', 'API 6 description', true, 'GET', 'user6', 'API 6', 'schema6.json', '/api/v1/resource6'),
+    (1, true, NOW(), NOW(), 7, '#8C33FF', 'user7', 'API 7 description', true, 'POST', 'user7', 'API 7', 'schema7.json', '/api/v1/resource7'),
+    (1, true, NOW(), NOW(), 8, '#FF338C', 'user8', 'API 8 description', true, 'PUT', 'user8', 'API 8', 'schema8.json', '/api/v1/resource8'),
+    (1, true, NOW(), NOW(), 9, '#33A5FF', 'user9', 'API 9 description', true, 'DELETE', 'user9', 'API 9', 'schema9.json', '/api/v1/resource9'),
+    (1, true, NOW(), NOW(), 10, '#A5FF33', 'user10', 'API 10 description', true, 'PATCH', 'user10', 'API 10', 'schema10.json', '/api/v1/resource10'),
+    (1, true, NOW(), NOW(), 11, '#FF57A5', 'user11', 'API 11 description', true, 'GET', 'user11', 'API 11', 'schema11.json', '/api/v1/resource11'),
+    (1, true, NOW(), NOW(), 12, '#57A5FF', 'user12', 'API 12 description', true, 'POST', 'user12', 'API 12', 'schema12.json', '/api/v1/resource12'),
+    (1, true, NOW(), NOW(), 13, '#A533FF', 'user13', 'API 13 description', true, 'PUT', 'user13', 'API 13', 'schema13.json', '/api/v1/resource13'),
+    (1, true, NOW(), NOW(), 14, '#33FF57', 'user14', 'API 14 description', true, 'DELETE', 'user14', 'API 14', 'schema14.json', '/api/v1/resource14'),
+    (1, true, NOW(), NOW(), 15, '#FF8C57', 'user15', 'API 15 description', true, 'PATCH', 'user15', 'API 15', 'schema15.json', '/api/v1/resource15'),
+    (1, true, NOW(), NOW(), 16, '#8C57FF', 'user16', 'API 16 description', true, 'GET', 'user16', 'API 16', 'schema16.json', '/api/v1/resource16'),
+    (1, true, NOW(), NOW(), 17, '#33FF8C', 'user17', 'API 17 description', true, 'POST', 'user17', 'API 17', 'schema17.json', '/api/v1/resource17'),
+    (1, true, NOW(), NOW(), 18, '#FF33A5', 'user18', 'API 18 description', true, 'PUT', 'user18', 'API 18', 'schema18.json', '/api/v1/resource18'),
+    (1, true, NOW(), NOW(), 19, '#FF5733', 'user19', 'API 19 description', true, 'DELETE', 'user19', 'API 19', 'schema19.json', '/api/v1/resource19'),
+    (1, true, NOW(), NOW(), 20, '#33A5FF', 'user20', 'API 20 description', true, 'PATCH', 'user20', 'API 20', 'schema20.json', '/api/v1/resource20'),
+    (1, true, NOW(), NOW(), 21, '#A5FF33', 'user21', 'API 21 description', true, 'GET', 'user21', 'API 21', 'schema21.json', '/api/v1/resource21'),
+    (1, true, NOW(), NOW(), 22, '#8C33FF', 'user22', 'API 22 description', true, 'POST', 'user22', 'API 22', 'schema22.json', '/api/v1/resource22'),
+    (1, true, NOW(), NOW(), 23, '#FF8C33', 'user23', 'API 23 description', true, 'PUT', 'user23', 'API 23', 'schema23.json', '/api/v1/resource23'),
+    (1, true, NOW(), NOW(), 24, '#33FF57', 'user24', 'API 24 description', true, 'DELETE', 'user24', 'API 24', 'schema24.json', '/api/v1/resource24'),
+    (1, true, NOW(), NOW(), 25, '#57A5FF', 'user25', 'API 25 description', true, 'PATCH', 'user25', 'API 25', 'schema25.json', '/api/v1/resource25');

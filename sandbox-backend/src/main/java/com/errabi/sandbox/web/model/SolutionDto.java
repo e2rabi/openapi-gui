@@ -26,5 +26,6 @@ public class SolutionDto extends AbstractMessageDto{
     @NotEmpty(message = "Please add an image")
     private String image;
     private Long releaseId;
+    private String releaseName;
     private List<ModuleDto> modules;
 }

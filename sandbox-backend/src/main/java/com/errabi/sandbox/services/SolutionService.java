@@ -9,6 +9,8 @@ import com.errabi.sandbox.web.mapper.SolutionMapper;
 import com.errabi.sandbox.web.model.SolutionDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,7 @@ public class SolutionService {
     private final SolutionRepository solutionRepository;
     private final SolutionMapper solutionMapper;
     private final ReleaseRepository releaseRepository;
+    private final ReleaseService releaseService;
 
     @Transactional
     public SolutionDto createSolution(SolutionDto solutionDto){
@@ -86,17 +89,18 @@ public class SolutionService {
         }
     }
 
-    public List<SolutionDto> findAllSolutions() {
+    public Page<SolutionDto> findAllSolutions(Pageable pageable) {
         try {
             log.info("Fetching all solutions...");
-            List<Solution> solutions = solutionRepository.findAll();
+            Page<Solution> solutions = solutionRepository.findAll(pageable);
             if (!solutions.isEmpty()) {
-                return solutions.stream()
-                        .map(solutionMapper::toDto)
-                        .peek(solutionDto -> solutionDto.setResponseInfo(buildSuccessInfo()))
-                        .toList();
+                return solutions.map(solution -> {
+                            SolutionDto solutionDto = solutionMapper.toDto(solution);
+                            solutionDto.setReleaseName(releaseService.findReleaseById(solution.getRelease().getId()).getName());
+                            return solutionDto;
+                        });
             } else {
-                return Collections.emptyList();
+                return Page.empty();
             }
         } catch(Exception ex) {
             log.error("Unexpected error occurred while fetching all solutions");

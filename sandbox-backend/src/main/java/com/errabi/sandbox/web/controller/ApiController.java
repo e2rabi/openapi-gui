@@ -6,6 +6,8 @@ import com.errabi.sandbox.web.model.ApiDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,9 +37,9 @@ public class ApiController {
     }
 
     @GetMapping("/api")
-    public ResponseEntity<List<ApiDto>> getAllApi() {
-        List<ApiDto> apisDto = apiService.findAllApi();
-        return new ResponseEntity<>(apisDto, HttpStatus.OK);
+    public ResponseEntity<Page<ApiDto>> getAllApi(@RequestParam(defaultValue = "0") int page,
+                                                  @RequestParam(defaultValue = "10") int pageSize) {
+        return new ResponseEntity<>(apiService.findAllApi(PageRequest.of(page,pageSize)), HttpStatus.OK);
     }
 
     @PutMapping("/api")
