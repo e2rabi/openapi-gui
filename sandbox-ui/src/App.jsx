@@ -7,6 +7,10 @@ import Configuration from "./components/configuration/Configuration.jsx";
 import Workspace from "./components/workspace/Workspace.jsx";
 import Product from "./components/product/Product.jsx";
 import Release from "./components/release/Release.jsx";
+import Solution from "./components/solution/Solution.jsx";
+import Module from "./components/module/Module.jsx";
+import Api from "./components/api/Api.jsx";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -31,6 +35,18 @@ const router = createBrowserRouter([
   {
     path: "/users",
     element: <User />,
+  },
+  {
+    path: "/solutions",
+    element: <Solution />,
+  },
+  {
+    path: "/modules",
+    element: <Module />,
+  },
+  {
+    path: "/apis",
+    element: <Api />,
   },
   {
     path: "/config",

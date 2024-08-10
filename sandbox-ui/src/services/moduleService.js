@@ -1,8 +1,8 @@
-async function getAllApi(page, pageSize) {
+async function getAllModules(page, pageSize) {
   const rootUrl = import.meta.env.VITE_API_URL;
   try {
     const response = await fetch(
-      `${rootUrl}api?page=${page}&pageSize=${pageSize}`,
+      `${rootUrl}modules?page=${page}&pageSize=${pageSize}`,
       {
         headers: {
           Authorization: "Basic " + btoa("admin:admin"),
@@ -11,7 +11,7 @@ async function getAllApi(page, pageSize) {
     );
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch all Api : ${response.statusText}`);
+      throw new Error(`Failed to fetch modules : ${response.statusText}`);
     }
     return await response.json();
   } catch (error) {
@@ -19,4 +19,4 @@ async function getAllApi(page, pageSize) {
     throw error;
   }
 }
-export { getAllApi };
+export { getAllModules };

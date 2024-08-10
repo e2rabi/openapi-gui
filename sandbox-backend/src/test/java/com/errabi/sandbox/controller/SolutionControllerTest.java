@@ -54,7 +54,7 @@ class SolutionControllerTest extends BaseControllerIT{
     void UpdateSolutionOkTest() throws Exception {
         mockMvc.perform(put("/sandbox-api/v1/solutions")
                         .content(asJsonString(SolutionDto.builder()
-                                .id(1L)
+                                .id(26L)
                                 .name("card")
                                 .description("update")
                                 .color("#FFF1FF")
@@ -70,7 +70,7 @@ class SolutionControllerTest extends BaseControllerIT{
     @Test
     @Order(5)
     void DeleteSolutionOkTest() throws Exception {
-        mockMvc.perform(delete("/sandbox-api/v1/solutions/1"))
+        mockMvc.perform(delete("/sandbox-api/v1/solutions/26"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }

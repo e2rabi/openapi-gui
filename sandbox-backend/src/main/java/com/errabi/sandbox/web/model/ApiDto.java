@@ -28,4 +28,5 @@ public class ApiDto extends AbstractMessageDto{
     @NotEmpty(message = "Please add open api schema")
     private String openApiSchema;
     private Long moduleId;
+    private String moduleName;
 }

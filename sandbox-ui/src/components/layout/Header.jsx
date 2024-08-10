@@ -70,28 +70,28 @@ const Header = () => {
               Releases
             </Link>
             <Link
-              href="#"
+              to="/solutions"
               className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
             >
               <Package2 className="h-4 w-4" />
               Solutions
             </Link>
             <Link
-              href="#"
+              to="/modules"
               className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
             >
               <Package className="h-4 w-4" />
               Modules
             </Link>
             <Link
-              href="#"
+              to="/apis"
               className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
             >
               <CloudCog className="h-4 w-4" />
               APIs
             </Link>
             <Link
-              href="#"
+              to="/users"
               className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
             >
               <Users className="h-4 w-4" />

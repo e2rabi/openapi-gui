@@ -1,0 +1,28 @@
+INSERT INTO
+    module (version, visibility, created, last_modified, solution_id, color, created_by, description, enabled, image, last_modified_by, name)
+VALUES
+    (1, true, NOW(), NOW(), 1, '#FF5733', 'user1', 'Module 1 description', true, 'image1.png', 'user1', 'Module 1'),
+    (1, true, NOW(), NOW(), 2, '#33FF57', 'user2', 'Module 2 description', true, 'image2.png', 'user2', 'Module 2'),
+    (1, true, NOW(), NOW(), 3, '#3357FF', 'user3', 'Module 3 description', true, 'image3.png', 'user3', 'Module 3'),
+    (1, true, NOW(), NOW(), 4, '#FF33A5', 'user4', 'Module 4 description', true, 'image4.png', 'user4', 'Module 4'),
+    (1, true, NOW(), NOW(), 5, '#FF8C33', 'user5', 'Module 5 description', true, 'image5.png', 'user5', 'Module 5'),
+    (1, true, NOW(), NOW(), 6, '#33FF8C', 'user6', 'Module 6 description', true, 'image6.png', 'user6', 'Module 6'),
+    (1, true, NOW(), NOW(), 7, '#8C33FF', 'user7', 'Module 7 description', true, 'image7.png', 'user7', 'Module 7'),
+    (1, true, NOW(), NOW(), 8, '#FF338C', 'user8', 'Module 8 description', true, 'image8.png', 'user8', 'Module 8'),
+    (1, true, NOW(), NOW(), 9, '#33A5FF', 'user9', 'Module 9 description', true, 'image9.png', 'user9', 'Module 9'),
+    (1, true, NOW(), NOW(), 10, '#A5FF33', 'user10', 'Module 10 description', true, 'image10.png', 'user10', 'Module 10'),
+    (1, true, NOW(), NOW(), 11, '#FF57A5', 'user11', 'Module 11 description', true, 'image11.png', 'user11', 'Module 11'),
+    (1, true, NOW(), NOW(), 12, '#57A5FF', 'user12', 'Module 12 description', true, 'image12.png', 'user12', 'Module 12'),
+    (1, true, NOW(), NOW(), 13, '#A533FF', 'user13', 'Module 13 description', true, 'image13.png', 'user13', 'Module 13'),
+    (1, true, NOW(), NOW(), 14, '#33FF57', 'user14', 'Module 14 description', true, 'image14.png', 'user14', 'Module 14'),
+    (1, true, NOW(), NOW(), 15, '#FF8C57', 'user15', 'Module 15 description', true, 'image15.png', 'user15', 'Module 15'),
+    (1, true, NOW(), NOW(), 16, '#8C57FF', 'user16', 'Module 16 description', true, 'image16.png', 'user16', 'Module 16'),
+    (1, true, NOW(), NOW(), 17, '#33FF8C', 'user17', 'Module 17 description', true, 'image17.png', 'user17', 'Module 17'),
+    (1, true, NOW(), NOW(), 18, '#FF33A5', 'user18', 'Module 18 description', true, 'image18.png', 'user18', 'Module 18'),
+    (1, true, NOW(), NOW(), 19, '#FF5733', 'user19', 'Module 19 description', true, 'image19.png', 'user19', 'Module 19'),
+    (1, true, NOW(), NOW(), 20, '#33A5FF', 'user20', 'Module 20 description', true, 'image20.png', 'user20', 'Module 20'),
+    (1, true, NOW(), NOW(), 21, '#A5FF33', 'user21', 'Module 21 description', true, 'image21.png', 'user21', 'Module 21'),
+    (1, true, NOW(), NOW(), 22, '#8C33FF', 'user22', 'Module 22 description', true, 'image22.png', 'user22', 'Module 22'),
+    (1, true, NOW(), NOW(), 23, '#FF8C33', 'user23', 'Module 23 description', true, 'image23.png', 'user23', 'Module 23'),
+    (1, true, NOW(), NOW(), 24, '#33FF57', 'user24', 'Module 24 description', true, 'image24.png', 'user24', 'Module 24'),
+    (1, true, NOW(), NOW(), 25, '#57A5FF', 'user25', 'Module 25 description', true, 'image25.png', 'user25', 'Module 25');
