@@ -10,5 +10,6 @@ create table users (
     first_name varchar(255), last_name varchar(255),
     password varchar(255), phone varchar(255),
     username varchar(255),
+    expiry_date varchar(20),
     primary key (id)
 );

@@ -7,7 +7,7 @@ import {
     DialogFooter,
     DialogClose
 } from "@/components/ui/dialog"
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -40,8 +40,43 @@ import {
     HoverCardContent,
     HoverCardTrigger,
 } from "@/components/ui/hover-card"
-const UserEditDialog = ({ isOpen, setIsOpen }) => {
+import { getAllWorkspaces } from "../../services/workspaceService.js";
+import { getUserById } from "../../services/userService.js";
+
+const UserEditDialog = ({ isOpen, setIsOpen, userId }) => {
     const [date, setDate] = useState(new Date())
+    const [workspaces, setWorkspaces] = useState([]);
+    const [user, setUser] = useState({});
+
+
+    const fetchWorkspaces = useCallback(async (page, pageSize) => {
+        const controller = new AbortController();
+        try {
+            const data = await getAllWorkspaces(page, pageSize);
+            setWorkspaces(() => data.content);
+        } catch (error) {
+            console.error("Error fetching workspaces:", error);
+        }
+        return () => controller.abort();
+    }, []);
+
+    const getUserDetailsById = useCallback(async (userId) => {
+        const controller = new AbortController();
+        try {
+            const data = await getUserById(userId);
+            setUser(() => data);
+        } catch (error) {
+            console.error("Error fetching user details:", error);
+        }
+        return () => controller.abort();
+    }, []);
+
+    useEffect(() => {
+        if (userId) {
+            fetchWorkspaces(0, 1000);
+            getUserDetailsById(userId)
+        }
+    }, [userId, fetchWorkspaces, getUserDetailsById]);
 
     return (
         <Dialog open={isOpen}
@@ -65,22 +100,29 @@ const UserEditDialog = ({ isOpen, setIsOpen }) => {
                             </CardHeader>
                             <CardContent>
                                 <div className="grid gap-6">
-                                    <div className="flex flex-col space-y-1.5">
-                                        <Label htmlFor="name">Username</Label>
-                                        <Input disabled id="name" placeholder="admin" />
+                                    <div className="flex justify-start flex-wrap">
+                                        <div className="flex flex-col space-y-1.5 mr-5">
+                                            <Label htmlFor="username">Username</Label>
+                                            <Input disabled id="username" placeholder="admin" defaultValue={user.username} />
+                                        </div>
+                                        <div className="flex flex-col space-y-1.5 mr-5">
+                                            <Label htmlFor="email">Email</Label>
+                                            <Input disabled id="email" placeholder="example@test.com" defaultValue={user.email} />
+                                        </div>
+                                        <div className="flex flex-col space-y-1.5 mr-5">
+                                            <Label htmlFor="phone">Phone</Label>
+                                            <Input id="phone" placeholder="+212 0607825454" defaultValue={user.phone} />
+                                        </div>
+                                        <div className="flex flex-col space-y-1.5 mr-5 mt-4">
+                                            <Label htmlFor="firstname">FirstName</Label>
+                                            <Input id="firstname" placeholder="firstname" defaultValue={user.firstName} />
+                                        </div>
+                                        <div className="flex flex-col space-y-1.5 mr-5 mt-4">
+                                            <Label htmlFor="lastname">LastName</Label>
+                                            <Input id="lastname" placeholder="lastname" defaultValue={user.lastName} />
+                                        </div>
                                     </div>
-                                    <div className="flex flex-col space-y-1.5">
-                                        <Label htmlFor="framework">Email</Label>
-                                        <Input disabled id="framework" placeholder="example@test.com" />
-                                    </div>
-                                    <div className="flex flex-col space-y-1.5">
-                                        <Label htmlFor="framework">FirstName</Label>
-                                        <Input id="framework" placeholder="firstname" />
-                                    </div>
-                                    <div className="flex flex-col space-y-1.5">
-                                        <Label htmlFor="framework">LastName</Label>
-                                        <Input id="framework" placeholder="lastname" />
-                                    </div>
+
                                     <div className=" flex items-center space-x-4 rounded-md border p-4">
                                         <UserRound />
                                         <div className="flex-1 space-y-1">
@@ -91,7 +133,7 @@ const UserEditDialog = ({ isOpen, setIsOpen }) => {
                                                 Activate or deactivate this account
                                             </p>
                                         </div>
-                                        <Switch checked />
+                                        <Switch checked={user.enabled} />
                                     </div>
                                     <div className=" flex items-center space-x-4 rounded-md border p-4 top-3 relative">
                                         <CalendarOff />
@@ -100,7 +142,7 @@ const UserEditDialog = ({ isOpen, setIsOpen }) => {
                                                 Account expired
                                             </p>
                                             <p className="text-sm text-muted-foreground">
-                                                expiry date :  2024-12-31
+                                                expiry date :  {user.expiryDate}
                                             </p>
                                         </div>
                                         <Popover>
@@ -135,9 +177,11 @@ const UserEditDialog = ({ isOpen, setIsOpen }) => {
                                                     <SelectValue placeholder="Workspace" />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    <SelectItem value="light">Light</SelectItem>
-                                                    <SelectItem value="dark">Dark</SelectItem>
-                                                    <SelectItem value="system">System</SelectItem>
+                                                    {
+                                                        workspaces.map((workspace) => (
+                                                            <SelectItem key={workspace.id} value={workspace.id}>{workspace.name}</SelectItem>
+                                                        ))
+                                                    }
                                                 </SelectContent>
                                             </Select>
                                         </div>
@@ -147,9 +191,9 @@ const UserEditDialog = ({ isOpen, setIsOpen }) => {
                                                     <SelectValue placeholder="Role" />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    <SelectItem value="light">Light</SelectItem>
-                                                    <SelectItem value="dark">Dark</SelectItem>
-                                                    <SelectItem value="system">System</SelectItem>
+                                                    <SelectItem value="light">Role1</SelectItem>
+                                                    <SelectItem value="dark">Role2</SelectItem>
+                                                    <SelectItem value="system">default</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                         </div>
