@@ -23,7 +23,12 @@ import UserEdit from './UserEdit';
 const MemoizedUserTable = ({ isLoading, users }) => {
 
     const [isOpen, setIsOpen] = useState(false);
-    const editUserHandler = () => setIsOpen(true);
+    const [userId, setUserId] = useState("");
+
+    const editUserHandler = (userId) => {
+        setIsOpen(true);
+        setUserId(userId);
+    }
 
     return (
         <>
@@ -40,8 +45,8 @@ const MemoizedUserTable = ({ isLoading, users }) => {
                             <TableHead>Email</TableHead>
                             <TableHead>Phone</TableHead>
                             <TableHead>Status</TableHead>
-                            <TableHead>Account Expired</TableHead>
-                            <TableHead>Account Locked</TableHead>
+                            <TableHead>Account expired</TableHead>
+                            <TableHead>Expiry date</TableHead>
                             <TableHead>
                                 <span className="sr-only">Actions</span>
                             </TableHead>
@@ -65,7 +70,7 @@ const MemoizedUserTable = ({ isLoading, users }) => {
                                     {user.accountNonExpired ? "Yes" : "No"}
                                 </TableCell>
                                 <TableCell>
-                                    {user.accountNonLocked ? "Yes" : "No"}
+                                    {user.expiryDate}
                                 </TableCell>
                                 <TableCell>
                                     <DropdownMenu>
@@ -81,7 +86,7 @@ const MemoizedUserTable = ({ isLoading, users }) => {
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
                                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                            <DropdownMenuItem onClick={() => editUserHandler()} className="cursor-pointer">
+                                            <DropdownMenuItem onClick={() => editUserHandler(user.id)} className="cursor-pointer">
                                                 Edit
                                             </DropdownMenuItem>
                                             <DropdownMenuItem>Delete</DropdownMenuItem>
@@ -93,7 +98,7 @@ const MemoizedUserTable = ({ isLoading, users }) => {
                     </TableBody>
                 </Table>
             )}
-            <UserEdit isOpen={isOpen} setIsOpen={setIsOpen} />
+            <UserEdit isOpen={isOpen} setIsOpen={setIsOpen} userId={userId} />
         </>
     )
 }

@@ -29,6 +29,7 @@ public class User{
     private  boolean accountNonExpired;
     private  boolean accountNonLocked;
     private  boolean credentialsNonExpired;
+    private String expiryDate ;
     @ManyToMany(cascade = {CascadeType.MERGE},fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_role",
