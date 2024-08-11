@@ -89,17 +89,17 @@ public class ModuleService {
         }
     }
 
+    @Transactional(readOnly = true)
     public Page<ModuleDto> findAllModules(Pageable pageable) {
         try {
             log.info("Fetching all modules...");
-            Page<Module> modules = moduleRepository.findAll(pageable);
+            Page<Module> modules = moduleRepository.findAllWithSolutionNames(pageable);
             if (!modules.isEmpty()) {
                 return modules.map(module -> {
                     ModuleDto moduleDto = moduleMapper.toDto(module);
-                    moduleDto.setSolutionName(solutionService.findSolutionById(module.getSolution().getId()).getName());
+                    moduleDto.setSolutionName(module.getSolution().getName());
                     return moduleDto;
                 });
-
             } else {
                 return Page.empty();
             }

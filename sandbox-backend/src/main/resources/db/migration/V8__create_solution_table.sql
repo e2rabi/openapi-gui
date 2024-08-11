@@ -10,7 +10,7 @@ create table solution (
     created_by varchar(255),
     description varchar(255),
     enabled boolean not null,
-    image varchar(255),
+    image varchar(5000),
     last_modified_by varchar(255),
     name varchar(255),
     primary key (id)
