@@ -32,6 +32,9 @@ const MemoizedModuleTable = ({ isLoading, modules }) => {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="hidden w-[100px] sm:table-cell">
+                <span className="sr-only">Image</span>
+              </TableHead>
               <TableHead className="w-[100px]">ID</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Description</TableHead>
@@ -46,6 +49,14 @@ const MemoizedModuleTable = ({ isLoading, modules }) => {
           <TableBody>
             {modules.map((module) => (
               <TableRow key={module.id} className="cursor-pointer">
+                <TableCell className="hidden sm:table-cell">
+                  <img
+                    className="aspect-square rounded-md object-cover"
+                    height="32"
+                    src={`data:image/png;base64,${module.image}`}
+                    width="32"
+                  />
+                </TableCell>
                 <TableCell className="font-medium">{module.id}</TableCell>
                 <TableCell>{module.name}</TableCell>
                 <TableCell>{module.description}</TableCell>

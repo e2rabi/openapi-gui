@@ -32,6 +32,9 @@ const MemoizedSolutionTable = ({ isLoading, solutions }) => {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="hidden w-[100px] sm:table-cell">
+                <span className="sr-only">Image</span>
+              </TableHead>
               <TableHead className="w-[100px]">ID</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Description</TableHead>
@@ -46,6 +49,14 @@ const MemoizedSolutionTable = ({ isLoading, solutions }) => {
           <TableBody>
             {solutions.map((solution) => (
               <TableRow key={solution.id} className="cursor-pointer">
+                <TableCell className="hidden sm:table-cell">
+                  <img
+                    className="aspect-square rounded-md object-cover"
+                    height="32"
+                    src={`data:image/png;base64,${solution.image}`}
+                    width="32"
+                  />
+                </TableCell>
                 <TableCell className="font-medium">{solution.id}</TableCell>
                 <TableCell>{solution.name}</TableCell>
                 <TableCell>{solution.description}</TableCell>

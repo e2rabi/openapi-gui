@@ -28,7 +28,6 @@ public class SolutionService {
     private final SolutionRepository solutionRepository;
     private final SolutionMapper solutionMapper;
     private final ReleaseRepository releaseRepository;
-    private final ReleaseService releaseService;
 
     @Transactional
     public SolutionDto createSolution(SolutionDto solutionDto){
@@ -89,14 +88,15 @@ public class SolutionService {
         }
     }
 
+    @Transactional(readOnly = true)
     public Page<SolutionDto> findAllSolutions(Pageable pageable) {
         try {
             log.info("Fetching all solutions...");
-            Page<Solution> solutions = solutionRepository.findAll(pageable);
+            Page<Solution> solutions = solutionRepository.findAllWithReleaseNames(pageable);
             if (!solutions.isEmpty()) {
                 return solutions.map(solution -> {
                             SolutionDto solutionDto = solutionMapper.toDto(solution);
-                            solutionDto.setReleaseName(releaseService.findReleaseById(solution.getRelease().getId()).getName());
+                            solutionDto.setReleaseName(solution.getRelease().getName());
                             return solutionDto;
                         });
             } else {
