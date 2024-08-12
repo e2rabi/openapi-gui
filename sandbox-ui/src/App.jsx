@@ -10,7 +10,7 @@ import Release from "./components/release/Release.jsx";
 import Solution from "./components/solution/Solution.jsx";
 import Module from "./components/module/Module.jsx";
 import Api from "./components/api/Api.jsx";
-
+import { Toaster } from "@/components/ui/toaster"
 const router = createBrowserRouter([
   {
     path: "/",
@@ -60,6 +60,7 @@ function App() {
         <main className="main">
           <RouterProvider router={router} />
         </main>
+        <Toaster />
       </ThemeProvider>
     </div>
   );

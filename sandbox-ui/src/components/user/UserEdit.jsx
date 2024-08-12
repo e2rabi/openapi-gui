@@ -8,10 +8,12 @@ import {
     DialogClose
 } from "@/components/ui/dialog"
 import React, { useState, useEffect, useCallback, useRef } from "react";
+import { useToast } from "@/components/ui/use-toast"
 import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
+import { internalError } from "../../services/ErrorHandler";
 import {
     Card,
     CardContent,
@@ -49,7 +51,7 @@ const UserEditDialog = ({ isOpen, setIsOpen, userId }) => {
     const [selectedWorkspace, setSelectedWorkspace] = useState(''); // State to hold the selected value
     const [user, setUser] = useState({});
     const hiddenSubmitButtonRef = useRef(null);
-
+    const { toast } = useToast()
     const {
         register,
         handleSubmit,
@@ -61,19 +63,21 @@ const UserEditDialog = ({ isOpen, setIsOpen, userId }) => {
     const onSubmit = (data) => console.log(data);
 
     const fetchWorkspaces = useCallback(async (page, pageSize) => {
-        reset();
         const controller = new AbortController();
         try {
             const data = await getAllWorkspaces(page, pageSize);
             setWorkspaces(() => data.content);
         } catch (error) {
+            toast(internalError);
             console.error("Error fetching workspaces:", error);
         }
         return () => controller.abort();
-    }, [reset]);
+    }, [toast]);
 
     const getUserDetailsById = useCallback(async (userId) => {
         const controller = new AbortController();
+        reset();
+        setUser(() => { })
         try {
             const data = await getUserById(userId);
             setUser(() => data);
@@ -83,17 +87,22 @@ const UserEditDialog = ({ isOpen, setIsOpen, userId }) => {
             setValue('phone', data.phone);
             setValue('username', data.username);
         } catch (error) {
+            toast(internalError);
             console.error("Error fetching user details:", error);
         }
         return () => controller.abort();
-    }, [setValue]);
+    }, [setValue, reset, toast]);
 
     useEffect(() => {
         if (userId) {
-            fetchWorkspaces(0, 1000);
             getUserDetailsById(userId)
         }
-    }, [userId, fetchWorkspaces, getUserDetailsById]);
+    }, [userId, getUserDetailsById]);
+    useEffect(() => {
+        if (workspaces.length === 0) {
+            fetchWorkspaces(0, 1000);
+        }
+    }, [workspaces, fetchWorkspaces]);
 
     const handleSaveClick = () => {
         hiddenSubmitButtonRef.current.click();
@@ -127,25 +136,25 @@ const UserEditDialog = ({ isOpen, setIsOpen, userId }) => {
                                         <div className="flex justify-start flex-wrap">
                                             <div className="flex flex-col space-y-1.5 mr-5">
                                                 <Label htmlFor="username">Username</Label>
-                                                <Input className="relative top-1" disabled id="username" placeholder="admin" {...register("username")} />
+                                                <Input className="relative top-1" disabled id="username" placeholder="" {...register("username")} />
                                             </div>
                                             <div className="flex flex-col space-y-1.5 mr-5">
                                                 <Label htmlFor="email">Email</Label>
-                                                <Input className="relative top-1" disabled id="email" placeholder="example@test.com" {...register("email")} />
+                                                <Input className="relative top-1" disabled id="email" placeholder="" {...register("email")} />
                                             </div>
                                             <div className="flex flex-col space-y-1.5 mr-5">
                                                 <Label htmlFor="phone">Phone</Label>
-                                                <Input className="relative top-1" id="phone" placeholder="+212 0607825454" {...register("phone", { required: true })} />
+                                                <Input className="relative top-1" id="phone" placeholder="" {...register("phone", { required: true })} />
                                                 {errors.phone && <div className="text-red-500 text-sm  mt-1 relative">Phone is required </div>}
                                             </div>
                                             <div className="flex flex-col space-y-1.5 mr-5 mt-4">
                                                 <Label htmlFor="firstName">FirstName</Label>
-                                                <Input className="relative top-1" name="firstName" id="firstName" placeholder="firstname" {...register("firstName", { required: true })} />
+                                                <Input className="relative top-1" name="firstName" id="firstName" placeholder="" {...register("firstName", { required: true })} />
                                                 {errors.firstName && <div className="text-red-500 text-sm  mt-1 relative">FirstName is required </div>}
                                             </div>
                                             <div className="flex flex-col space-y-1.5 mr-5 mt-4">
                                                 <Label htmlFor="lastName">LastName</Label>
-                                                <Input className="relative top-1" id="lastName" placeholder="lastName" {...register("lastName", { required: true })} />
+                                                <Input className="relative top-1" id="lastName" placeholder="" {...register("lastName", { required: true })} />
                                                 {errors.lastName && <div className="text-red-500 text-sm mt-1 relative">LastName is required </div>}
                                             </div>
                                             <input type="submit" hidden ref={hiddenSubmitButtonRef} />
@@ -161,7 +170,7 @@ const UserEditDialog = ({ isOpen, setIsOpen, userId }) => {
                                                     Activate or deactivate this account
                                                 </p>
                                             </div>
-                                            <Switch checked={user.enabled} />
+                                            <Switch checked={user ? user.enabled : false} />
                                         </div>
                                         <div className=" flex items-center space-x-4 rounded-md border p-4 top-5 relative">
                                             <CalendarOff />
@@ -170,7 +179,7 @@ const UserEditDialog = ({ isOpen, setIsOpen, userId }) => {
                                                     Account expired
                                                 </p>
                                                 <p className="text-sm text-muted-foreground">
-                                                    expiry date :  {user.expiryDate}
+                                                    expiry date :  {user && user.expiryDate ? user.expiryDate : "loading ..."}
                                                 </p>
                                             </div>
                                             <Popover>
@@ -254,7 +263,7 @@ const UserEditDialog = ({ isOpen, setIsOpen, userId }) => {
                     <DialogClose asChild >
                         <Button variant="outline">Cancel</Button>
                     </DialogClose>
-                    <Button onClick={() => handleSaveClick()}>Save</Button>
+                    <Button disabled={!user} onClick={() => handleSaveClick()}>Save</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

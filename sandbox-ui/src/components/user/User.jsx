@@ -12,6 +12,8 @@ import {
 
 import TablePagination from "../shared/TablePagination";
 import UserTableFiltred from "./UserTableFiltred";
+import { useToast } from "@/components/ui/use-toast"
+import { internalError } from "../../services/ErrorHandler";
 const page = {
   "pageSize": 7,
   "pageNumber": 0,
@@ -22,16 +24,21 @@ export default function User() {
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast()
+
+
   useEffect(() => { fetchUsers(pageInfo.pageNumber, pageInfo.pageSize) }, [pageInfo.pageNumber, pageInfo.pageSize]);
 
   const fetchUsers = async (page, pageSize) => {
     try {
+      setIsLoading(true);
       const data = await getAllUser(page, pageSize)
       setUsers(() => data.content);
       setTotalPages(() => data.page.totalPages)
       setTotalElements(() => data.page.totalElements)
     } catch (error) {
-      console.error("Error fetching users:", error);
+      toast(internalError);
+      console.error("Error fetching users :", error);
     } finally {
       setIsLoading(false);
     }
