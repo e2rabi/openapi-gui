@@ -7,7 +7,7 @@ import {
     DialogFooter,
     DialogClose
 } from "@/components/ui/dialog"
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -42,14 +42,26 @@ import {
 } from "@/components/ui/hover-card"
 import { getAllWorkspaces } from "../../services/workspaceService.js";
 import { getUserById } from "../../services/userService.js";
-
+import { useForm } from "react-hook-form"
 const UserEditDialog = ({ isOpen, setIsOpen, userId }) => {
     const [date, setDate] = useState(new Date())
     const [workspaces, setWorkspaces] = useState([]);
+    const [selectedWorkspace, setSelectedWorkspace] = useState(''); // State to hold the selected value
     const [user, setUser] = useState({});
+    const hiddenSubmitButtonRef = useRef(null);
 
+    const {
+        register,
+        handleSubmit,
+        setValue,
+        reset,
+        formState: { errors }
+    } = useForm()
+
+    const onSubmit = (data) => console.log(data);
 
     const fetchWorkspaces = useCallback(async (page, pageSize) => {
+        reset();
         const controller = new AbortController();
         try {
             const data = await getAllWorkspaces(page, pageSize);
@@ -58,18 +70,23 @@ const UserEditDialog = ({ isOpen, setIsOpen, userId }) => {
             console.error("Error fetching workspaces:", error);
         }
         return () => controller.abort();
-    }, []);
+    }, [reset]);
 
     const getUserDetailsById = useCallback(async (userId) => {
         const controller = new AbortController();
         try {
             const data = await getUserById(userId);
             setUser(() => data);
+            setValue('firstName', data.firstName);
+            setValue('lastName', data.lastName);
+            setValue('email', data.email);
+            setValue('phone', data.phone);
+            setValue('username', data.username);
         } catch (error) {
             console.error("Error fetching user details:", error);
         }
         return () => controller.abort();
-    }, []);
+    }, [setValue]);
 
     useEffect(() => {
         if (userId) {
@@ -78,6 +95,12 @@ const UserEditDialog = ({ isOpen, setIsOpen, userId }) => {
         }
     }, [userId, fetchWorkspaces, getUserDetailsById]);
 
+    const handleSaveClick = () => {
+        hiddenSubmitButtonRef.current.click();
+    };
+    const handleWorkspaceChange = (value) => {
+        setSelectedWorkspace(value);
+    };
     return (
         <Dialog open={isOpen}
             onOpenChange={() => setIsOpen(false)}
@@ -99,106 +122,112 @@ const UserEditDialog = ({ isOpen, setIsOpen, userId }) => {
                                 <CardTitle>Account details</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div className="grid gap-6">
-                                    <div className="flex justify-start flex-wrap">
-                                        <div className="flex flex-col space-y-1.5 mr-5">
-                                            <Label htmlFor="username">Username</Label>
-                                            <Input disabled id="username" placeholder="admin" defaultValue={user.username} />
+                                <form onSubmit={handleSubmit(onSubmit)}>
+                                    <div className="grid gap-6">
+                                        <div className="flex justify-start flex-wrap">
+                                            <div className="flex flex-col space-y-1.5 mr-5">
+                                                <Label htmlFor="username">Username</Label>
+                                                <Input className="relative top-1" disabled id="username" placeholder="admin" {...register("username")} />
+                                            </div>
+                                            <div className="flex flex-col space-y-1.5 mr-5">
+                                                <Label htmlFor="email">Email</Label>
+                                                <Input className="relative top-1" disabled id="email" placeholder="example@test.com" {...register("email")} />
+                                            </div>
+                                            <div className="flex flex-col space-y-1.5 mr-5">
+                                                <Label htmlFor="phone">Phone</Label>
+                                                <Input className="relative top-1" id="phone" placeholder="+212 0607825454" {...register("phone", { required: true })} />
+                                                {errors.phone && <div className="text-red-500 text-sm  mt-1 relative">Phone is required </div>}
+                                            </div>
+                                            <div className="flex flex-col space-y-1.5 mr-5 mt-4">
+                                                <Label htmlFor="firstName">FirstName</Label>
+                                                <Input className="relative top-1" name="firstName" id="firstName" placeholder="firstname" {...register("firstName", { required: true })} />
+                                                {errors.firstName && <div className="text-red-500 text-sm  mt-1 relative">FirstName is required </div>}
+                                            </div>
+                                            <div className="flex flex-col space-y-1.5 mr-5 mt-4">
+                                                <Label htmlFor="lastName">LastName</Label>
+                                                <Input className="relative top-1" id="lastName" placeholder="lastName" {...register("lastName", { required: true })} />
+                                                {errors.lastName && <div className="text-red-500 text-sm mt-1 relative">LastName is required </div>}
+                                            </div>
+                                            <input type="submit" hidden ref={hiddenSubmitButtonRef} />
                                         </div>
-                                        <div className="flex flex-col space-y-1.5 mr-5">
-                                            <Label htmlFor="email">Email</Label>
-                                            <Input disabled id="email" placeholder="example@test.com" defaultValue={user.email} />
-                                        </div>
-                                        <div className="flex flex-col space-y-1.5 mr-5">
-                                            <Label htmlFor="phone">Phone</Label>
-                                            <Input id="phone" placeholder="+212 0607825454" defaultValue={user.phone} />
-                                        </div>
-                                        <div className="flex flex-col space-y-1.5 mr-5 mt-4">
-                                            <Label htmlFor="firstname">FirstName</Label>
-                                            <Input id="firstname" placeholder="firstname" defaultValue={user.firstName} />
-                                        </div>
-                                        <div className="flex flex-col space-y-1.5 mr-5 mt-4">
-                                            <Label htmlFor="lastname">LastName</Label>
-                                            <Input id="lastname" placeholder="lastname" defaultValue={user.lastName} />
-                                        </div>
-                                    </div>
 
-                                    <div className=" flex items-center space-x-4 rounded-md border p-4">
-                                        <UserRound />
-                                        <div className="flex-1 space-y-1">
-                                            <p className="text-sm font-medium leading-none">
-                                                Activate account
-                                            </p>
-                                            <p className="text-sm text-muted-foreground">
-                                                Activate or deactivate this account
-                                            </p>
+                                        <div className=" flex items-center space-x-4 rounded-md border p-4 top-3 relative">
+                                            <UserRound />
+                                            <div className="flex-1 space-y-1">
+                                                <p className="text-sm font-medium leading-none">
+                                                    Activate account
+                                                </p>
+                                                <p className="text-sm text-muted-foreground">
+                                                    Activate or deactivate this account
+                                                </p>
+                                            </div>
+                                            <Switch checked={user.enabled} />
                                         </div>
-                                        <Switch checked={user.enabled} />
-                                    </div>
-                                    <div className=" flex items-center space-x-4 rounded-md border p-4 top-3 relative">
-                                        <CalendarOff />
-                                        <div className="flex-1 space-y-1">
-                                            <p className="text-sm font-medium leading-none">
-                                                Account expired
-                                            </p>
-                                            <p className="text-sm text-muted-foreground">
-                                                expiry date :  {user.expiryDate}
-                                            </p>
-                                        </div>
-                                        <Popover>
-                                            <PopoverTrigger asChild>
-                                                <Button variant="outline">Change date</Button>
-                                            </PopoverTrigger>
-                                            <PopoverContent className="w-80">
-                                                <div className="grid gap-4">
-                                                    <div className="space-y-2">
-                                                        <Calendar
-                                                            mode="single"
-                                                            selected={date}
-                                                            onSelect={setDate}
-                                                            className="rounded-md border"
-                                                        />
+                                        <div className=" flex items-center space-x-4 rounded-md border p-4 top-5 relative">
+                                            <CalendarOff />
+                                            <div className="flex-1 space-y-1">
+                                                <p className="text-sm font-medium leading-none">
+                                                    Account expired
+                                                </p>
+                                                <p className="text-sm text-muted-foreground">
+                                                    expiry date :  {user.expiryDate}
+                                                </p>
+                                            </div>
+                                            <Popover>
+                                                <PopoverTrigger asChild>
+                                                    <Button variant="outline">Change date</Button>
+                                                </PopoverTrigger>
+                                                <PopoverContent className="w-80">
+                                                    <div className="grid gap-4">
+                                                        <div className="space-y-2">
+                                                            <Calendar
+                                                                mode="single"
+                                                                selected={date}
+                                                                onSelect={setDate}
+                                                                className="rounded-md border"
+                                                            />
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </PopoverContent>
-                                        </Popover>
-                                    </div>
-                                    <div className=" flex items-center space-x-4 rounded-md border p-4">
-                                        <LockKeyhole />
-                                        <div className="flex-1 space-y-1">
-                                            <p className="text-sm font-medium leading-none">
-                                                Account authorizations
-                                            </p>
+                                                </PopoverContent>
+                                            </Popover>
+                                        </div>
+                                        <div className=" flex items-center space-x-4 rounded-md border p-4 relative top-7">
+                                            <LockKeyhole />
+                                            <div className="flex-1 space-y-1">
+                                                <p className="text-sm font-medium leading-none">
+                                                    Account authorizations
+                                                </p>
 
-                                        </div>
-                                        <div>
-                                            <Select>
-                                                <SelectTrigger className="w-[180px]">
-                                                    <SelectValue placeholder="Workspace" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {
-                                                        workspaces.map((workspace) => (
-                                                            <SelectItem key={workspace.id} value={workspace.id}>{workspace.name}</SelectItem>
-                                                        ))
-                                                    }
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-                                        <div>
-                                            <Select>
-                                                <SelectTrigger className="w-[180px]">
-                                                    <SelectValue placeholder="Role" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="light">Role1</SelectItem>
-                                                    <SelectItem value="dark">Role2</SelectItem>
-                                                    <SelectItem value="system">default</SelectItem>
-                                                </SelectContent>
-                                            </Select>
+                                            </div>
+                                            <div>
+                                                <Select value={selectedWorkspace} onValueChange={handleWorkspaceChange}>
+                                                    <SelectTrigger className="w-[180px]">
+                                                        <SelectValue placeholder="Workspace" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {
+                                                            workspaces.map((workspace) => (
+                                                                <SelectItem key={workspace.id} value={workspace.name}>{workspace.name}</SelectItem>
+                                                            ))
+                                                        }
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+                                            <div>
+                                                <Select>
+                                                    <SelectTrigger className="w-[180px]">
+                                                        <SelectValue placeholder="Role" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="light">Role1</SelectItem>
+                                                        <SelectItem value="dark">Role2</SelectItem>
+                                                        <SelectItem value="system">default</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                </form>
                             </CardContent>
                             <CardFooter className="flex justify-end">
                                 <HoverCard>
@@ -219,15 +248,18 @@ const UserEditDialog = ({ isOpen, setIsOpen, userId }) => {
                             </CardFooter>
                         </Card>
                     </div>
+
                 </div>
                 <DialogFooter className="sm:justify-end">
                     <DialogClose asChild >
                         <Button variant="outline">Cancel</Button>
                     </DialogClose>
-                    <Button>Save</Button>
+                    <Button onClick={() => handleSaveClick()}>Save</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
+
+
     );
 }
 const UserEdit = React.memo(UserEditDialog);
