@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Header from "../layout/Header";
 import Logo from "../layout/Logo";
 import Navbar from "../layout/Navbar";
-import { getAllUser } from "../../services/userService";
+import { getUsersByQuery } from "../../services/userService";
 import {
   Card,
   CardContent,
@@ -17,33 +17,38 @@ import { internalError } from "../../services/ErrorHandler";
 const page = {
   "pageSize": 7,
   "pageNumber": 0,
+  "totalPages": 0,
+  "totalElements": 0,
+  "searchQuery": "all"
 }
 export default function User() {
   const [users, setUsers] = useState([]);
   const [pageInfo, setPageInfo] = useState(page);
-  const [totalPages, setTotalPages] = useState(0);
-  const [totalElements, setTotalElements] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast()
 
-
-  useEffect(() => { fetchUsers(pageInfo.pageNumber, pageInfo.pageSize) }, [pageInfo.pageNumber, pageInfo.pageSize]);
-
-  const fetchUsers = async (page, pageSize) => {
-    try {
-      setIsLoading(true);
-      const data = await getAllUser(page, pageSize)
-      setUsers(() => data.content);
-      setTotalPages(() => data.page.totalPages)
-      setTotalElements(() => data.page.totalElements)
-    } catch (error) {
-      toast(internalError);
-      console.error("Error fetching users :", error);
-    } finally {
-      setIsLoading(false);
+  useEffect(() => {
+    const fetchUsers = async (searchQuery, page, pageSize) => {
+      try {
+        setIsLoading(true);
+        const data = await getUsersByQuery(searchQuery, "", "", page, pageSize)
+        setUsers(() => data.content);
+        setPageInfo({
+          "searchQuery": pageInfo.searchQuery,
+          "pageSize": pageInfo.pageSize,
+          "pageNumber": pageInfo.pageNumber,
+          "totalPages": data.page.totalPages,
+          "totalElements": data.page.totalElements
+        });
+      } catch (error) {
+        toast(internalError);
+        console.error("Error fetching users :", error);
+      } finally {
+        setIsLoading(false);
+      }
     }
-
-  }
+    fetchUsers(pageInfo.searchQuery, pageInfo.pageNumber, pageInfo.pageSize)
+  }, [pageInfo.searchQuery, pageInfo.pageNumber, pageInfo.pageSize, toast]);
 
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
@@ -64,10 +69,10 @@ export default function User() {
               </div>
             </CardHeader>
             <CardContent>
-              <UserTableFiltred isLoading={isLoading} users={users} />
+              <UserTableFiltred isLoading={isLoading} users={users} pageInfo={pageInfo} setPageInfo={setPageInfo} />
             </CardContent>
             <CardFooter className="flex justify-between">
-              <TablePagination pageInfo={pageInfo} changePage={setPageInfo} totalPages={totalPages} totalElements={totalElements} />
+              <TablePagination pageInfo={pageInfo} changePage={setPageInfo} />
             </CardFooter>
           </Card>
 

@@ -98,11 +98,12 @@ const UserEditDialog = ({ isOpen, setIsOpen, userId }) => {
             getUserDetailsById(userId)
         }
     }, [userId, getUserDetailsById]);
+
     useEffect(() => {
-        if (workspaces.length === 0) {
+        if (userId && workspaces.length === 0) {
             fetchWorkspaces(0, 1000);
         }
-    }, [workspaces, fetchWorkspaces]);
+    }, [userId]);
 
     const handleSaveClick = () => {
         hiddenSubmitButtonRef.current.click();

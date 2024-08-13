@@ -40,6 +40,12 @@ public class UserController {
         return new ResponseEntity<>(userService.findUserById(userId), HttpStatus.OK);
     }
 
+    @GetMapping("/users/query")
+    public ResponseEntity<Page<UserDto>> getUsersByFilter(@RequestParam(required = false) String status,
+                                                   @RequestParam(required = false) String email, @RequestParam(required = false) String userName,@RequestParam(defaultValue = "0") int page,@RequestParam(defaultValue = "10") int pageSize){
+        return new ResponseEntity<>(userService.findUsersByFilter(status,email,userName,PageRequest.of(page,pageSize)), HttpStatus.OK);
+    }
+
     @GetMapping("/users")
     public ResponseEntity<Page<UserDto>> getAllUsers( @RequestParam(defaultValue = "0") int page,
                                                       @RequestParam(defaultValue = "10") int pageSize) {

@@ -5,7 +5,7 @@ import {
     DoubleArrowRightIcon,
 } from "@radix-ui/react-icons"
 import { Button } from "../ui/button"
-const TablePagination = ({ pageInfo, changePage, totalPages, totalElements }) => {
+const TablePagination = ({ pageInfo, changePage }) => {
     const nextPage = () => {
         changePage({
             ...pageInfo,
@@ -29,10 +29,10 @@ const TablePagination = ({ pageInfo, changePage, totalPages, totalElements }) =>
         }
     }
     const goToLastPage = () => {
-        if (totalPages > 0) {
+        if (pageInfo.totalPages > 0) {
             changePage({
                 ...pageInfo,
-                pageNumber: totalPages - 1
+                pageNumber: pageInfo.totalPages - 1
             })
         }
     }
@@ -40,7 +40,7 @@ const TablePagination = ({ pageInfo, changePage, totalPages, totalElements }) =>
     return (
         <>
             <div className="text-xs text-muted-foreground">
-                Showing <strong>1-{pageInfo.pageSize}</strong> of <strong>{totalElements}</strong>{" "}
+                Showing <strong>1-{pageInfo.pageSize}</strong> of <strong>{pageInfo.totalElements}</strong>{" "}
                 users
             </div>
             <div className="flex items-center space-x-2">
@@ -65,7 +65,7 @@ const TablePagination = ({ pageInfo, changePage, totalPages, totalElements }) =>
                     variant="outline"
                     className="h-8 w-8 p-0"
                     onClick={() => nextPage()}
-                    disabled={(pageInfo.pageNumber + 1) == totalPages}
+                    disabled={(pageInfo.pageNumber + 1) == pageInfo.totalPages}
                 >
                     <span className="sr-only">Go to next page</span>
                     <ChevronRightIcon className="h-4 w-4" />

@@ -16,6 +16,8 @@ import com.nimbusds.jose.JOSEException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -126,6 +128,21 @@ public class UserService {
         }
     }
 
+    public Page<UserDto> findUsersByFilter(String status,String email,String username,Pageable pageable){
+        User userProb =  User.builder()
+                .email(StringUtils.isEmpty(email)?null:email)
+                .enabled("all".equalsIgnoreCase(status)?null: !"inactive".equalsIgnoreCase(status))
+                .username(StringUtils.isEmpty(username)?null:username)
+                .build();
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withIgnoreNullValues()
+                .withIgnorePaths("id");
+        Example<User> example = Example.of(userProb, matcher);
+
+        return userRepository.findAll(example,pageable)
+                      .map(userMapper::toDto);
+
+    }
     public UserDto findUserById(Long userId) {
         log.info("Finding User with id {}",userId);
         Optional<User> optionalUser =  userRepository.findById(userId);

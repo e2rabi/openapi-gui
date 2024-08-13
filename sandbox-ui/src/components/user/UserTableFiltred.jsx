@@ -1,26 +1,31 @@
 
-import { useState } from "react";
 import { Button } from "../ui/button"
+import React, { useCallback } from 'react';
 import { PlusCircle, File, } from 'lucide-react';
 import UserTable from './UserTable';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
-const UserTableFiltred = ({ isLoading, users }) => {
-    const [filter, setFilter] = useState("all");
+const MemoizedUserTableFiltred = ({ isLoading, users, pageInfo, setPageInfo }) => {
+    const selectQuery = useCallback((query) => {
+        setPageInfo({
+            ...pageInfo,
+            searchQuery: query,
+            pageSize: pageInfo.pageSize,
+            pageNumber: 0
+        });
+    }, [setPageInfo, pageInfo]);
+
     return (
         <>
             {isLoading ? (
                 <p>Loading users...</p>
             ) : (
-                <Tabs defaultValue="all">
+                <Tabs defaultValue={pageInfo.searchQuery}>
                     <div className="flex items-center">
                         <TabsList>
-                            <TabsTrigger value="all" onClick={() => setFilter("all")}>All</TabsTrigger>
-                            <TabsTrigger value="active" onClick={() => setFilter("active")}>Active</TabsTrigger>
-                            <TabsTrigger value="disabled" onClick={() => setFilter("disabled")}>Disabled</TabsTrigger>
-                            <TabsTrigger value="expired" onClick={() => setFilter("expired")} className="hidden sm:flex">
-                                Expired
-                            </TabsTrigger>
+                            <TabsTrigger value="all" onClick={() => selectQuery("all")}>All</TabsTrigger>
+                            <TabsTrigger value="active" onClick={() => selectQuery("active")}>Active</TabsTrigger>
+                            <TabsTrigger value="inactive" onClick={() => selectQuery("inactive")}>Inactive</TabsTrigger>
                         </TabsList>
                         <div className="ml-auto flex items-center gap-2">
                             <Button size="sm" variant="outline" className="h-8 gap-1">
@@ -37,8 +42,8 @@ const UserTableFiltred = ({ isLoading, users }) => {
                             </Button>
                         </div>
                     </div>
-                    <TabsContent value={filter}>
-                        <UserTable isLoading={isLoading} users={users} filtreBy={filter} />
+                    <TabsContent value={pageInfo.searchQuery}>
+                        <UserTable isLoading={isLoading} users={users} />
                     </TabsContent>
                 </Tabs>
             )}
@@ -46,4 +51,5 @@ const UserTableFiltred = ({ isLoading, users }) => {
     )
 }
 
-export default UserTableFiltred
+const UserTableFiltred = React.memo(MemoizedUserTableFiltred);
+export default UserTableFiltred;

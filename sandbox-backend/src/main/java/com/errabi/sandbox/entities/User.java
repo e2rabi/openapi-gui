@@ -9,6 +9,7 @@ import java.util.Set;
 
 @Entity
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @DynamicUpdate
@@ -26,10 +27,11 @@ public class User{
     private  String password;
     private  String phone ;
     private  String address ;
-    private  boolean accountNonExpired;
-    private  boolean accountNonLocked;
-    private  boolean credentialsNonExpired;
+    private  Boolean accountNonExpired;
+    private  Boolean accountNonLocked;
+    private  Boolean credentialsNonExpired;
     private String expiryDate ;
+    @Builder.Default
     @ManyToMany(cascade = {CascadeType.MERGE},fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_role",
