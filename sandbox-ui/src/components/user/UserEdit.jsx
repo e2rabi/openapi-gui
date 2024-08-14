@@ -48,7 +48,7 @@ import { useForm } from "react-hook-form"
 const UserEditDialog = ({ isOpen, setIsOpen, userId }) => {
     const [date, setDate] = useState(new Date())
     const [workspaces, setWorkspaces] = useState([]);
-    const [selectedWorkspace, setSelectedWorkspace] = useState(''); // State to hold the selected value
+    const [selectedWorkspace, setSelectedWorkspace] = useState('');
     const [user, setUser] = useState({});
     const hiddenSubmitButtonRef = useRef(null);
     const { toast } = useToast()

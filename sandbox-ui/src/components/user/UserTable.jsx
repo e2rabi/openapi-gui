@@ -29,7 +29,6 @@ const MemoizedUserTable = ({ isLoading, users }) => {
         setIsOpen(true);
         setUserId(userId);
     }
-
     return (
         <>
             {isLoading ? (
@@ -67,7 +66,7 @@ const MemoizedUserTable = ({ isLoading, users }) => {
                                     </Badge>
                                 </TableCell>
                                 <TableCell>
-                                    {user.accountNonExpired ? "Yes" : "No"}
+                                    {!user.accountNonExpired ? "Yes" : "No"}
                                 </TableCell>
                                 <TableCell>
                                     {user.expiryDate}

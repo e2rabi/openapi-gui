@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,7 +31,7 @@ public class User{
     private  Boolean accountNonExpired;
     private  Boolean accountNonLocked;
     private  Boolean credentialsNonExpired;
-    private String expiryDate ;
+    private  LocalDate expiryDate ;
     @Builder.Default
     @ManyToMany(cascade = {CascadeType.MERGE},fetch = FetchType.EAGER)
     @JoinTable(

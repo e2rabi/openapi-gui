@@ -127,12 +127,15 @@ public class UserService {
             );
         }
     }
-
+    private String getStatus(String status){
+        return "all".equalsIgnoreCase(status)||"expired".equalsIgnoreCase(status)?null: !"inactive".equalsIgnoreCase(status)?"active":"inactive";
+    }
     public Page<UserDto> findUsersByFilter(String status,String email,String username,Pageable pageable){
         User userProb =  User.builder()
                 .email(StringUtils.isEmpty(email)?null:email)
-                .enabled("all".equalsIgnoreCase(status)?null: !"inactive".equalsIgnoreCase(status))
+                .enabled("all".equalsIgnoreCase(status)||"expired".equalsIgnoreCase(status)?null: !"inactive".equalsIgnoreCase(status))
                 .username(StringUtils.isEmpty(username)?null:username)
+                .accountNonExpired("expired".equalsIgnoreCase(status)?false:null)
                 .build();
         ExampleMatcher matcher = ExampleMatcher.matching()
                 .withIgnoreNullValues()

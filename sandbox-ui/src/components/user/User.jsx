@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useDeferredValue } from "react";
 import Header from "../layout/Header";
 import Logo from "../layout/Logo";
 import Navbar from "../layout/Navbar";
@@ -23,7 +23,9 @@ const page = {
 }
 export default function User() {
   const [users, setUsers] = useState([]);
+  const deferredUsers = useDeferredValue(users);
   const [pageInfo, setPageInfo] = useState(page);
+  const deferredPageInfo = useDeferredValue(pageInfo);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast()
 
@@ -49,7 +51,6 @@ export default function User() {
     }
     fetchUsers(pageInfo.searchQuery, pageInfo.pageNumber, pageInfo.pageSize)
   }, [pageInfo.searchQuery, pageInfo.pageNumber, pageInfo.pageSize, toast]);
-
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
@@ -69,10 +70,10 @@ export default function User() {
               </div>
             </CardHeader>
             <CardContent>
-              <UserTableFiltred isLoading={isLoading} users={users} pageInfo={pageInfo} setPageInfo={setPageInfo} />
+              <UserTableFiltred isLoading={isLoading} users={deferredUsers} pageInfo={deferredPageInfo} setPageInfo={setPageInfo} />
             </CardContent>
             <CardFooter className="flex justify-between">
-              <TablePagination pageInfo={pageInfo} changePage={setPageInfo} />
+              <TablePagination pageInfo={deferredPageInfo} changePage={setPageInfo} />
             </CardFooter>
           </Card>
 
