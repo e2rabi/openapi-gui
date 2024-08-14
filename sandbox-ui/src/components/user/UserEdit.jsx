@@ -7,13 +7,14 @@ import {
     DialogFooter,
     DialogClose
 } from "@/components/ui/dialog"
+import { format } from 'date-fns';
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useToast } from "@/components/ui/use-toast"
 import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { internalError } from "../../services/ErrorHandler";
+import { internalError, UserStatusUpdatedSuccess } from "../../services/MessageConstant.js";
 import {
     Card,
     CardContent,
@@ -43,10 +44,10 @@ import {
     HoverCardTrigger,
 } from "@/components/ui/hover-card"
 import { getAllWorkspaces } from "../../services/workspaceService.js";
-import { getUserById } from "../../services/userService.js";
+import { getUserById, changeUserStatus } from "../../services/userService.js";
 import { useForm } from "react-hook-form"
-const UserEditDialog = ({ isOpen, setIsOpen, userId }) => {
-    const [date, setDate] = useState(new Date())
+const UserEditDialog = ({ isOpen, setIsOpen, userId, onRefreshCallback }) => {
+    const [date, setDate] = useState(null)
     const [workspaces, setWorkspaces] = useState([]);
     const [selectedWorkspace, setSelectedWorkspace] = useState('');
     const [user, setUser] = useState({});
@@ -60,7 +61,12 @@ const UserEditDialog = ({ isOpen, setIsOpen, userId }) => {
         formState: { errors }
     } = useForm()
 
-    const onSubmit = (data) => console.log(data);
+    const onSubmit = (data) => {
+        if (date) {
+            console.log(format(date, 'yyyy-MM-dd'));
+        }
+        console.log(data)
+    };
 
     const fetchWorkspaces = useCallback(async (page, pageSize) => {
         const controller = new AbortController();
@@ -77,7 +83,6 @@ const UserEditDialog = ({ isOpen, setIsOpen, userId }) => {
     const getUserDetailsById = useCallback(async (userId) => {
         const controller = new AbortController();
         reset();
-        setUser(() => { })
         try {
             const data = await getUserById(userId);
             setUser(() => data);
@@ -92,6 +97,23 @@ const UserEditDialog = ({ isOpen, setIsOpen, userId }) => {
         }
         return () => controller.abort();
     }, [setValue, reset, toast]);
+
+    const changeUserStatusById = async () => {
+        const controller = new AbortController();
+        try {
+            setUser((prev) => ({
+                ...prev, enabled: !prev.enabled
+            }));
+            await changeUserStatus(user.id, !user.enabled);
+            toast(UserStatusUpdatedSuccess);
+            onRefreshCallback();
+        } catch (error) {
+            toast(internalError);
+            console.error("Error fetching user details:", error);
+        }
+        return () => controller.abort();
+
+    };
 
     useEffect(() => {
         if (userId) {
@@ -111,6 +133,7 @@ const UserEditDialog = ({ isOpen, setIsOpen, userId }) => {
     const handleWorkspaceChange = (value) => {
         setSelectedWorkspace(value);
     };
+
     return (
         <Dialog open={isOpen}
             onOpenChange={() => setIsOpen(false)}
@@ -171,10 +194,10 @@ const UserEditDialog = ({ isOpen, setIsOpen, userId }) => {
                                                     Activate or deactivate this account
                                                 </p>
                                             </div>
-                                            <Switch checked={user ? user.enabled : false} />
+                                            <Switch checked={user ? user.enabled : false} onCheckedChange={() => changeUserStatusById()} />
                                         </div>
                                         <div className=" flex items-center space-x-4 rounded-md border p-4 top-5 relative">
-                                            <CalendarOff />
+                                            <CalendarOff onSelect={setDate} />
                                             <div className="flex-1 space-y-1">
                                                 <p className="text-sm font-medium leading-none">
                                                     Account expired

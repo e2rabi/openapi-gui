@@ -62,4 +62,26 @@ async function getUserById(userId) {
         throw error;
     }
 }
-export { getAllUser, getUserById, getUsersByQuery };
+async function changeUserStatus(userId, status) {
+    try {
+        const response = await fetch(`${rootUrl}users/${userId}?status=${status}`,
+            {
+                method: 'PATCH',
+                headers: {
+                    Authorization: "Basic " + btoa("admin:admin"),
+                },
+            });
+
+        if (!response.ok) {
+            throw new Error(
+                `Failed to fetch users : ${response.statusText}`
+            );
+        }
+        const data = await response;
+        return data;
+    } catch (error) {
+        console.error("Error change user status data from API:", error);
+        throw error;
+    }
+}
+export { getAllUser, getUserById, getUsersByQuery, changeUserStatus };

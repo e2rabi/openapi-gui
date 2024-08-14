@@ -235,6 +235,12 @@ public class UserService {
                 );
         }
     }
+    @Transactional
+    public void changeUserStatus(Long userId,Boolean status) {
+        User user = userMapper.toEntity(findUserById(userId));
+        user.setEnabled(status);
+        userRepository.save(user);
+    }
 
     @Transactional
     public UserDto updateUser(UserDto userDto) {

@@ -35,7 +35,6 @@ public class UserController {
     }
 
     @GetMapping("/users/{userId}")
-    @Cacheable(value = "sandbox", key = "#userId")
     public ResponseEntity<UserDto> getUserById(@PathVariable Long userId){
         return new ResponseEntity<>(userService.findUserById(userId), HttpStatus.OK);
     }
@@ -71,5 +70,11 @@ public class UserController {
     @DeleteMapping("/users/{userId}")
     public ResponseEntity<ErrorResponse> deleteUser(@PathVariable Long userId){
         return new ResponseEntity<>(userService.deleteUser(userId), HttpStatus.OK);
+    }
+
+    @PatchMapping("/users/{userId}")
+    public ResponseEntity<Void> changeUserStatus(@PathVariable Long userId, @RequestParam(defaultValue = "false") Boolean status){
+        userService.changeUserStatus(userId, status);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

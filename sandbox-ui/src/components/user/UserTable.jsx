@@ -20,7 +20,7 @@ import { Badge } from "../ui/badge"
 import { MoreHorizontal } from 'lucide-react';
 import UserEdit from './UserEdit';
 
-const MemoizedUserTable = ({ isLoading, users }) => {
+const MemoizedUserTable = ({ isLoading, users, onRefreshCallback }) => {
 
     const [isOpen, setIsOpen] = useState(false);
     const [userId, setUserId] = useState("");
@@ -97,7 +97,7 @@ const MemoizedUserTable = ({ isLoading, users }) => {
                     </TableBody>
                 </Table>
             )}
-            <UserEdit isOpen={isOpen} setIsOpen={setIsOpen} userId={userId} />
+            <UserEdit isOpen={isOpen} setIsOpen={setIsOpen} userId={userId} onRefreshCallback={onRefreshCallback} />
         </>
     )
 }

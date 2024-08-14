@@ -1,11 +1,12 @@
 
 import { Button } from "../ui/button"
 import React, { useCallback, useDeferredValue, useState, useEffect } from 'react';
-import { PlusCircle, File, Search, } from 'lucide-react';
+import { PlusCircle, File, Search, RefreshCcw } from 'lucide-react';
 import UserTable from './UserTable';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
-const MemoizedUserTableFiltred = ({ isLoading, users, pageInfo, setPageInfo }) => {
+
+const MemoizedUserTableFiltred = ({ isLoading, users, pageInfo, setPageInfo, refresh }) => {
     const [userList, setUserList] = useState([]);
     const deferredUsers = useDeferredValue(userList);
 
@@ -26,6 +27,9 @@ const MemoizedUserTableFiltred = ({ isLoading, users, pageInfo, setPageInfo }) =
         setUserList(() => users.filter(user => (user.username.includes(e.target.value) || user.email.includes(e.target.value))))
     };
 
+    const onRefresh = () => {
+        refresh();
+    };
     return (
         <>
             {isLoading ? (
@@ -49,6 +53,12 @@ const MemoizedUserTableFiltred = ({ isLoading, users, pageInfo, setPageInfo }) =
                             />
                         </div>
                         <div className="ml-auto flex items-center gap-2">
+                            <Button onClick={() => onRefresh()} size="sm" variant="outline" className="h-8 gap-1" >
+                                <RefreshCcw onClick={() => onRefresh()} className="h-3.5 w-3.5" />
+                                <span onClick={() => onRefresh()} className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                                    Refresh
+                                </span>
+                            </Button>
                             <Button size="sm" variant="outline" className="h-8 gap-1">
                                 <File className="h-3.5 w-3.5" />
                                 <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
@@ -64,7 +74,7 @@ const MemoizedUserTableFiltred = ({ isLoading, users, pageInfo, setPageInfo }) =
                         </div>
                     </div>
                     <TabsContent value={pageInfo.searchQuery}>
-                        <UserTable isLoading={isLoading} users={deferredUsers} />
+                        <UserTable isLoading={isLoading} users={deferredUsers} onRefreshCallback={() => onRefresh()} />
                     </TabsContent>
                 </Tabs>
             )}

@@ -13,7 +13,7 @@ import {
 import TablePagination from "../shared/TablePagination";
 import UserTableFiltred from "./UserTableFiltred";
 import { useToast } from "@/components/ui/use-toast"
-import { internalError } from "../../services/ErrorHandler";
+import { internalError } from "../../services/MessageConstant";
 const page = {
   "pageSize": 7,
   "pageNumber": 0,
@@ -27,12 +27,13 @@ export default function User() {
   const [pageInfo, setPageInfo] = useState(page);
   const deferredPageInfo = useDeferredValue(pageInfo);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const { toast } = useToast()
 
   useEffect(() => {
     const fetchUsers = async (searchQuery, page, pageSize) => {
       try {
-        setIsLoading(true);
+        setIsLoading(() => true);
         const data = await getUsersByQuery(searchQuery, "", "", page, pageSize)
         setUsers(() => data.content);
         setPageInfo({
@@ -50,7 +51,11 @@ export default function User() {
       }
     }
     fetchUsers(pageInfo.searchQuery, pageInfo.pageNumber, pageInfo.pageSize)
-  }, [pageInfo.searchQuery, pageInfo.pageNumber, pageInfo.pageSize, toast]);
+  }, [pageInfo.searchQuery, pageInfo.pageNumber, pageInfo.pageSize, toast, isRefreshing]);
+
+  const refreshUserTable = () => {
+    setIsRefreshing(() => !isRefreshing);
+  };
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
@@ -70,7 +75,7 @@ export default function User() {
               </div>
             </CardHeader>
             <CardContent>
-              <UserTableFiltred isLoading={isLoading} users={deferredUsers} pageInfo={deferredPageInfo} setPageInfo={setPageInfo} />
+              <UserTableFiltred isLoading={isLoading} users={deferredUsers} pageInfo={deferredPageInfo} setPageInfo={setPageInfo} refresh={refreshUserTable} />
             </CardContent>
             <CardFooter className="flex justify-between">
               <TablePagination pageInfo={deferredPageInfo} changePage={setPageInfo} />
