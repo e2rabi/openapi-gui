@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Header from "../layout/Header";
 import Logo from "../layout/Logo";
 import Navbar from "../layout/Navbar";
-import { getAllWorkspaces } from "../../services/workspaceService.js";
+import { getWorkspacesByQuery } from "../../services/workspaceService.js";
 
 import {
   Card,
@@ -12,37 +12,52 @@ import {
 } from "@/components/ui/card";
 
 import TablePagination from "../shared/TablePagination";
-import WorkspaceTable from "./WorkspaceTable";
 import WorkspaceTableFilter from "./WorkspaceTableFilter";
 
 const page = {
   pageSize: 7,
   pageNumber: 0,
+  totalPages: 0,
+  totalElements: 0,
+  searchQuery: "all",
 };
 
 export default function Workspace() {
   const [workspaces, setWorkspaces] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [pageInfo, setPageInfo] = useState(page);
-  const [totalPages, setTotalPages] = useState(0);
-  const [totalElements, setTotalElements] = useState(0);
-
-  const fetchWorkspaces = async (page, pageSize) => {
-    try {
-      const data = await getAllWorkspaces(page, pageSize);
-      setWorkspaces(() => data.content);
-      setTotalPages(() => data.page.totalPages);
-      setTotalElements(() => data.page.totalElements);
-    } catch (error) {
-      console.error("Error fetching workspaces:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetchWorkspaces(pageInfo.pageNumber, pageInfo.pageSize);
-  }, [pageInfo.pageNumber, pageInfo.pageSize]);
+    const fetchWorkspaces = async (searchQuery, page, pageSize) => {
+      try {
+        setIsLoading(true);
+        const data = await getWorkspacesByQuery(
+          searchQuery,
+          "",
+          page,
+          pageSize
+        );
+
+        setWorkspaces(() => data.content);
+        setPageInfo({
+          searchQuery: pageInfo.searchQuery,
+          pageSize: pageInfo.pageSize,
+          pageNumber: pageInfo.pageNumber,
+          totalPages: data.page.totalPages,
+          totalElements: data.page.totalElements,
+        });
+      } catch (error) {
+        console.error("Error fetching workspaces:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchWorkspaces(
+      pageInfo.searchQuery,
+      pageInfo.pageNumber,
+      pageInfo.pageSize
+    );
+  }, [pageInfo.searchQuery, pageInfo.pageNumber, pageInfo.pageSize]);
 
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
@@ -60,18 +75,23 @@ export default function Workspace() {
             className=" rounded-lg border border-dashed shadow-sm"
           >
             <CardHeader>
-              <WorkspaceTableFilter />
+              <div>
+                <h1 className="text-lg font-semibold md:text-2xl">Workspace</h1>
+                <p className="text-sm text-muted-foreground">
+                  Recent workspaces from your sandbox.
+                </p>
+              </div>
             </CardHeader>
             <CardContent>
-              <WorkspaceTable isLoading={isLoading} workspaces={workspaces} />
+              <WorkspaceTableFilter
+                isLoading={isLoading}
+                workspaces={workspaces}
+                pageInfo={pageInfo}
+                setPageInfo={setPageInfo}
+              />
             </CardContent>
             <CardFooter className="flex justify-between">
-              <TablePagination
-                pageInfo={pageInfo}
-                changePage={setPageInfo}
-                totalPages={totalPages}
-                totalElements={totalElements}
-              />
+              <TablePagination pageInfo={pageInfo} changePage={setPageInfo} />
             </CardFooter>
           </Card>
         </main>

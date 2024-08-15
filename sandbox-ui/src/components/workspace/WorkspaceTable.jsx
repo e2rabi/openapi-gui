@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -7,9 +8,23 @@ import {
   TableRow,
 } from "../ui/table";
 
-import { Badge } from "../ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
-const WorkspaceTable = ({ isLoading, workspaces }) => {
+import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
+import { MoreHorizontal } from "lucide-react";
+import WorkspaceEdit from "./WorkspaceEdit.jsx";
+
+const MemoizedWorkspaceTable = ({ isLoading, workspaces }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const editWorkspacesHandler = () => setIsOpen(true);
+
   return (
     <>
       {isLoading ? (
@@ -53,13 +68,35 @@ const WorkspaceTable = ({ isLoading, workspaces }) => {
                 </TableCell>
                 <TableCell>{workspace.visibility ? "Yes" : "No"}</TableCell>
                 <TableCell>{workspace.nbOfUsers}</TableCell>
+                <TableCell>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button aria-haspopup="true" size="icon" variant="ghost">
+                        <MoreHorizontal className="h-4 w-4" />
+                        <span className="sr-only">Toggle menu</span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <DropdownMenuItem
+                        onClick={() => editWorkspacesHandler()}
+                        className="cursor-pointer"
+                      >
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem>Delete</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       )}
+      <WorkspaceEdit isOpen={isOpen} setIsOpen={setIsOpen} />
     </>
   );
 };
 
+const WorkspaceTable = React.memo(MemoizedWorkspaceTable);
 export default WorkspaceTable;

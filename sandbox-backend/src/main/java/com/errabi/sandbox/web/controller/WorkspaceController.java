@@ -2,6 +2,7 @@ package com.errabi.sandbox.web.controller;
 
 import com.errabi.sandbox.exception.ErrorResponse;
 import com.errabi.sandbox.services.WorkspaceService;
+import com.errabi.sandbox.web.model.UserDto;
 import com.errabi.sandbox.web.model.WorkspaceDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,13 @@ public class WorkspaceController {
     @Cacheable(value = "sandbox", key = "#workspaceId")
     public ResponseEntity<WorkspaceDto> getWorkspaceById(@PathVariable  Long workspaceId){
         return new ResponseEntity<>(workspaceService.findWorkspaceById(workspaceId), HttpStatus.OK);
+    }
+
+    @GetMapping("/workspaces/query")
+    public ResponseEntity<Page<WorkspaceDto>> getWorkspacesByFilter(@RequestParam(required = false) String status,
+                                                          @RequestParam(required = false) String visibility,
+                                                          @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int pageSize){
+        return new ResponseEntity<>(workspaceService.findWorkspacesByFilter(status,visibility,PageRequest.of(page,pageSize)), HttpStatus.OK);
     }
 
     @GetMapping("/workspaces")
