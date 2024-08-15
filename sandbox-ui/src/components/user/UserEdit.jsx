@@ -14,7 +14,7 @@ import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { internalError, UserStatusUpdatedSuccess } from "../../services/MessageConstant.js";
+import { internalError, UserStatusUpdatedSuccess, UserUpdatedSuccess } from "../../services/MessageConstant.js";
 import {
     Card,
     CardContent,
@@ -44,7 +44,7 @@ import {
     HoverCardTrigger,
 } from "@/components/ui/hover-card"
 import { getAllWorkspaces } from "../../services/workspaceService.js";
-import { getUserById, changeUserStatus } from "../../services/userService.js";
+import { getUserById, changeUserStatus, updateUser } from "../../services/userService.js";
 import { useForm } from "react-hook-form"
 const UserEditDialog = ({ isOpen, setIsOpen, userId, onRefreshCallback }) => {
     const [date, setDate] = useState(null)
@@ -62,11 +62,24 @@ const UserEditDialog = ({ isOpen, setIsOpen, userId, onRefreshCallback }) => {
     } = useForm()
 
     const onSubmit = (data) => {
-        if (date) {
-            console.log(format(date, 'yyyy-MM-dd'));
-        }
-        console.log(data)
+        const updateUserData = async (data) => {
+            const controller = new AbortController();
+            try {
+                await updateUser(data);
+                toast(UserUpdatedSuccess);
+                onRefreshCallback();
+            } catch (error) {
+                toast(internalError);
+                console.error("Error updating user details:", error);
+            }
+            return () => controller.abort();
+        };
+        data.id = user.id;
+        data.enabled = user.enabled;
+        data.expiryDate = date ? format(date, 'yyyy-MM-dd') : user.expiryDate;
+        updateUserData(data);
     };
+
 
     const fetchWorkspaces = useCallback(async (page, pageSize) => {
         const controller = new AbortController();
@@ -91,6 +104,7 @@ const UserEditDialog = ({ isOpen, setIsOpen, userId, onRefreshCallback }) => {
             setValue('email', data.email);
             setValue('phone', data.phone);
             setValue('username', data.username);
+            setDate(() => data.expiryDate);
         } catch (error) {
             toast(internalError);
             console.error("Error fetching user details:", error);
@@ -203,7 +217,7 @@ const UserEditDialog = ({ isOpen, setIsOpen, userId, onRefreshCallback }) => {
                                                     Account expired
                                                 </p>
                                                 <p className="text-sm text-muted-foreground">
-                                                    expiry date :  {user && user.expiryDate ? user.expiryDate : "loading ..."}
+                                                    expiry date :  {date ? format(date, 'yyyy-MM-dd') : user.expiryDate}
                                                 </p>
                                             </div>
                                             <Popover>

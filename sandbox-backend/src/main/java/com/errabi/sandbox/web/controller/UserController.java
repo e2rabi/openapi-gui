@@ -63,7 +63,7 @@ public class UserController {
     }
 
     @PutMapping("/users")
-    public ResponseEntity<UserDto> updateUser(@RequestBody @Valid UserDto userDto) {
+    public ResponseEntity<UserDto> updateUser(@RequestBody  UserDto userDto) {
         return new ResponseEntity<>(userService.updateUser(userDto), HttpStatus.OK);
     }
 

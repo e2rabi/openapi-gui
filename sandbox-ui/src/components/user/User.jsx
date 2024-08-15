@@ -1,4 +1,4 @@
-import { useState, useEffect, useDeferredValue } from "react";
+import { useState, useEffect, useDeferredValue, useCallback } from "react";
 import Header from "../layout/Header";
 import Logo from "../layout/Logo";
 import Navbar from "../layout/Navbar";
@@ -53,9 +53,10 @@ export default function User() {
     fetchUsers(pageInfo.searchQuery, pageInfo.pageNumber, pageInfo.pageSize)
   }, [pageInfo.searchQuery, pageInfo.pageNumber, pageInfo.pageSize, toast, isRefreshing]);
 
-  const refreshUserTable = () => {
+  const refreshUserTable = useCallback(() => {
     setIsRefreshing(() => !isRefreshing);
-  };
+  }, [isRefreshing]);
+
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">

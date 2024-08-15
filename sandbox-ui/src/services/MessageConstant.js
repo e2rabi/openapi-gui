@@ -4,7 +4,12 @@ export const internalError = {
     description: "There was a problem with your request.",
 };
 export const UserStatusUpdatedSuccess = {
-    variant: "outline",
+    variant: "success",
+    title: "Success.",
+    description: "The user status has been updated.",
+};
+export const UserUpdatedSuccess = {
+    variant: "success",
     title: "Success.",
     description: "The user status has been updated.",
 };

@@ -84,4 +84,30 @@ async function changeUserStatus(userId, status) {
         throw error;
     }
 }
-export { getAllUser, getUserById, getUsersByQuery, changeUserStatus };
+async function updateUser(user) {
+    try {
+        const response = await fetch(`${rootUrl}users`,
+            {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: "Basic " + btoa("admin:admin"),
+                },
+                body: JSON.stringify({
+                    ...user
+                })
+            });
+
+        if (!response.ok) {
+            throw new Error(
+                `Failed to fetch users : ${response.statusText}`
+            );
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error updating user from API:", error);
+        throw error;
+    }
+}
+export { getAllUser, getUserById, getUsersByQuery, changeUserStatus, updateUser };
