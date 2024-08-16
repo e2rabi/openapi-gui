@@ -8,6 +8,9 @@ import com.errabi.sandbox.web.mapper.WorkspaceMapper;
 import com.errabi.sandbox.web.model.WorkspaceDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -59,6 +62,22 @@ public class WorkspaceService {
                     NOT_FOUND_ERROR_DESCRIPTION,
                     HttpStatus.NOT_FOUND);
         }
+    }
+
+    public Page<WorkspaceDto> findWorkspacesByFilter(String status, String visibility, Pageable pageable) {
+
+        Workspace workspaceProb = Workspace.builder()
+                .enabled("all".equalsIgnoreCase(status)?null: !"inactive".equalsIgnoreCase(status))
+                .visibility(StringUtils.isEmpty(visibility)?null:Boolean.valueOf(visibility))
+                .build();
+
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withIgnoreNullValues()
+                .withIgnorePaths("id", "version");
+
+        Example<Workspace> example = Example.of(workspaceProb, matcher);
+
+        return workspaceRepository.findAll(example, pageable).map(workspaceMapper::toDto);
     }
 
     public Page<WorkspaceDto> findAllWorkspaces(Pageable pageable) {
