@@ -46,6 +46,7 @@ const MemoizedUserTable = ({ isLoading, users, onRefreshCallback }) => {
                             <TableHead>Status</TableHead>
                             <TableHead>Account expired</TableHead>
                             <TableHead>Expiry date</TableHead>
+                            <TableHead>Workspace</TableHead>
                             <TableHead>
                                 <span className="sr-only">Actions</span>
                             </TableHead>
@@ -70,6 +71,9 @@ const MemoizedUserTable = ({ isLoading, users, onRefreshCallback }) => {
                                 </TableCell>
                                 <TableCell>
                                     {user.expiryDate}
+                                </TableCell>
+                                <TableCell>
+                                    {user.workspace ? user.workspace.name : "-"}
                                 </TableCell>
                                 <TableCell>
                                     <DropdownMenu>
