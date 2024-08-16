@@ -65,19 +65,25 @@ public class WorkspaceService {
     }
 
     public Page<WorkspaceDto> findWorkspacesByFilter(String status, String visibility, Pageable pageable) {
+        Boolean enabledStatus;
+        if (StringUtils.isEmpty(status)) { enabledStatus = null;
+        } else {enabledStatus = "all".equalsIgnoreCase(status) ? null : !"inactive".equalsIgnoreCase(status); }
 
         Workspace workspaceProb = Workspace.builder()
-                .enabled("all".equalsIgnoreCase(status)?null: !"inactive".equalsIgnoreCase(status))
+                .enabled(enabledStatus)
                 .visibility(StringUtils.isEmpty(visibility)?null:Boolean.valueOf(visibility))
                 .build();
-
         ExampleMatcher matcher = ExampleMatcher.matching()
                 .withIgnoreNullValues()
                 .withIgnorePaths("id", "version");
-
         Example<Workspace> example = Example.of(workspaceProb, matcher);
 
-        return workspaceRepository.findAll(example, pageable).map(workspaceMapper::toDto);
+        return workspaceRepository.findAll(example, pageable).map(workspace -> {
+            WorkspaceDto workspaceDto = workspaceMapper.toDto(workspace);
+            long numberOfUsers = userService.getNumberOfUsersInWorkspace(workspace.getId());
+            workspaceDto.setNbOfUsers(numberOfUsers);
+            return workspaceDto;
+        });
     }
 
     public Page<WorkspaceDto> findAllWorkspaces(Pageable pageable) {
