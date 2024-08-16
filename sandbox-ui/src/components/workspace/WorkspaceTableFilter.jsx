@@ -11,10 +11,11 @@ const MemoizedWorkspaceTableFiltred = ({
   setPageInfo,
 }) => {
   const selectQuery = useCallback(
-    (query) => {
+    (searchQuery, visibleQuery) => {
       setPageInfo({
         ...pageInfo,
-        searchQuery: query,
+        searchQuery: searchQuery,
+        visibleQuery: visibleQuery,
         pageSize: pageInfo.pageSize,
         pageNumber: 0,
       });
@@ -29,17 +30,29 @@ const MemoizedWorkspaceTableFiltred = ({
         <Tabs defaultValue={pageInfo.searchQuery}>
           <div className="flex items-center">
             <TabsList>
-              <TabsTrigger value="all" onClick={() => selectQuery("all")}>
+              <TabsTrigger value="all" onClick={() => selectQuery("all", "")}>
                 All
               </TabsTrigger>
-              <TabsTrigger value="active" onClick={() => selectQuery("active")}>
+              <TabsTrigger
+                value="active"
+                onClick={() => selectQuery("active", "")}
+              >
                 Active
               </TabsTrigger>
               <TabsTrigger
                 value="inactive"
-                onClick={() => selectQuery("inactive")}
+                onClick={() => selectQuery("inactive", "")}
               >
                 Inactive
+              </TabsTrigger>
+              <TabsTrigger value="true" onClick={() => selectQuery("", "true")}>
+                Visible
+              </TabsTrigger>
+              <TabsTrigger
+                value="false"
+                onClick={() => selectQuery("", "false")}
+              >
+                Not Visible
               </TabsTrigger>
             </TabsList>
             <div className="ml-auto flex items-center gap-2">

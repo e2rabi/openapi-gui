@@ -13,6 +13,8 @@ import {
 
 import TablePagination from "../shared/TablePagination";
 import WorkspaceTableFilter from "./WorkspaceTableFilter";
+import { useToast } from "@/components/ui/use-toast";
+import { internalError } from "../../services/MessageConstant";
 
 const page = {
   pageSize: 7,
@@ -20,20 +22,27 @@ const page = {
   totalPages: 0,
   totalElements: 0,
   searchQuery: "all",
+  visibleQuery: "true",
 };
 
 export default function Workspace() {
   const [workspaces, setWorkspaces] = useState([]);
   const [pageInfo, setPageInfo] = useState(page);
   const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
-    const fetchWorkspaces = async (searchQuery, page, pageSize) => {
+    const fetchWorkspaces = async (
+      searchQuery,
+      visibleQuery,
+      page,
+      pageSize
+    ) => {
       try {
         setIsLoading(true);
         const data = await getWorkspacesByQuery(
           searchQuery,
-          "",
+          visibleQuery,
           page,
           pageSize
         );
@@ -41,12 +50,14 @@ export default function Workspace() {
         setWorkspaces(() => data.content);
         setPageInfo({
           searchQuery: pageInfo.searchQuery,
+          visibleQuery: pageInfo.visibleQuery,
           pageSize: pageInfo.pageSize,
           pageNumber: pageInfo.pageNumber,
           totalPages: data.page.totalPages,
           totalElements: data.page.totalElements,
         });
       } catch (error) {
+        toast(internalError);
         console.error("Error fetching workspaces:", error);
       } finally {
         setIsLoading(false);
@@ -54,10 +65,17 @@ export default function Workspace() {
     };
     fetchWorkspaces(
       pageInfo.searchQuery,
+      pageInfo.visibleQuery,
       pageInfo.pageNumber,
       pageInfo.pageSize
     );
-  }, [pageInfo.searchQuery, pageInfo.pageNumber, pageInfo.pageSize]);
+  }, [
+    pageInfo.searchQuery,
+    pageInfo.visibleQuery,
+    pageInfo.pageNumber,
+    pageInfo.pageSize,
+    toast,
+  ]);
 
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
