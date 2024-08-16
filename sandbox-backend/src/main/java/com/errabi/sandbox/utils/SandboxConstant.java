@@ -24,4 +24,8 @@ public class SandboxConstant {
     public static final String TOKEN_GENERATION_ERROR_CODE = "991";
     public static final String TOKEN_GENERATION_ERROR_DESCRIPTION = "TOKEN GENERATION ERROR";
     public static final String MAIL_SENDING_ERROR_DESCRIPTION = "FAILED TO SEND THE EMAIL";
+
+    public static final String FILTER_QUERY_ALL = "all";
+    public static final String FILTER_QUERY_INACTIVE = "inactive";
+    public static final String FILTER_QUERY_EXPIRED = "expired";
 }

@@ -130,22 +130,25 @@ public class UserService {
     private String getStatus(String status){
         return "all".equalsIgnoreCase(status)||"expired".equalsIgnoreCase(status)?null: !"inactive".equalsIgnoreCase(status)?"active":"inactive";
     }
+    @Transactional
     public Page<UserDto> findUsersByFilter(String status,String email,String username,Pageable pageable){
+        log.info("find users by query ...");
         User userProb =  User.builder()
                 .email(StringUtils.isEmpty(email)?null:email)
-                .enabled("all".equalsIgnoreCase(status)||"expired".equalsIgnoreCase(status)?null: !"inactive".equalsIgnoreCase(status))
+                .enabled(FILTER_QUERY_ALL.equalsIgnoreCase(status)||FILTER_QUERY_EXPIRED.equalsIgnoreCase(status)?null: !FILTER_QUERY_INACTIVE.equalsIgnoreCase(status))
                 .username(StringUtils.isEmpty(username)?null:username)
                 .accountNonExpired("expired".equalsIgnoreCase(status)?false:null)
                 .build();
         ExampleMatcher matcher = ExampleMatcher.matching()
                 .withIgnoreNullValues()
-                .withIgnorePaths("id");
+                .withIgnorePaths("id","version");
         Example<User> example = Example.of(userProb, matcher);
 
         return userRepository.findAll(example,pageable)
                       .map(userMapper::toDto);
 
     }
+
     public UserDto findUserById(Long userId) {
         log.info("Finding User with id {}",userId);
         Optional<User> optionalUser =  userRepository.findById(userId);
@@ -160,7 +163,7 @@ public class UserService {
                     HttpStatus.NOT_FOUND);
         }
     }
-
+   @Transactional
     public Page<UserDto> findAllUsers(Pageable pageable) {
         try {
             log.info("Fetching all users...");
@@ -237,7 +240,11 @@ public class UserService {
     }
     @Transactional
     public void changeUserStatus(Long userId,Boolean status) {
-        User user = userMapper.toEntity(findUserById(userId));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new TechnicalException(
+                        NOT_FOUND_ERROR_CODE,
+                        NOT_FOUND_ERROR_DESCRIPTION,
+                        HttpStatus.NOT_FOUND));
         user.setEnabled(status);
         userRepository.save(user);
     }
@@ -245,14 +252,18 @@ public class UserService {
     @Transactional
     public UserDto updateUser(UserDto userDto) {
         try {
-            log.info("Updating user {} ..", userDto.getId());
-            User existingUser = userMapper.toEntity(findUserById(userDto.getId()));
+            log.info("Updating user with id {} ..", userDto.getId());
+            User existingUser = userRepository.findById(userDto.getId())
+                    .orElseThrow(() -> new TechnicalException(
+                            NOT_FOUND_ERROR_CODE,
+                            NOT_FOUND_ERROR_DESCRIPTION,
+                            HttpStatus.NOT_FOUND));
             userMapper.updateFromDto(userDto, existingUser);
             userRepository.save(existingUser);
             userDto.setResponseInfo(buildSuccessInfo());
             return userDto;
         } catch(Exception ex) {
-            log.error("Unexpected error occurred while updating user with ID {}", userDto.getId());
+            log.error("Unexpected error occurred while updating user with ID {}", userDto.getId(),ex);
             throw new TechnicalException(
                     UPDATE_ERROR_CODE,
                     UPDATE_ERROR_DESCRIPTION,

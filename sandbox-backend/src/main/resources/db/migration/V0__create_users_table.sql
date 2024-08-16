@@ -11,5 +11,10 @@ create table users (
     password varchar(255), phone varchar(255),
     username varchar(255),
     expiry_date varchar(20),
+    version integer not null,
+    created timestamp(6),
+    last_modified timestamp(6),
+    created_by varchar(255),
+    last_modified_by varchar(255),
     primary key (id)
 );
