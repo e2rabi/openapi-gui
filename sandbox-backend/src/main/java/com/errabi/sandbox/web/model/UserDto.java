@@ -38,5 +38,5 @@ public class UserDto extends AbstractMessageDto {
     private  boolean credentialsNonExpired;
     private String expiryDate ;
     private Set<RoleDto> roles;
-    private Long workspaceId;
+    private WorkspaceDto workspace;
 }

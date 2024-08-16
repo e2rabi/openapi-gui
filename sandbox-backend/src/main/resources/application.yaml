@@ -12,7 +12,7 @@ spring:
     username: sa
     password:
     hikari:
-      auto-commit: false # delaying connection acquisition turn of auto commit mode
+      auto-commit: false # delaying connection acquisition from the connection pool turn of auto commit mode
       connection-timeout: 30000
       idleTimeout: 600000
       max-lifetime: 1800000
@@ -25,7 +25,7 @@ spring:
         connection:
           autocommit: false
         format_sql: true
-        generate_statistics: true
+        #generate_statistics: true
   h2:
     console:
       enabled: true

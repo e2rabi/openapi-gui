@@ -8,7 +8,7 @@ import {
     DialogClose
 } from "@/components/ui/dialog"
 import { format } from 'date-fns';
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import { useToast } from "@/components/ui/use-toast"
 import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
@@ -49,7 +49,7 @@ import { useForm } from "react-hook-form"
 const UserEditDialog = ({ isOpen, setIsOpen, userId, onRefreshCallback }) => {
     const [date, setDate] = useState(null)
     const [workspaces, setWorkspaces] = useState([]);
-    const [selectedWorkspace, setSelectedWorkspace] = useState('');
+    const [selectedWorkspace, setSelectedWorkspace] = useState("");
     const [user, setUser] = useState({});
     const hiddenSubmitButtonRef = useRef(null);
     const { toast } = useToast()
@@ -65,6 +65,13 @@ const UserEditDialog = ({ isOpen, setIsOpen, userId, onRefreshCallback }) => {
         const updateUserData = async (data) => {
             const controller = new AbortController();
             try {
+                if (selectedWorkspace) {
+                    const el = workspaces.filter((workspace) => workspace.name == selectedWorkspace);
+                    if (el) {
+                        const [workspace] = el;
+                        data.workspace = { id: workspace.id };
+                    }
+                }
                 await updateUser(data);
                 toast(UserUpdatedSuccess);
                 onRefreshCallback();
@@ -105,6 +112,7 @@ const UserEditDialog = ({ isOpen, setIsOpen, userId, onRefreshCallback }) => {
             setValue('phone', data.phone);
             setValue('username', data.username);
             setDate(() => data.expiryDate);
+            setSelectedWorkspace(() => data.workspace ? data.workspace.name : "");
         } catch (error) {
             toast(internalError);
             console.error("Error fetching user details:", error);
@@ -139,15 +147,22 @@ const UserEditDialog = ({ isOpen, setIsOpen, userId, onRefreshCallback }) => {
         if (userId && workspaces.length === 0) {
             fetchWorkspaces(0, 1000);
         }
-    }, [userId]);
+    }, [userId, fetchWorkspaces, workspaces.length]);
 
     const handleSaveClick = () => {
         hiddenSubmitButtonRef.current.click();
     };
-    const handleWorkspaceChange = (value) => {
-        setSelectedWorkspace(value);
-    };
+    const handleWorkspaceChange = (workspaceName) => {
+        if (workspaceName) {
+            const el = workspaces.filter((workspace) => workspace.name == workspaceName);
+            if (el) {
+                const [workspace] = el;
+                setSelectedWorkspace(() => workspace ? workspace.name : "");
+                console.log("workspace  : ", workspace ? workspace.id : 0);
+            }
+        }
 
+    };
     return (
         <Dialog open={isOpen}
             onOpenChange={() => setIsOpen(false)}
@@ -249,17 +264,18 @@ const UserEditDialog = ({ isOpen, setIsOpen, userId, onRefreshCallback }) => {
                                             <div>
                                                 <Select value={selectedWorkspace} onValueChange={handleWorkspaceChange}>
                                                     <SelectTrigger className="w-[180px]">
-                                                        <SelectValue placeholder="Workspace" />
+                                                        <SelectValue>{selectedWorkspace}</SelectValue>
                                                     </SelectTrigger>
                                                     <SelectContent>
                                                         {
                                                             workspaces.map((workspace) => (
-                                                                <SelectItem key={workspace.id} value={workspace.name}>{workspace.name}</SelectItem>
+                                                                <SelectItem key={workspace.id} value={workspace.name}>
+                                                                    {workspace.name}
+                                                                </SelectItem>
                                                             ))
                                                         }
                                                     </SelectContent>
-                                                </Select>
-                                            </div>
+                                                </Select>                                            </div>
                                             <div>
                                                 <Select>
                                                     <SelectTrigger className="w-[180px]">

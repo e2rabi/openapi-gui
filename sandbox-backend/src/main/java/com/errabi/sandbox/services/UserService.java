@@ -2,16 +2,16 @@ package com.errabi.sandbox.services;
 
 import com.errabi.sandbox.entities.Role;
 import com.errabi.sandbox.entities.User;
+import com.errabi.sandbox.entities.Workspace;
 import com.errabi.sandbox.exception.ErrorResponse;
 import com.errabi.sandbox.exception.TechnicalException;
 import com.errabi.sandbox.repositories.UserRepository;
+import com.errabi.sandbox.repositories.WorkspaceRepository;
 import com.errabi.sandbox.utils.TokenInfo;
 import com.errabi.sandbox.utils.TokenResponse;
 import com.errabi.sandbox.web.mapper.RoleMapper;
 import com.errabi.sandbox.web.mapper.UserMapper;
-import com.errabi.sandbox.web.model.AuthDto;
-import com.errabi.sandbox.web.model.RoleDto;
-import com.errabi.sandbox.web.model.UserDto;
+import com.errabi.sandbox.web.model.*;
 import com.nimbusds.jose.JOSEException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +25,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +39,7 @@ import static com.errabi.sandbox.utils.SandboxUtils.buildSuccessInfo;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final WorkspaceRepository workspaceRepository;
     private final UserMapper userMapper;
     private final RoleService roleService;
     private final RoleMapper roleMapper;
@@ -250,20 +252,55 @@ public class UserService {
     }
 
     @Transactional
-    public UserDto updateUser(UserDto userDto) {
-        try {
-            log.info("Updating user with id {} ..", userDto.getId());
-            User existingUser = userRepository.findById(userDto.getId())
+    public void assignExistingWorkspaceToUser(User user, UpdateUserDto updateRequest) {
+        Long workspaceId = Optional.ofNullable(updateRequest.getWorkspace())
+                .map(WorkspaceDto::getId)
+                .orElse(null);
+
+        if (workspaceId != null) {
+            Workspace newWorkspace = workspaceRepository.findById(workspaceId)
                     .orElseThrow(() -> new TechnicalException(
                             NOT_FOUND_ERROR_CODE,
                             NOT_FOUND_ERROR_DESCRIPTION,
                             HttpStatus.NOT_FOUND));
-            userMapper.updateFromDto(userDto, existingUser);
-            userRepository.save(existingUser);
-            userDto.setResponseInfo(buildSuccessInfo());
-            return userDto;
+
+            if (user.getWorkspace() != null) {
+                Workspace currentWorkspace = workspaceRepository.findById(user.getWorkspace().getId())
+                        .orElseThrow(() -> new TechnicalException(
+                                NOT_FOUND_ERROR_CODE,
+                                NOT_FOUND_ERROR_DESCRIPTION,
+                                HttpStatus.NOT_FOUND));
+
+                currentWorkspace.getUsers().remove(user);
+                workspaceRepository.save(currentWorkspace);
+            }
+
+            newWorkspace.getUsers().add(user);
+            user.setWorkspace(newWorkspace);
+            workspaceRepository.save(newWorkspace);
+            userRepository.save(user);
+        }
+    }
+    @Transactional
+    public UpdateUserDto updateUser(UpdateUserDto updateRequest) {
+        try {
+            log.info("Updating user with id {} ..", updateRequest.getId());
+            User user = userRepository.findById(updateRequest.getId()).orElseThrow(() ->  new TechnicalException(
+                    NOT_FOUND_ERROR_CODE,
+                    NOT_FOUND_ERROR_DESCRIPTION,
+                    HttpStatus.NOT_FOUND));
+           // update user workspace
+            assignExistingWorkspaceToUser(user,updateRequest);
+            // update user data
+            user.setFirstName(updateRequest.getFirstName());
+            user.setLastName(updateRequest.getLastName());
+            user.setPhone(updateRequest.getPhone());
+            user.setExpiryDate(LocalDate.parse(updateRequest.getExpiryDate()));
+
+            updateRequest.setResponseInfo(buildSuccessInfo());
+            return updateRequest;
         } catch(Exception ex) {
-            log.error("Unexpected error occurred while updating user with ID {}", userDto.getId(),ex);
+            log.error("Unexpected error occurred while updating user with ID {}", updateRequest.getId(),ex);
             throw new TechnicalException(
                     UPDATE_ERROR_CODE,
                     UPDATE_ERROR_DESCRIPTION,

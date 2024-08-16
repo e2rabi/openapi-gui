@@ -10,7 +10,7 @@ import org.mapstruct.*;
 
 import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring",unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(uses = {WorkspaceMapper.class}, componentModel = "spring",unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UserMapper {
 
     @Mapping(target = "roles", ignore = true)

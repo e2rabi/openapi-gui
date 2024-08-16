@@ -5,6 +5,7 @@ import com.errabi.sandbox.services.UserService;
 import com.errabi.sandbox.utils.TokenResponse;
 import com.errabi.sandbox.web.model.AuthDto;
 import com.errabi.sandbox.web.model.RoleDto;
+import com.errabi.sandbox.web.model.UpdateUserDto;
 import com.errabi.sandbox.web.model.UserDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -63,7 +64,7 @@ public class UserController {
     }
 
     @PutMapping("/users")
-    public ResponseEntity<UserDto> updateUser(@RequestBody  UserDto userDto) {
+    public ResponseEntity<UpdateUserDto> updateUser(@RequestBody @Valid UpdateUserDto userDto) {
         return new ResponseEntity<>(userService.updateUser(userDto), HttpStatus.OK);
     }
 

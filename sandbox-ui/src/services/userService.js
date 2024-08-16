@@ -100,7 +100,7 @@ async function updateUser(user) {
 
         if (!response.ok) {
             throw new Error(
-                `Failed to fetch users : ${response.statusText}`
+                `Failed to update user: ${response.statusText}`
             );
         }
         const data = await response.json();
