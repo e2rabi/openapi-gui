@@ -16,7 +16,7 @@ import java.util.Set;
 @DynamicUpdate
 @EqualsAndHashCode(exclude = "roles")
 @Table(name = "users")
-public class User{
+public class User extends SecurityBaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -32,6 +32,7 @@ public class User{
     private  Boolean accountNonLocked;
     private  Boolean credentialsNonExpired;
     private  LocalDate expiryDate ;
+
     @Builder.Default
     @ManyToMany(cascade = {CascadeType.MERGE},fetch = FetchType.EAGER)
     @JoinTable(

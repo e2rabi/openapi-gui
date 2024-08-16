@@ -11,5 +11,5 @@ export const UserStatusUpdatedSuccess = {
 export const UserUpdatedSuccess = {
     variant: "success",
     title: "Success.",
-    description: "The user status has been updated.",
+    description: "The user has been updated.",
 };
