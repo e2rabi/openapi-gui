@@ -22,7 +22,7 @@ const page = {
   totalPages: 0,
   totalElements: 0,
   searchQuery: "all",
-  visibleQuery: "true",
+  visibleQuery: "",
 };
 
 export default function Workspace() {
