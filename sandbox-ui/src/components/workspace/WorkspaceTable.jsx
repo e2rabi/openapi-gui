@@ -23,7 +23,11 @@ import WorkspaceEdit from "./WorkspaceEdit.jsx";
 
 const MemoizedWorkspaceTable = ({ isLoading, workspaces }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const editWorkspacesHandler = () => setIsOpen(true);
+  const [workspaceId, setWorkspaceId] = useState();
+  const editWorkspacesHandler = (id) => {
+    setIsOpen(true);
+    setWorkspaceId(id);
+  };
 
   return (
     <>
@@ -78,13 +82,13 @@ const MemoizedWorkspaceTable = ({ isLoading, workspaces }) => {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <DropdownMenuItem>Edit</DropdownMenuItem>
                       <DropdownMenuItem
-                        onClick={() => editWorkspacesHandler()}
+                        onClick={() => editWorkspacesHandler(workspace.id)}
                         className="cursor-pointer"
                       >
-                        Edit
+                        Delete
                       </DropdownMenuItem>
-                      <DropdownMenuItem>Delete</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>
@@ -93,7 +97,11 @@ const MemoizedWorkspaceTable = ({ isLoading, workspaces }) => {
           </TableBody>
         </Table>
       )}
-      <WorkspaceEdit isOpen={isOpen} setIsOpen={setIsOpen} />
+      <WorkspaceEdit
+        workspaceId={workspaceId}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+      />
     </>
   );
 };

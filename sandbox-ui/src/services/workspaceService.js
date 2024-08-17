@@ -43,4 +43,29 @@ async function getWorkspacesByQuery(status, visibility, page, pageSize) {
   }
 }
 
-export { getAllWorkspaces, getWorkspacesByQuery };
+async function deleteWorkspaces(workspaceId) {
+  try {
+    const response = await fetch(`${rootUrl}workspace/${workspaceId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: "Basic " + btoa("admin:admin"),
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to delete workspaces: ${response.statusText}`);
+    }
+
+    if (response.status !== 204) {
+      const data = await response.json();
+      return data;
+    }
+
+    return null; // Return null if the response is 204 No Content
+  } catch (error) {
+    console.error("Error deleting data from Database:", error);
+    throw error;
+  }
+}
+
+export { getAllWorkspaces, getWorkspacesByQuery, deleteWorkspaces };
