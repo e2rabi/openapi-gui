@@ -18,15 +18,21 @@ import {
 import { Button } from "../ui/button"
 import { Badge } from "../ui/badge"
 import { MoreHorizontal } from 'lucide-react';
-import UserEdit from './UserEdit';
+import UserEditDialog from './UserEditDialog';
+import UserDeleteDialog from './UserDeleteDialog';
 
 const MemoizedUserTable = ({ isLoading, users, onRefreshCallback }) => {
 
-    const [isOpen, setIsOpen] = useState(false);
+    const [isEditUserDialogOpen, setIsEditUserDialogOpen] = useState(false);
+    const [isDeleteUserDialogOpen, setIsDeleteUserDialogOpen] = useState(false);
     const [userId, setUserId] = useState("");
 
     const editUserHandler = (userId) => {
-        setIsOpen(true);
+        setIsEditUserDialogOpen(true);
+        setUserId(userId);
+    }
+    const deleteUserHandler = (userId) => {
+        setIsDeleteUserDialogOpen(true);
         setUserId(userId);
     }
     return (
@@ -92,7 +98,7 @@ const MemoizedUserTable = ({ isLoading, users, onRefreshCallback }) => {
                                             <DropdownMenuItem onClick={() => editUserHandler(user.id)} className="cursor-pointer">
                                                 Edit
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem>Delete</DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => deleteUserHandler(user.id)}>Delete</DropdownMenuItem>
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </TableCell>
@@ -101,7 +107,8 @@ const MemoizedUserTable = ({ isLoading, users, onRefreshCallback }) => {
                     </TableBody>
                 </Table>
             )}
-            <UserEdit isOpen={isOpen} setIsOpen={setIsOpen} userId={userId} onRefreshCallback={onRefreshCallback} />
+            <UserEditDialog isEditUserDialogOpen={isEditUserDialogOpen} setIsEditUserDialogOpen={setIsEditUserDialogOpen} userId={userId} onRefreshCallback={onRefreshCallback} />
+            <UserDeleteDialog isDeleteUserDialogOpen={isDeleteUserDialogOpen} setIsDeleteUserDialogOpen={setIsDeleteUserDialogOpen} userId={userId} onRefreshCallback={onRefreshCallback} />
         </>
     )
 }

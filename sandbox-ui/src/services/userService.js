@@ -110,4 +110,26 @@ async function updateUser(user) {
         throw error;
     }
 }
-export { getAllUser, getUserById, getUsersByQuery, changeUserStatus, updateUser };
+async function deleteUserById(userId) {
+    try {
+        const response = await fetch(`${rootUrl}users/${userId}`,
+            {
+                method: 'DELETE',
+                headers: {
+                    Authorization: "Basic " + btoa("admin:admin"),
+                },
+            });
+
+        if (!response.ok) {
+            throw new Error(
+                `Failed to fetch users : ${response.statusText}`
+            );
+        }
+        const data = await response;
+        return data;
+    } catch (error) {
+        console.error("Error delete user from API:", error);
+        throw error;
+    }
+}
+export { getAllUser, getUserById, getUsersByQuery, changeUserStatus, updateUser, deleteUserById };

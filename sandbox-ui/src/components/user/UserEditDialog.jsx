@@ -8,7 +8,7 @@ import {
     DialogClose
 } from "@/components/ui/dialog"
 import { format } from 'date-fns';
-import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useToast } from "@/components/ui/use-toast"
 import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
@@ -46,7 +46,7 @@ import {
 import { getAllWorkspaces } from "../../services/workspaceService.js";
 import { getUserById, changeUserStatus, updateUser } from "../../services/userService.js";
 import { useForm } from "react-hook-form"
-const UserEditDialog = ({ isOpen, setIsOpen, userId, onRefreshCallback }) => {
+const UserEditDialog = ({ isEditUserDialogOpen, setIsEditUserDialogOpen, userId, onRefreshCallback }) => {
     const [date, setDate] = useState(null)
     const [workspaces, setWorkspaces] = useState([]);
     const [selectedWorkspace, setSelectedWorkspace] = useState("");
@@ -72,6 +72,9 @@ const UserEditDialog = ({ isOpen, setIsOpen, userId, onRefreshCallback }) => {
                         data.workspace = { id: workspace.id };
                     }
                 }
+                data.id = user.id;
+                data.enabled = user.enabled;
+                data.expiryDate = date ? format(date, 'yyyy-MM-dd') : user.expiryDate;
                 await updateUser(data);
                 toast(UserUpdatedSuccess);
                 onRefreshCallback();
@@ -81,9 +84,6 @@ const UserEditDialog = ({ isOpen, setIsOpen, userId, onRefreshCallback }) => {
             }
             return () => controller.abort();
         };
-        data.id = user.id;
-        data.enabled = user.enabled;
-        data.expiryDate = date ? format(date, 'yyyy-MM-dd') : user.expiryDate;
         updateUserData(data);
     };
 
@@ -164,8 +164,8 @@ const UserEditDialog = ({ isOpen, setIsOpen, userId, onRefreshCallback }) => {
 
     };
     return (
-        <Dialog open={isOpen}
-            onOpenChange={() => setIsOpen(false)}
+        <Dialog open={isEditUserDialogOpen}
+            onOpenChange={() => setIsEditUserDialogOpen(false)}
             closeOnEsc={true}
             aria-label="edit user"
             closeOnOverlayClick={true}
