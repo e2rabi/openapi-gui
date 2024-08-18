@@ -129,9 +129,6 @@ public class UserService {
             );
         }
     }
-    private String getStatus(String status){
-        return "all".equalsIgnoreCase(status)||"expired".equalsIgnoreCase(status)?null: !"inactive".equalsIgnoreCase(status)?"active":"inactive";
-    }
     @Transactional
     public Page<UserDto> findUsersByFilter(String status,String email,String username,Pageable pageable){
         log.info("find users by query ...");
@@ -151,40 +148,37 @@ public class UserService {
 
     }
 
+    @Transactional(readOnly = true)
     public UserDto findUserById(Long userId) {
-        log.info("Finding User with id {}",userId);
-        Optional<User> optionalUser =  userRepository.findById(userId);
-        if(optionalUser.isPresent()){
-            UserDto userDto = userMapper.toDto(optionalUser.get());
-            userDto.setResponseInfo(buildSuccessInfo());
-            return userDto;
-        }else{
-            throw new TechnicalException(
-                    NOT_FOUND_ERROR_CODE,
-                    NOT_FOUND_ERROR_DESCRIPTION,
-                    HttpStatus.NOT_FOUND);
-        }
+        log.info("Finding User with id {}", userId);
+        return userRepository.findById(userId)
+                .map(user -> {
+                    UserDto userDto = userMapper.toDto(user);
+                    userDto.setResponseInfo(buildSuccessInfo());
+                    return userDto;
+                })
+                .orElseThrow(() -> new TechnicalException(
+                        NOT_FOUND_ERROR_CODE,
+                        NOT_FOUND_ERROR_DESCRIPTION,
+                        HttpStatus.NOT_FOUND));
     }
-   @Transactional
+   @Transactional(readOnly = true)
     public Page<UserDto> findAllUsers(Pageable pageable) {
-        try {
-            log.info("Fetching all users...");
-            Page<User> users = userRepository.findAll(pageable);
-            if(!users.isEmpty()){
-                return users.map(userMapper::toDto);
-
-            }
-             return Page.empty();
-        } catch(Exception ex) {
-            log.error("Unexpected error occurred while fetching all users", ex);
-            throw new TechnicalException(
-                    SYSTEM_ERROR,
-                    SYSTEM_ERROR_DESCRIPTION,
-                    HttpStatus.INTERNAL_SERVER_ERROR
-            );
-        }
+       log.info("Fetching all users...");
+       try {
+           Page<User> users = userRepository.findAll(pageable);
+           return users.isEmpty() ? Page.empty() : users.map(userMapper::toDto);
+       } catch (Exception ex) {
+           log.error("Unexpected error occurred while fetching all users", ex);
+           throw new TechnicalException(
+                   SYSTEM_ERROR,
+                   SYSTEM_ERROR_DESCRIPTION,
+                   HttpStatus.INTERNAL_SERVER_ERROR
+           );
+       }
     }
 
+    @Transactional(readOnly = true)
     public List<UserDto> getUsersInWorkspace(Long workspaceId) {
         try {
             log.info("Finding Users with workspace id {}",workspaceId);
@@ -207,6 +201,7 @@ public class UserService {
         }
     }
 
+    @Transactional(readOnly = true)
     public long getNumberOfUsersInWorkspace(Long workspaceId) {
         try {
             log.info("Counting users numbers with workspace id {}",workspaceId);
@@ -248,7 +243,6 @@ public class UserService {
                         NOT_FOUND_ERROR_DESCRIPTION,
                         HttpStatus.NOT_FOUND));
         user.setEnabled(status);
-        userRepository.save(user);
     }
 
     @Transactional
@@ -317,7 +311,7 @@ public class UserService {
             userRepository.deleteById(findUserById(userId).getId());
             errorResponse.setResponseInfo(buildSuccessInfo());
         } catch (Exception ex) {
-            log.error("Unexpected error occurred while deleting user with ID {}", userId);
+            log.error("Unexpected error occurred while deleting user with ID {}", userId,ex);
             throw new TechnicalException(
                     DELETE_ERROR_CODE,
                     DELETE_ERROR_DESCRIPTION,
