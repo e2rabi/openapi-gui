@@ -3,10 +3,7 @@ package com.errabi.sandbox.web.controller;
 import com.errabi.sandbox.exception.ErrorResponse;
 import com.errabi.sandbox.services.UserService;
 import com.errabi.sandbox.utils.TokenResponse;
-import com.errabi.sandbox.web.model.AuthDto;
-import com.errabi.sandbox.web.model.RoleDto;
-import com.errabi.sandbox.web.model.UpdateUserDto;
-import com.errabi.sandbox.web.model.UserDto;
+import com.errabi.sandbox.web.model.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
@@ -31,8 +28,8 @@ public class UserController {
     }
 
     @PostMapping("/users")
-    public ResponseEntity<UserDto> createUser(@RequestBody @Valid UserDto userDto){
-        return new ResponseEntity<>(userService.createUser(userDto), HttpStatus.CREATED);
+    public ResponseEntity<CreateUserDto> createUser(@RequestBody @Valid CreateUserDto createUserDto){
+        return new ResponseEntity<>(userService.createUser(createUserDto), HttpStatus.CREATED);
     }
 
     @GetMapping("/users/{userId}")

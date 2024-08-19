@@ -16,5 +16,6 @@ create table users (
     last_modified timestamp(6),
     created_by varchar(255),
     last_modified_by varchar(255),
+    first_login_change_password boolean null,
     primary key (id)
 );

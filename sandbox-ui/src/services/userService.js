@@ -132,4 +132,36 @@ async function deleteUserById(userId) {
         throw error;
     }
 }
-export { getAllUser, getUserById, getUsersByQuery, changeUserStatus, updateUser, deleteUserById };
+async function saveUser(user) {
+    try {
+        const response = await fetch(`${rootUrl}users`,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: "Basic " + btoa("admin:admin"),
+                },
+                body: JSON.stringify({
+                    username: user.username.trim(),
+                    email: user.email.trim(),
+                    phone: user.phone.trim(),
+                    firstName: user.firstName.trim(),
+                    lastName: user.lastName.trim(),
+                    enabled: user.enabled,
+                    expiryDate: user.expiryDate,
+                    firstLoginChangePassword: user.firstLoginChangePassword,
+                })
+            });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw error;
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error saving user from API:", error);
+        throw error;
+    }
+}
+export { getAllUser, getUserById, getUsersByQuery, changeUserStatus, updateUser, deleteUserById, saveUser };

@@ -32,6 +32,7 @@ public class User extends SecurityBaseEntity{
     private  Boolean accountNonLocked;
     private  Boolean credentialsNonExpired;
     private  LocalDate expiryDate ;
+    private  Boolean firstLoginChangePassword;
 
     @Builder.Default
     @ManyToMany(cascade = {CascadeType.MERGE},fetch = FetchType.EAGER)

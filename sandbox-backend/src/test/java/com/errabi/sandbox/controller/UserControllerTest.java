@@ -2,6 +2,7 @@ package com.errabi.sandbox.controller;
 
 import com.errabi.sandbox.services.MailService;
 import com.errabi.sandbox.web.model.AuthDto;
+import com.errabi.sandbox.web.model.CreateUserDto;
 import com.errabi.sandbox.web.model.UserDto;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -28,7 +29,7 @@ class UserControllerTest extends BaseControllerIT{
     @Order(1)
     void CreateUserOkTest() throws Exception {
         mockMvc.perform(post("/sandbox-api/v1/users")
-                        .content(asJsonString(UserDto.builder()
+                        .content(asJsonString(CreateUserDto.builder()
                                 .username("e2rabi")
                                 .firstName("Amine")
                                 .lastName("errabi")
@@ -36,9 +37,10 @@ class UserControllerTest extends BaseControllerIT{
                                 .email("amine@errabi.com")
                                 .password("123456")
                                 .phone("06131")
-                                .address("casa")
+                                .firstLoginChangePassword(false)
                                 .accountNonExpired(true)
                                 .accountNonLocked(true)
+                                .credentialsNonExpired(true)
                                 .build()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))

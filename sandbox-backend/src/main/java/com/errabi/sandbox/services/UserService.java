@@ -26,10 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static com.errabi.sandbox.utils.SandboxConstant.*;
 import static com.errabi.sandbox.utils.SandboxUtils.buildSuccessInfo;
@@ -93,8 +90,7 @@ public class UserService {
         }
     }
 
-    @Transactional
-    public UserDto createUser(UserDto userDto){
+    private void validateUser(CreateUserDto userDto) {
         if (userRepository.existsByUsername(userDto.getUsername())) {
             log.error("Failed to save user. Username {} already exists.", userDto.getUsername());
             throw new TechnicalException(
@@ -102,22 +98,18 @@ public class UserService {
                     USER_ALREADY_EXISTS_ERROR_DESCRIPTION,
                     HttpStatus.CONFLICT);
         }
+    }
+    @Transactional
+    public CreateUserDto createUser(CreateUserDto userDto){
+        log.info("Creating User {} ..", userDto.getUsername());
+        validateUser(userDto);
         try {
-            log.info("Creating User {} ..", userDto.getUsername());
-            userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
+            String temporaryPassword = TemporaryPasswordGenerator.generatePassword();
+            userDto.setPassword(StringUtils.isEmpty(userDto.getPassword())?passwordEncoder.encode(temporaryPassword): passwordEncoder.encode(userDto.getPassword()));
             User user = userRepository.save(userMapper.toEntity(userDto));
-            Map<String, String> templateParams = Map.of(
-                    "firstName", userDto.getFirstName(),
-                    "lastName", userDto.getLastName()
-            );
-            mailService.sendEmail(
-                    userDto.getEmail(),
-                    "Welcome to our platform!",
-                    "welcomeEmail",
-                    templateParams
-            );
-            userDto = userMapper.toDto(user);
+            userDto = userMapper.toCreateUserDto(user);
             userDto.setPassword(StringUtils.EMPTY);
+            userDto.setTemporaryPassword(temporaryPassword);
             userDto.setResponseInfo(buildSuccessInfo());
             return userDto;
         } catch(Exception ex) {

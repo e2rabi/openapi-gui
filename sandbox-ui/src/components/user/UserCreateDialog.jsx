@@ -8,13 +8,13 @@ import {
     DialogClose
 } from "@/components/ui/dialog"
 import { format } from 'date-fns';
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useToast } from "@/components/ui/use-toast"
 import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { internalError, UserStatusUpdatedSuccess, UserUpdatedSuccess } from "../../services/MessageConstant.js";
+import { internalError } from "../../services/MessageConstant.js";
 import {
     Card,
     CardContent,
@@ -23,7 +23,7 @@ import {
     CardFooter
 } from "@/components/ui/card"
 import { Switch } from "@/components/ui/switch"
-import { LockKeyhole, CalendarOff, UserRound } from "lucide-react"
+import { LockKeyhole, UserRound } from "lucide-react"
 import {
     Popover,
     PopoverContent,
@@ -43,98 +43,84 @@ import {
     HoverCardContent,
     HoverCardTrigger,
 } from "@/components/ui/hover-card"
-import { getUserById, changeUserStatus, updateUser } from "../../services/userService.js";
 import { useForm } from "react-hook-form"
 import useWorkspace from "../../hooks/UseWorkspace.js";
+import { saveUser } from "../../services/userService.js";
+import { UserCreatedSuccess, ValidtionError } from "../../services/MessageConstant.js";
+import TemporaryPasswordDialog from "./TemporaryPasswordDialog.jsx";
 
-const UserEditDialog = ({ isEditUserDialogOpen, setIsEditUserDialogOpen, userId, onRefreshCallback }) => {
-    const [date, setDate] = useState(null)
+const MemoizedUserCreateDialog = ({ isCreateUserDialogOpen, setIsCreateUserDialogOpen, onRefreshCallback }) => {
+    const [date, setDate] = useState(new Date());
     const [selectedWorkspace, setSelectedWorkspace] = useState("");
-    const [user, setUser] = useState({});
+    const [isTemporaryPasswordDialogOpen, setIsTemporaryPasswordDialogOpen] = useState(false);
+    const [userStatus, setUserStatus] = useState(false);
+    const [firstLoginChangePassword, setFirstLoginChangePassword] = useState(false);
+    const [temporaryPassword, setTemporaryPassword] = useState("");
     const hiddenSubmitButtonRef = useRef(null);
     const { toast } = useToast()
     const { workspaces } = useWorkspace();
     const {
         register,
         handleSubmit,
-        setValue,
         reset,
         formState: { errors }
-    } = useForm()
+    } = useForm();
 
-    const onSubmit = (data) => {
-        const updateUserData = async (data) => {
+    useEffect(() => {
+        reset();
+        setDate(() => format(new Date(), 'yyyy-MM-dd'));
+        setUserStatus(() => false);
+        setFirstLoginChangePassword(() => false);
+        setSelectedWorkspace(() => "");
+    }, [isCreateUserDialogOpen, reset]);
+
+    const onSubmit = (newUser) => {
+        const createUser = async (newUser) => {
             const controller = new AbortController();
             try {
                 if (selectedWorkspace) {
                     const el = workspaces.filter((workspace) => workspace.name == selectedWorkspace);
                     if (el) {
                         const [workspace] = el;
-                        data.workspace = { id: workspace.id };
+                        newUser.workspace = { id: workspace.id }
                     }
                 }
-                data.id = user.id;
-                data.enabled = user.enabled;
-                data.expiryDate = date ? format(date, 'yyyy-MM-dd') : user.expiryDate;
-                await updateUser(data);
-                toast(UserUpdatedSuccess);
-                onRefreshCallback();
+                newUser.enabled = userStatus;
+                newUser.firstLoginChangePassword = firstLoginChangePassword;
+                newUser.expiryDate = date ? format(date, 'yyyy-MM-dd') : new Date()
+                const response = await saveUser(newUser);
+                handleSuccess(response)
             } catch (error) {
-                toast(internalError);
-                console.error("Error updating user details:", error);
+                handleError(error);
             }
             return () => controller.abort();
         };
-        updateUserData(data);
+        createUser(newUser);
     };
+    const handleSuccess = (response) => {
+        setTemporaryPassword(() => response.temporaryPassword);
+        toast(UserCreatedSuccess);
+        setIsTemporaryPasswordDialogOpen(() => true)
+    }
+    const temporaryPasswordCopyCallback = useCallback(() => {
+        onRefreshCallback();
+        setIsTemporaryPasswordDialogOpen(() => false);
+        setIsCreateUserDialogOpen(() => false);
+    }, [onRefreshCallback, setIsCreateUserDialogOpen]);
 
-    const getUserDetailsById = useCallback(async (userId) => {
-        const controller = new AbortController();
-        reset();
-        try {
-            const data = await getUserById(userId);
-            setUser(() => data);
-            setValue('firstName', data.firstName);
-            setValue('lastName', data.lastName);
-            setValue('email', data.email);
-            setValue('phone', data.phone);
-            setValue('username', data.username);
-            setDate(() => data.expiryDate);
-            setSelectedWorkspace(() => data.workspace ? data.workspace.name : "");
-        } catch (error) {
+    const handleError = (error) => {
+        console.error("Error creating user :", error);
+        if (error && error.responseInfo) {
+            ValidtionError.description = error.responseInfo.errorDescription;
+            toast(ValidtionError);
+        } else {
             toast(internalError);
-            console.error("Error fetching user details:", error);
         }
-        return () => controller.abort();
-    }, [setValue, reset, toast]);
-
-    const changeUserStatusById = async () => {
-        const controller = new AbortController();
-        try {
-            setUser((prev) => ({
-                ...prev, enabled: !prev.enabled
-            }));
-            await changeUserStatus(user.id, !user.enabled);
-            toast(UserStatusUpdatedSuccess);
-            onRefreshCallback();
-        } catch (error) {
-            toast(internalError);
-            console.error("Error fetching user details:", error);
-        }
-        return () => controller.abort();
-
-    };
-
-    useEffect(() => {
-        if (userId) {
-            getUserDetailsById(userId)
-        }
-    }, [userId, getUserDetailsById]);
-
-    const handleSaveClick = () => {
+    }
+    const onCreateUser = () => {
         hiddenSubmitButtonRef.current.click();
     };
-    const handleWorkspaceChange = (workspaceName) => {
+    const onChangeWorkspace = (workspaceName) => {
         if (workspaceName) {
             const el = workspaces.filter((workspace) => workspace.name == workspaceName);
             if (el) {
@@ -142,19 +128,26 @@ const UserEditDialog = ({ isEditUserDialogOpen, setIsEditUserDialogOpen, userId,
                 setSelectedWorkspace(() => workspace ? workspace.name : "");
             }
         }
-
     };
+    const onChangeUserStatus = async () => {
+        setUserStatus(() => !userStatus)
+    };
+    const onChnageDate = (date) => {
+        if (date) {
+            setDate(() => date);
+        }
+    }
     return (
-        <Dialog open={isEditUserDialogOpen}
-            onOpenChange={() => setIsEditUserDialogOpen(false)}
+        <Dialog open={isCreateUserDialogOpen}
+            onOpenChange={() => setIsCreateUserDialogOpen(false)}
             closeOnEsc={true}
-            aria-label="edit user"
+            aria-label="Create user"
             closeOnOverlayClick={true}
             isDismissable={true}
         >
             <DialogContent className="max-w-[45rem]">
                 <DialogHeader>
-                    <DialogTitle>Edit Account</DialogTitle>
+                    <DialogTitle>Create new user</DialogTitle>
                     <Separator />
                     <DialogDescription />
                 </DialogHeader>
@@ -170,16 +163,18 @@ const UserEditDialog = ({ isEditUserDialogOpen, setIsEditUserDialogOpen, userId,
                                         <div className="flex justify-start flex-wrap">
                                             <div className="flex flex-col space-y-1.5 mr-5">
                                                 <Label htmlFor="username">Username</Label>
-                                                <Input className="relative top-1" disabled id="username" placeholder="" {...register("username")} />
+                                                <Input className="relative top-1" id="username" placeholder="" {...register("username", { required: true })} />
+                                                {errors.username && <div className="text-red-500 text-sm  mt-2 relative">Username is required </div>}
                                             </div>
                                             <div className="flex flex-col space-y-1.5 mr-5">
                                                 <Label htmlFor="email">Email</Label>
-                                                <Input className="relative top-1" disabled id="email" placeholder="" {...register("email")} />
+                                                <Input className="relative top-1" id="email" placeholder="" {...register("email", { required: true })} />
+                                                {errors.email && <div className="text-red-500 text-sm  mt-2 relative">Email is required </div>}
                                             </div>
                                             <div className="flex flex-col space-y-1.5 mr-5">
                                                 <Label htmlFor="phone">Phone</Label>
                                                 <Input className="relative top-1" id="phone" placeholder="" {...register("phone", { required: true })} />
-                                                {errors.phone && <div className="text-red-500 text-sm  mt-1 relative">Phone is required </div>}
+                                                {errors.phone && <div className="text-red-500 text-sm  mt-2 relative">Phone is required </div>}
                                             </div>
                                             <div className="flex flex-col space-y-1.5 mr-5 mt-4">
                                                 <Label htmlFor="firstName">FirstName</Label>
@@ -204,16 +199,27 @@ const UserEditDialog = ({ isEditUserDialogOpen, setIsEditUserDialogOpen, userId,
                                                     Activate or deactivate this account
                                                 </p>
                                             </div>
-                                            <Switch checked={user ? user.enabled : false} onCheckedChange={() => changeUserStatusById()} />
+                                            <Switch checked={userStatus} onCheckedChange={() => onChangeUserStatus()} />
+                                        </div>
+                                        <div className=" flex items-center space-x-4 rounded-md border p-4 top-3 relative">
+                                            <UserRound />
+                                            <div className="flex-1 space-y-1">
+                                                <p className="text-sm font-medium leading-none">
+                                                    Change password
+                                                </p>
+                                                <p className="text-sm text-muted-foreground">
+                                                    User must change password on next login.
+                                                </p>
+                                            </div>
+                                            <Switch checked={firstLoginChangePassword} onCheckedChange={() => setFirstLoginChangePassword(!firstLoginChangePassword)} />
                                         </div>
                                         <div className=" flex items-center space-x-4 rounded-md border p-4 top-5 relative">
-                                            <CalendarOff onSelect={setDate} />
                                             <div className="flex-1 space-y-1">
                                                 <p className="text-sm font-medium leading-none">
                                                     Account expired
                                                 </p>
                                                 <p className="text-sm text-muted-foreground">
-                                                    expiry date :  {date ? format(date, 'yyyy-MM-dd') : user.expiryDate}
+                                                    expiry date :  {date ? format(date, 'yyyy-MM-dd') : new Date()}
                                                 </p>
                                             </div>
                                             <Popover>
@@ -226,7 +232,8 @@ const UserEditDialog = ({ isEditUserDialogOpen, setIsEditUserDialogOpen, userId,
                                                             <Calendar
                                                                 mode="single"
                                                                 selected={date}
-                                                                onSelect={setDate}
+                                                                onSelect={onChnageDate}
+                                                                initialFocus
                                                                 className="rounded-md border"
                                                             />
                                                         </div>
@@ -243,7 +250,7 @@ const UserEditDialog = ({ isEditUserDialogOpen, setIsEditUserDialogOpen, userId,
 
                                             </div>
                                             <div>
-                                                <Select value={selectedWorkspace} onValueChange={handleWorkspaceChange}>
+                                                <Select value={selectedWorkspace} onValueChange={onChangeWorkspace}>
                                                     <SelectTrigger className="w-[180px]">
                                                         <SelectValue>{selectedWorkspace}</SelectValue>
                                                     </SelectTrigger>
@@ -256,8 +263,7 @@ const UserEditDialog = ({ isEditUserDialogOpen, setIsEditUserDialogOpen, userId,
                                                             ))
                                                         }
                                                     </SelectContent>
-                                                </Select>
-                                            </div>
+                                                </Select>                                            </div>
                                             <div>
                                                 <Select>
                                                     <SelectTrigger className="w-[180px]">
@@ -275,6 +281,21 @@ const UserEditDialog = ({ isEditUserDialogOpen, setIsEditUserDialogOpen, userId,
                                 </form>
                             </CardContent>
                             <CardFooter className="flex justify-end">
+                                <HoverCard>
+                                    <HoverCardTrigger asChild>
+                                        <Button variant="link">Workspace management</Button>
+                                    </HoverCardTrigger>
+                                    <HoverCardContent className="w-80">
+                                        <div className="flex justify-between space-x-4">
+                                            <div className="space-y-1">
+                                                <h4 className="text-sm font-semibold">Create new role</h4>
+                                                <p className="text-sm">
+                                                    To create a new workspace,edit a workspace and more.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </HoverCardContent>
+                                </HoverCard>
                                 <HoverCard>
                                     <HoverCardTrigger asChild>
                                         <Button variant="link">Role management</Button>
@@ -299,13 +320,13 @@ const UserEditDialog = ({ isEditUserDialogOpen, setIsEditUserDialogOpen, userId,
                     <DialogClose asChild >
                         <Button variant="outline">Cancel</Button>
                     </DialogClose>
-                    <Button disabled={!user} onClick={() => handleSaveClick()}>Save</Button>
+                    <Button onClick={() => onCreateUser()}>Create</Button>
                 </DialogFooter>
             </DialogContent>
+            <TemporaryPasswordDialog isTemporaryPasswordDialogOpen={isTemporaryPasswordDialogOpen} setIsTemporaryPasswordDialogOpen={setIsTemporaryPasswordDialogOpen} temporaryPassword={temporaryPassword} temporaryPasswordCopyCallback={temporaryPasswordCopyCallback} />
         </Dialog>
-
-
     );
+
 }
-const UserEdit = React.memo(UserEditDialog);
-export default UserEdit;
+const UserCreateDialog = React.memo(MemoizedUserCreateDialog);
+export default UserCreateDialog;

@@ -5,10 +5,13 @@ import { PlusCircle, File, Search, RefreshCcw } from 'lucide-react';
 import UserTable from './UserTable';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
+import UserCreateDialog from './UserCreateDialog';
 
 const MemoizedUserTableFiltred = ({ isLoading, users, pageInfo, setPageInfo, refresh }) => {
     const [userList, setUserList] = useState([]);
     const deferredUsers = useDeferredValue(userList);
+    const [isCreateUserDialogOpen, setIsCreateUserDialogOpen] = useState(false);
+
 
     useEffect(() => {
         setUserList(users)
@@ -28,6 +31,7 @@ const MemoizedUserTableFiltred = ({ isLoading, users, pageInfo, setPageInfo, ref
     };
 
     const onRefresh = () => {
+        console.log("refreshing")
         refresh();
     };
     return (
@@ -65,7 +69,7 @@ const MemoizedUserTableFiltred = ({ isLoading, users, pageInfo, setPageInfo, ref
                                     Export
                                 </span>
                             </Button>
-                            <Button size="sm" className="h-8 gap-1">
+                            <Button onClick={() => setIsCreateUserDialogOpen(true)} size="sm" className="h-8 gap-1">
                                 <PlusCircle className="h-3.5 w-3.5" />
                                 <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                                     Add User
@@ -78,6 +82,8 @@ const MemoizedUserTableFiltred = ({ isLoading, users, pageInfo, setPageInfo, ref
                     </TabsContent>
                 </Tabs>
             )}
+            <UserCreateDialog isCreateUserDialogOpen={isCreateUserDialogOpen} setIsCreateUserDialogOpen={setIsCreateUserDialogOpen} onRefreshCallback={() => onRefresh()} />
+
         </>
     )
 }

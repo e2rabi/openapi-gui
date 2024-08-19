@@ -4,8 +4,10 @@ import com.errabi.sandbox.entities.Authority;
 import com.errabi.sandbox.entities.Role;
 import com.errabi.sandbox.entities.User;
 import com.errabi.sandbox.web.model.AuthorityDto;
+import com.errabi.sandbox.web.model.CreateUserDto;
 import com.errabi.sandbox.web.model.RoleDto;
 import com.errabi.sandbox.web.model.UserDto;
+import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.*;
 
 import java.util.stream.Collectors;
@@ -15,6 +17,10 @@ public interface UserMapper {
 
     @Mapping(target = "roles", ignore = true)
     User toEntity(UserDto userDto);
+
+    User toEntity(CreateUserDto userDto);
+    @Mapping(target = "password",ignore = true)
+    CreateUserDto toCreateUserDto(User user);
 
     @Mapping(target = "roles", ignore = true)
     UserDto toDto(User user);
