@@ -11,6 +11,9 @@ import Solution from "./components/solution/Solution.jsx";
 import Module from "./components/module/Module.jsx";
 import Api from "./components/api/Api.jsx";
 import { Toaster } from "@/components/ui/toaster"
+import {
+  TooltipProvider,
+} from "@/components/ui/tooltip"
 const router = createBrowserRouter([
   {
     path: "/",
@@ -57,10 +60,12 @@ function App() {
   return (
     <div className="container">
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <main className="main">
-          <RouterProvider router={router} />
-        </main>
-        <Toaster />
+        <TooltipProvider>
+          <main className="main">
+            <RouterProvider router={router} />
+          </main>
+          <Toaster />
+        </TooltipProvider>
       </ThemeProvider>
     </div>
   );

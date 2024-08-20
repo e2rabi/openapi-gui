@@ -21,7 +21,11 @@ import { MoreHorizontal } from 'lucide-react';
 import UserEditDialog from './UserEditDialog';
 import UserDeleteDialog from './UserDeleteDialog';
 import { format } from 'date-fns';
-
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 const MemoizedUserTable = ({ isLoading, users, onRefreshCallback }) => {
 
@@ -65,7 +69,7 @@ const MemoizedUserTable = ({ isLoading, users, onRefreshCallback }) => {
                         {users.map((user) => (
                             <TableRow key={user.id} className="cursor-pointer">
                                 <TableCell className="font-medium">{user.id}</TableCell>
-                                <TableCell>{user.username}</TableCell>
+                                <TableCell >{user.username}</TableCell>
                                 <TableCell>{user.firstName}</TableCell>
                                 <TableCell>{user.lastName}</TableCell>
                                 <TableCell>{user.email}</TableCell>
@@ -79,7 +83,21 @@ const MemoizedUserTable = ({ isLoading, users, onRefreshCallback }) => {
                                     {!user.accountNonExpired ? "Yes" : "No"}
                                 </TableCell>
                                 <TableCell>
-                                    {user.expiryDate}
+                                    {user.accountNonExpired ? user.expiryDate :
+
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <div>
+                                                    <Badge className="text-xs" variant={"disabled"}>
+                                                        Expired
+                                                    </Badge>
+                                                </div>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>Account expired on : {user.expiryDate}</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    }
                                 </TableCell>
                                 <TableCell>
                                     {user.workspace ? user.workspace.name : "-"}
