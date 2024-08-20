@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 
@@ -39,4 +40,5 @@ public class UserDto extends AbstractMessageDto {
     private String expiryDate ;
     private Set<RoleDto> roles;
     private WorkspaceDto workspace;
+    protected LocalDateTime created ;
 }

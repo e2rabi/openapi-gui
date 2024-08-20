@@ -14,7 +14,7 @@ import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { internalError, UserStatusUpdatedSuccess, UserUpdatedSuccess } from "../../services/MessageConstant.js";
+import { internalError, UserStatusUpdatedSuccess, UserUpdatedSuccess, ValidtionError } from "../../services/MessageConstant.js";
 import {
     Card,
     CardContent,
@@ -80,8 +80,7 @@ const UserEditDialog = ({ isEditUserDialogOpen, setIsEditUserDialogOpen, userId,
                 toast(UserUpdatedSuccess);
                 onRefreshCallback();
             } catch (error) {
-                toast(internalError);
-                console.error("Error updating user details:", error);
+                handleError(error)
             }
             return () => controller.abort();
         };
@@ -108,7 +107,23 @@ const UserEditDialog = ({ isEditUserDialogOpen, setIsEditUserDialogOpen, userId,
         return () => controller.abort();
     }, [setValue, reset, toast]);
 
-    const changeUserStatusById = async () => {
+    useEffect(() => {
+        if (userId) {
+            getUserDetailsById(userId)
+        }
+    }, [userId, getUserDetailsById]);
+
+
+    const handleError = (error) => {
+        console.error("Error updating user :", error);
+        if (error && error.responseInfo) {
+            ValidtionError.description = error.responseInfo.errorDescription;
+            toast(ValidtionError);
+        } else {
+            toast(internalError);
+        }
+    }
+    const onChangeUserStatus = async () => {
         const controller = new AbortController();
         try {
             setUser((prev) => ({
@@ -124,17 +139,10 @@ const UserEditDialog = ({ isEditUserDialogOpen, setIsEditUserDialogOpen, userId,
         return () => controller.abort();
 
     };
-
-    useEffect(() => {
-        if (userId) {
-            getUserDetailsById(userId)
-        }
-    }, [userId, getUserDetailsById]);
-
-    const handleSaveClick = () => {
+    const onSaveUpdate = () => {
         hiddenSubmitButtonRef.current.click();
     };
-    const handleWorkspaceChange = (workspaceName) => {
+    const onWorkspaceChangeHandler = (workspaceName) => {
         if (workspaceName) {
             const el = workspaces.filter((workspace) => workspace.name == workspaceName);
             if (el) {
@@ -204,7 +212,7 @@ const UserEditDialog = ({ isEditUserDialogOpen, setIsEditUserDialogOpen, userId,
                                                     Activate or deactivate this account
                                                 </p>
                                             </div>
-                                            <Switch checked={user ? user.enabled : false} onCheckedChange={() => changeUserStatusById()} />
+                                            <Switch checked={user ? user.enabled : false} onCheckedChange={() => onChangeUserStatus()} />
                                         </div>
                                         <div className=" flex items-center space-x-4 rounded-md border p-4 top-5 relative">
                                             <CalendarOff onSelect={setDate} />
@@ -243,7 +251,7 @@ const UserEditDialog = ({ isEditUserDialogOpen, setIsEditUserDialogOpen, userId,
 
                                             </div>
                                             <div>
-                                                <Select value={selectedWorkspace} onValueChange={handleWorkspaceChange}>
+                                                <Select value={selectedWorkspace} onValueChange={onWorkspaceChangeHandler}>
                                                     <SelectTrigger className="w-[180px]">
                                                         <SelectValue>{selectedWorkspace}</SelectValue>
                                                     </SelectTrigger>
@@ -299,7 +307,7 @@ const UserEditDialog = ({ isEditUserDialogOpen, setIsEditUserDialogOpen, userId,
                     <DialogClose asChild >
                         <Button variant="outline">Cancel</Button>
                     </DialogClose>
-                    <Button disabled={!user} onClick={() => handleSaveClick()}>Save</Button>
+                    <Button disabled={!user} onClick={() => onSaveUpdate()}>Save</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

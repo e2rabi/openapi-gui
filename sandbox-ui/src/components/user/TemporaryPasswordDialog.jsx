@@ -9,7 +9,6 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -38,10 +37,6 @@ export function MemoizedTemporaryPasswordDialog({ temporaryPassword, isTemporary
             closeOnEsc={true}
             closeOnOverlayClick={true}
             isDismissable={true}>
-
-            <DialogTrigger asChild>
-                <Button variant="outline">Share</Button>
-            </DialogTrigger>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                     <DialogTitle>Copy password</DialogTitle>

@@ -99,9 +99,8 @@ async function updateUser(user) {
             });
 
         if (!response.ok) {
-            throw new Error(
-                `Failed to update user: ${response.statusText}`
-            );
+            const error = await response.json();
+            throw error;
         }
         const data = await response.json();
         return data;
@@ -149,6 +148,7 @@ async function saveUser(user) {
                     lastName: user.lastName.trim(),
                     enabled: user.enabled,
                     expiryDate: user.expiryDate,
+                    workspaceId: Number(user.workspaceId),
                     firstLoginChangePassword: user.firstLoginChangePassword,
                 })
             });

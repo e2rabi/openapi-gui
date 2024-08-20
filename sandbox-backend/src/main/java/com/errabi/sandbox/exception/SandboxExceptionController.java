@@ -7,6 +7,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.errabi.sandbox.utils.SandboxConstant.*;
 
@@ -29,20 +30,19 @@ public class SandboxExceptionController {
 
     @ExceptionHandler(value = {MethodArgumentNotValidException.class})
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex){
-
-        List<String> messages = ex.getBindingResult().getAllErrors().stream()
+      String errors = ex.getBindingResult().getAllErrors().stream()
                 .map(error -> {
                     if (error instanceof FieldError fieldError) {
                         return fieldError.getField() + ": " + fieldError.getDefaultMessage();
                     } else {
                         return error.getObjectName() + ": " + error.getDefaultMessage();
                     }
-                })
-                .toList();
+                }).collect(Collectors.joining(" , "));
+
 
         ResponseInfo responseInfo = ResponseInfo.builder()
                 .errorCode(BEAN_VALIDATION_ERROR_CODE)
-                .errorDescription(messages.toString())
+                .errorDescription(errors)
                 .httpStatus(HttpStatus.BAD_REQUEST)
                 .build();
 

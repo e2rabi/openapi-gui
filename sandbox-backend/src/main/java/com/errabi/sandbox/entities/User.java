@@ -14,7 +14,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @DynamicUpdate
-@EqualsAndHashCode(exclude = "roles")
+@EqualsAndHashCode(exclude = "roles", callSuper = false)
 @Table(name = "users")
 public class User extends SecurityBaseEntity{
     @Id

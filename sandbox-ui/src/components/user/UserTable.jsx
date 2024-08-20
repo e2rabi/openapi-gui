@@ -20,6 +20,8 @@ import { Badge } from "../ui/badge"
 import { MoreHorizontal } from 'lucide-react';
 import UserEditDialog from './UserEditDialog';
 import UserDeleteDialog from './UserDeleteDialog';
+import { format } from 'date-fns';
+
 
 const MemoizedUserTable = ({ isLoading, users, onRefreshCallback }) => {
 
@@ -53,6 +55,7 @@ const MemoizedUserTable = ({ isLoading, users, onRefreshCallback }) => {
                             <TableHead>Account expired</TableHead>
                             <TableHead>Expiry date</TableHead>
                             <TableHead>Workspace</TableHead>
+                            <TableHead>Creation date</TableHead>
                             <TableHead>
                                 <span className="sr-only">Actions</span>
                             </TableHead>
@@ -80,6 +83,9 @@ const MemoizedUserTable = ({ isLoading, users, onRefreshCallback }) => {
                                 </TableCell>
                                 <TableCell>
                                     {user.workspace ? user.workspace.name : "-"}
+                                </TableCell>
+                                <TableCell>
+                                    {user.created ? format(user.created, 'yyyy-MM-dd') : "-"}
                                 </TableCell>
                                 <TableCell>
                                     <DropdownMenu>

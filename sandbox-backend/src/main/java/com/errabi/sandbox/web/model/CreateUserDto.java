@@ -26,8 +26,11 @@ public class CreateUserDto extends AbstractMessageDto{
     @Pattern(regexp = "\\d+", message = "Phone must contain only numbers")
     private  String phone ;
     private  String temporaryPassword;
+    @Builder.Default
     private  Boolean accountNonExpired = true;
+    @Builder.Default
     private  Boolean accountNonLocked = true;
+    @Builder.Default
     private  Boolean credentialsNonExpired = true;
     private String expiryDate ;
     private Long workspaceId;

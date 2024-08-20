@@ -16,10 +16,7 @@ import com.nimbusds.jose.JOSEException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -98,20 +95,32 @@ public class UserService {
                     USER_ALREADY_EXISTS_ERROR_DESCRIPTION,
                     HttpStatus.CONFLICT);
         }
+        if (userRepository.existsByEmail(userDto.getEmail())) {
+            log.error("Failed to save user. email {} already exists.", userDto.getEmail());
+            throw new TechnicalException(
+                    USER_ALREADY_EXISTS_ERROR_CODE,
+                    USER_ALREADY_EXISTS_ERROR_DESCRIPTION,
+                    HttpStatus.CONFLICT);
+        }
     }
     @Transactional
-    public CreateUserDto createUser(CreateUserDto userDto){
-        log.info("Creating User {} ..", userDto.getUsername());
-        validateUser(userDto);
+    public CreateUserDto createUser(CreateUserDto createUserDto){
+        log.info("Creating User {} ..", createUserDto.getUsername());
+        validateUser(createUserDto);
         try {
             String temporaryPassword = TemporaryPasswordGenerator.generatePassword();
-            userDto.setPassword(StringUtils.isEmpty(userDto.getPassword())?passwordEncoder.encode(temporaryPassword): passwordEncoder.encode(userDto.getPassword()));
-            User user = userRepository.save(userMapper.toEntity(userDto));
-            userDto = userMapper.toCreateUserDto(user);
-            userDto.setPassword(StringUtils.EMPTY);
-            userDto.setTemporaryPassword(temporaryPassword);
-            userDto.setResponseInfo(buildSuccessInfo());
-            return userDto;
+            createUserDto.setPassword(StringUtils.isEmpty(createUserDto.getPassword())?passwordEncoder.encode(temporaryPassword):
+                    passwordEncoder.encode(createUserDto.getPassword()));
+
+            User user = userRepository.save(userMapper.toEntity(createUserDto));
+
+            if(createUserDto.getWorkspaceId()!=null) {
+                assignExistingWorkspaceToUser(user,createUserDto.getWorkspaceId());
+            }
+            createUserDto = userMapper.toCreateUserDto(user,temporaryPassword);
+            createUserDto.setResponseInfo(buildSuccessInfo());
+
+            return createUserDto;
         } catch(Exception ex) {
             log.error("Unexpected error occurred while saving the User", ex);
             throw new TechnicalException(
@@ -128,14 +137,15 @@ public class UserService {
                 .email(StringUtils.isEmpty(email)?null:email)
                 .enabled(FILTER_QUERY_ALL.equalsIgnoreCase(status)||FILTER_QUERY_EXPIRED.equalsIgnoreCase(status)?null: !FILTER_QUERY_INACTIVE.equalsIgnoreCase(status))
                 .username(StringUtils.isEmpty(username)?null:username)
-                .accountNonExpired("expired".equalsIgnoreCase(status)?false:null)
+                .accountNonExpired(FILTER_QUERY_EXPIRED.equalsIgnoreCase(status)?false:null)
                 .build();
         ExampleMatcher matcher = ExampleMatcher.matching()
                 .withIgnoreNullValues()
                 .withIgnorePaths("id","version");
         Example<User> example = Example.of(userProb, matcher);
 
-        return userRepository.findAll(example,pageable)
+        Pageable sortedByCreatedDate = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("created").descending());
+        return userRepository.findAll(example,sortedByCreatedDate)
                       .map(userMapper::toDto);
 
     }
@@ -238,11 +248,7 @@ public class UserService {
     }
 
     @Transactional
-    public void assignExistingWorkspaceToUser(User user, UpdateUserDto updateRequest) {
-        Long workspaceId = Optional.ofNullable(updateRequest.getWorkspace())
-                .map(WorkspaceDto::getId)
-                .orElse(null);
-
+    public void assignExistingWorkspaceToUser(User user, Long workspaceId) {
         if (workspaceId != null) {
             Workspace newWorkspace = workspaceRepository.findById(workspaceId)
                     .orElseThrow(() -> new TechnicalException(
@@ -276,7 +282,9 @@ public class UserService {
                     NOT_FOUND_ERROR_DESCRIPTION,
                     HttpStatus.NOT_FOUND));
            // update user workspace
-            assignExistingWorkspaceToUser(user,updateRequest);
+            if(updateRequest.getWorkspace()!=null){
+                assignExistingWorkspaceToUser(user,updateRequest.getWorkspace().getId());
+            }
             // update user data
             user.setFirstName(updateRequest.getFirstName());
             user.setLastName(updateRequest.getLastName());

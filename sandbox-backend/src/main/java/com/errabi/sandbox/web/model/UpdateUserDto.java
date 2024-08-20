@@ -2,6 +2,7 @@ package com.errabi.sandbox.web.model;
 
 
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 
 @Data
@@ -11,12 +12,13 @@ import lombok.*;
 @EqualsAndHashCode(callSuper=false)
 public class UpdateUserDto extends AbstractMessageDto {
     private Long id;
-    @NotEmpty(message = "Please add firstname")
+    @NotEmpty(message = "Firstname is required")
     private  String firstName ;
-    @NotEmpty(message = "Please add lastname")
+    @NotEmpty(message = "Lastname is required")
     private  String lastName ;
     private  Boolean enabled ;
-    @NotEmpty(message = "Please add phone")
+    @NotEmpty(message = "Phone is required")
+    @Pattern(regexp = "\\d+", message = "Phone must contain only numbers")
     private  String phone ;
     private String expiryDate ;
     private WorkspaceDto workspace;

@@ -54,7 +54,7 @@ const MemoizedUserCreateDialog = ({ isCreateUserDialogOpen, setIsCreateUserDialo
     const [selectedWorkspace, setSelectedWorkspace] = useState("");
     const [isTemporaryPasswordDialogOpen, setIsTemporaryPasswordDialogOpen] = useState(false);
     const [userStatus, setUserStatus] = useState(false);
-    const [firstLoginChangePassword, setFirstLoginChangePassword] = useState(false);
+    const [firstLoginChangePassword, setFirstLoginChangePassword] = useState(true);
     const [temporaryPassword, setTemporaryPassword] = useState("");
     const hiddenSubmitButtonRef = useRef(null);
     const { toast } = useToast()
@@ -70,7 +70,7 @@ const MemoizedUserCreateDialog = ({ isCreateUserDialogOpen, setIsCreateUserDialo
         reset();
         setDate(() => format(new Date(), 'yyyy-MM-dd'));
         setUserStatus(() => false);
-        setFirstLoginChangePassword(() => false);
+        setFirstLoginChangePassword(() => true);
         setSelectedWorkspace(() => "");
     }, [isCreateUserDialogOpen, reset]);
 
@@ -82,7 +82,7 @@ const MemoizedUserCreateDialog = ({ isCreateUserDialogOpen, setIsCreateUserDialo
                     const el = workspaces.filter((workspace) => workspace.name == selectedWorkspace);
                     if (el) {
                         const [workspace] = el;
-                        newUser.workspace = { id: workspace.id }
+                        newUser.workspaceId = workspace.id;
                     }
                 }
                 newUser.enabled = userStatus;

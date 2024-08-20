@@ -3,28 +3,38 @@ package com.errabi.sandbox.web.mapper;
 import com.errabi.sandbox.entities.Authority;
 import com.errabi.sandbox.entities.Role;
 import com.errabi.sandbox.entities.User;
-import com.errabi.sandbox.web.model.AuthorityDto;
-import com.errabi.sandbox.web.model.CreateUserDto;
-import com.errabi.sandbox.web.model.RoleDto;
-import com.errabi.sandbox.web.model.UserDto;
+import com.errabi.sandbox.entities.Workspace;
+import com.errabi.sandbox.web.model.*;
 import org.apache.commons.lang3.StringUtils;
 import org.mapstruct.*;
 
 import java.util.stream.Collectors;
 
-@Mapper(uses = {WorkspaceMapper.class}, componentModel = "spring",unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring",unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface UserMapper {
 
     @Mapping(target = "roles", ignore = true)
     User toEntity(UserDto userDto);
 
     User toEntity(CreateUserDto userDto);
-    @Mapping(target = "password",ignore = true)
-    CreateUserDto toCreateUserDto(User user);
 
+    @Mapping(target = "temporaryPassword",source = "temporaryPassword")
+    @Mapping(target = "password",ignore = true)
+    CreateUserDto toCreateUserDto(User user,String temporaryPassword);
+
+    @Mapping(expression = "java(toWorkspaceDto(user.getWorkspace()))", target = "workspace")
     @Mapping(target = "roles", ignore = true)
     UserDto toDto(User user);
 
+    default WorkspaceDto toWorkspaceDto(Workspace workspace){
+        if(workspace == null ){
+            return null;
+        }
+        return WorkspaceDto.builder()
+                .id(workspace.getId())
+                .name(workspace.getName())
+                .build();
+    }
     @Mapping(target = "roles", ignore = true)
     void updateFromDto(UserDto userDto, @MappingTarget User user);
 

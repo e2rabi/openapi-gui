@@ -13,6 +13,7 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>, QueryByExampleExecutor<User> {
     boolean existsByUsername(String username);
+    boolean existsByEmail(String email);
     Optional<User> findByUsername(String username);
     @Query("SELECT u FROM User u WHERE u.workspace.id = :workspaceId")
     List<User> findUsersByWorkspaceId(@Param("workspaceId") Long workspaceId);
