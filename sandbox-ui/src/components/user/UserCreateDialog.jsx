@@ -14,7 +14,8 @@ import { Separator } from "@/components/ui/separator"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { internalError } from "../../services/MessageConstant.js";
+import { useNavigate } from 'react-router-dom';
+
 import {
     Card,
     CardContent,
@@ -46,7 +47,7 @@ import {
 import { useForm } from "react-hook-form"
 import useWorkspace from "../../hooks/UseWorkspace.js";
 import { saveUser } from "../../services/userService.js";
-import { UserCreatedSuccess, ValidtionError } from "../../services/MessageConstant.js";
+import { UserCreatedSuccess, ValidtionError, internalError } from "../../services/MessageConstant.js";
 import TemporaryPasswordDialog from "./TemporaryPasswordDialog.jsx";
 
 const MemoizedUserCreateDialog = ({ isCreateUserDialogOpen, setIsCreateUserDialogOpen, onRefreshCallback }) => {
@@ -59,6 +60,8 @@ const MemoizedUserCreateDialog = ({ isCreateUserDialogOpen, setIsCreateUserDialo
     const hiddenSubmitButtonRef = useRef(null);
     const { toast } = useToast()
     const { workspaces } = useWorkspace();
+    const navigate = useNavigate();
+
     const {
         register,
         handleSubmit,
@@ -283,12 +286,12 @@ const MemoizedUserCreateDialog = ({ isCreateUserDialogOpen, setIsCreateUserDialo
                             <CardFooter className="flex justify-end">
                                 <HoverCard>
                                     <HoverCardTrigger asChild>
-                                        <Button variant="link">Workspace management</Button>
+                                        <Button onClick={() => navigate('/workspaces')} variant="link">Workspace management</Button>
                                     </HoverCardTrigger>
                                     <HoverCardContent className="w-80">
                                         <div className="flex justify-between space-x-4">
                                             <div className="space-y-1">
-                                                <h4 className="text-sm font-semibold">Create new role</h4>
+                                                <h4 className="text-sm font-semibold">Create new workspace</h4>
                                                 <p className="text-sm">
                                                     To create a new workspace,edit a workspace and more.
                                                 </p>

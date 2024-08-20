@@ -59,7 +59,8 @@ const UserEditDialog = ({ isEditUserDialogOpen, setIsEditUserDialogOpen, userId,
         handleSubmit,
         setValue,
         reset,
-        formState: { errors }
+        resetField,
+        formState: { errors, isDirty }
     } = useForm()
 
     const onSubmit = (data) => {
@@ -93,11 +94,11 @@ const UserEditDialog = ({ isEditUserDialogOpen, setIsEditUserDialogOpen, userId,
         try {
             const data = await getUserById(userId);
             setUser(() => data);
-            setValue('firstName', data.firstName);
-            setValue('lastName', data.lastName);
-            setValue('email', data.email);
-            setValue('phone', data.phone);
-            setValue('username', data.username);
+            resetField("firstName", { defaultValue: data.firstName });
+            resetField("lastName", { defaultValue: data.lastName });
+            resetField("email", { defaultValue: data.email });
+            resetField("phone", { defaultValue: data.phone });
+            resetField("username", { defaultValue: data.username });
             setDate(() => data.expiryDate);
             setSelectedWorkspace(() => data.workspace ? data.workspace.name : "");
         } catch (error) {
@@ -307,12 +308,10 @@ const UserEditDialog = ({ isEditUserDialogOpen, setIsEditUserDialogOpen, userId,
                     <DialogClose asChild >
                         <Button variant="outline">Cancel</Button>
                     </DialogClose>
-                    <Button disabled={!user} onClick={() => onSaveUpdate()}>Save</Button>
+                    <Button disabled={!isDirty} onClick={() => onSaveUpdate()}>Save</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
-
-
     );
 }
 const UserEdit = React.memo(UserEditDialog);
