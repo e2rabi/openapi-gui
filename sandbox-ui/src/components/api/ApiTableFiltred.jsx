@@ -3,8 +3,11 @@ import { Button } from "../ui/button";
 import { PlusCircle, File } from "lucide-react";
 import ApiTable from "./ApiTable.jsx";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useNavigate } from "react-router-dom";
 
 const ApiTableFiltred = ({ isLoading, apis }) => {
+  const navigate = useNavigate();
+
   const [filter, setFilter] = useState("all");
   return (
     <>
@@ -41,7 +44,7 @@ const ApiTableFiltred = ({ isLoading, apis }) => {
                   Export
                 </span>
               </Button>
-              <Button size="sm" className="h-8 gap-1">
+              <Button size="sm" className="h-8 gap-1" onClick={() => navigate("/createApi")}>
                 <PlusCircle className="h-3.5 w-3.5" />
                 <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                   Add API

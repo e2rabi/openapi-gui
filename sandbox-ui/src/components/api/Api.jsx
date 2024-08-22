@@ -22,6 +22,7 @@ export default function Api() {
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     fetchApi(pageInfo.pageNumber, pageInfo.pageSize);
   }, [pageInfo.pageNumber, pageInfo.pageSize]);
