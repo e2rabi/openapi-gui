@@ -14,6 +14,7 @@ import { Toaster } from "@/components/ui/toaster"
 import {
   TooltipProvider,
 } from "@/components/ui/tooltip"
+import CreateApi from "./components/api/CreateApi.jsx";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -54,6 +55,10 @@ const router = createBrowserRouter([
   {
     path: "/config",
     element: <Configuration />,
+  },
+  {
+    path: "/createApi",
+    element: <CreateApi />,
   },
 ]);
 function App() {
