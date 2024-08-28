@@ -35,4 +35,4 @@ out/
 
 ### VS Code ###
 .vscode/
-/sandbox-backend/src/main/resources/static/
+/openapi-ui-backend/src/main/resources/static/

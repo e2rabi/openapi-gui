@@ -67,11 +67,11 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation "org.springframework.security:spring-security-test:${springSecurityTest}"
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-	implementation project(':sandbox-ui')
+	implementation project(':openapi-ui-frontend')
 }
 task copyReactBuild(type: Copy) {
-	dependsOn ':sandbox-ui:buildReactApp'
-	from file('../sandbox-ui/dist')
+	dependsOn ':openapi-ui-frontend:buildReactApp'
+	from file('../openapi-ui-frontend/dist')
 	into file('src/main/resources/static')
 }
 
