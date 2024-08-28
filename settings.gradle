@@ -1,4 +1,4 @@
-rootProject.name = 'sandbox-api'
-include 'sandbox-backend'
-include 'sandbox-ui'
-include 'infrastructure'
+rootProject.name = 'openapi-ui'
+include 'openapi-ui-backend'
+include 'openapi-ui-frontend'
+include 'openapi-ui-infrastructure'
