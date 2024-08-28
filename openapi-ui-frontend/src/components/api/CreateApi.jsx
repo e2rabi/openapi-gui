@@ -16,11 +16,14 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable"
 import { Button } from "@/components/ui/button"
-import { FileCheck, ScanEye, PlusCircle } from "lucide-react"
+import { FileCheck, ScanEye, PlusCircle, ChevronsLeftRight } from "lucide-react"
 import OpenApiSelector from "./OpenApiSelector";
 import { openApiReducer, initialState } from "../../services/reducers/OpenApiReducer";
 import InfoObject from "./InfoObject";
 import ServersObject from "./ServersObject";
+import Schema from "../openapi/Schema";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
 export default function CreateApi() {
 
   const [state, dispatch] = useReducer(openApiReducer, initialState);
@@ -58,18 +61,35 @@ export default function CreateApi() {
               </div>
             </CardHeader>
             <CardContent className="h-4/5">
-              <ResizablePanelGroup
-                direction="horizontal"
-                className="max-w-full rounded-lg border"
-              >
-                <ResizablePanel defaultSize={25}>
-                  <OpenApiSelector state={state} dispatch={dispatch} />
-                </ResizablePanel>
-                <ResizableHandle withHandle />
-                <ResizablePanel defaultSize={75}>
-                  {renderPanelContent()}
-                </ResizablePanel>
-              </ResizablePanelGroup>
+              <Tabs defaultValue="account" className="w-full">
+                <TabsList>
+                  <TabsTrigger value="account">
+                    <ChevronsLeftRight className="h-4 w-4" />
+                    <span className="ml-1">Schema</span>
+                  </TabsTrigger>
+                  <TabsTrigger value="password">Password</TabsTrigger>
+                </TabsList>
+                <TabsContent value="account">
+                  <ResizablePanelGroup
+                    direction="horizontal"
+                    className="max-w-full rounded-lg border"
+                  >
+                    <ResizablePanel defaultSize={25}>
+                      {/* <OpenApiSelector state={state} dispatch={dispatch} /> */}
+                    </ResizablePanel>
+                    <ResizableHandle withHandle />
+                    <ResizablePanel defaultSize={75}>
+                      <Schema />
+                      <Schema />
+                      <Schema />
+                      <Schema />
+                      <Schema />
+                    </ResizablePanel>
+                  </ResizablePanelGroup>
+                </TabsContent>
+                <TabsContent value="password">Change your password here.</TabsContent>
+              </Tabs>
+
             </CardContent>
             <CardFooter className="flex justify-end">
               <div className="flex justify-start">
