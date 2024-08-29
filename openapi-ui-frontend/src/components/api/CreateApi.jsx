@@ -23,7 +23,29 @@ import InfoObject from "./InfoObject";
 import ServersObject from "./ServersObject";
 import Schema from "../openapi/Schema";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+const customStyle = {
+  ...oneDark,
+  'pre[class*="language-"]': {
+    ...oneDark['pre[class*="language-"]'],
+    background: 'transparent',
+  },
+  'code[class*="language-"]': {
+    ...oneDark['code[class*="language-"]'],
+    background: 'transparent',
+  },
+};
+const yamlCode = `
+    apiVersion: v1
+    kind: Pod
+    metadata:
+      name: my-pod
+    spec:
+      containers:
+      - name: my-container
+        image: nginx
+  `;
 export default function CreateApi() {
 
   const [state, dispatch] = useReducer(openApiReducer, initialState);
@@ -63,11 +85,15 @@ export default function CreateApi() {
             <CardContent className="h-4/5">
               <Tabs defaultValue="account" className="w-full">
                 <TabsList>
+                  <TabsTrigger value="password">Info</TabsTrigger>
+                  <TabsTrigger value="password">Servers</TabsTrigger>
+                  <TabsTrigger value="password">Tags</TabsTrigger>
+                  <TabsTrigger value="password">Paths</TabsTrigger>
                   <TabsTrigger value="account">
                     <ChevronsLeftRight className="h-4 w-4" />
                     <span className="ml-1">Schema</span>
                   </TabsTrigger>
-                  <TabsTrigger value="password">Password</TabsTrigger>
+                  <TabsTrigger value="password">Security</TabsTrigger>
                 </TabsList>
                 <TabsContent value="account">
                   <ResizablePanelGroup
@@ -75,7 +101,9 @@ export default function CreateApi() {
                     className="max-w-full rounded-lg border"
                   >
                     <ResizablePanel defaultSize={25}>
-                      {/* <OpenApiSelector state={state} dispatch={dispatch} /> */}
+                      <SyntaxHighlighter language="yaml" style={customStyle} className="w-full bg-transparent">
+                        {yamlCode}
+                      </SyntaxHighlighter>
                     </ResizablePanel>
                     <ResizableHandle withHandle />
                     <ResizablePanel defaultSize={75}>
