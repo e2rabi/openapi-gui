@@ -15,6 +15,8 @@ import {
   TooltipProvider,
 } from "@/components/ui/tooltip"
 import CreateApi from "./components/api/CreateApi.jsx";
+import { store } from './store'
+import { Provider } from 'react-redux'
 const router = createBrowserRouter([
   {
     path: "/",
@@ -64,14 +66,16 @@ const router = createBrowserRouter([
 function App() {
   return (
     <div className="container">
-      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <TooltipProvider>
-          <main className="main">
-            <RouterProvider router={router} />
-          </main>
-          <Toaster />
-        </TooltipProvider>
-      </ThemeProvider>
+      <Provider store={store}>
+        <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+          <TooltipProvider>
+            <main className="main">
+              <RouterProvider router={router} />
+            </main>
+            <Toaster />
+          </TooltipProvider>
+        </ThemeProvider>
+      </Provider>
     </div>
   );
 }

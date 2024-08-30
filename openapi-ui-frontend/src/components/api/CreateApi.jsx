@@ -46,19 +46,11 @@ const yamlCode = `
       - name: my-container
         image: nginx
   `;
-export default function CreateApi() {
+import { useSelector, useDispatch } from 'react-redux'
 
-  const [state, dispatch] = useReducer(openApiReducer, initialState);
-  const renderPanelContent = () => {
-    switch (state.currentStep) {
-      case 'info':
-        return <InfoObject />;
-      case 'servers':
-        return <ServersObject />;
-      default:
-        return <InfoObject />;
-    }
-  };
+export default function CreateApi() {
+  const schemas = useSelector((state) => state.schema.value);
+
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
@@ -107,11 +99,11 @@ export default function CreateApi() {
                     </ResizablePanel>
                     <ResizableHandle withHandle />
                     <ResizablePanel defaultSize={75}>
-                      <Schema />
-                      <Schema />
-                      <Schema />
-                      <Schema />
-                      <Schema />
+                      {
+                        schemas.map((schema, index) => (
+                          <Schema key={index} name={schema.name} />
+                        ))
+                      }
                     </ResizablePanel>
                   </ResizablePanelGroup>
                 </TabsContent>
