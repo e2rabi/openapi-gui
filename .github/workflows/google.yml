@@ -3,7 +3,7 @@ name: Publish Docker Image to Google Artifact Registry
 on:
   push:
     branches:
-      - main
+      - develop
 
 jobs:
   build:
