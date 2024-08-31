@@ -2,7 +2,7 @@ import { useReducer } from "react";
 import Header from "../layout/Header";
 import Logo from "../layout/Logo";
 import Navbar from "../layout/Navbar";
-
+import React from "react";
 
 import {
   Card,
@@ -48,7 +48,7 @@ const yamlCode = `
   `;
 import { useSelector, useDispatch } from 'react-redux'
 
-export default function CreateApi() {
+const MemoizedCreateApi = () => {
   const schemas = useSelector((state) => state.schema.value);
 
   return (
@@ -139,3 +139,5 @@ export default function CreateApi() {
     </div>
   );
 }
+const CreateApi = React.memo(MemoizedCreateApi)
+export default CreateApi
