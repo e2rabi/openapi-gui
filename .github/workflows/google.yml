@@ -39,4 +39,4 @@ jobs:
         run: gcloud auth configure-docker
 
       - name: Build and Push Docker Image
-        run: ./gradlew jib --image=gcr.io/${{ secrets.GCP_PROJECT_ID }}/sandbox-docker/openapi-ui:develop
+        run: ./gradlew jib --image=gcr.io/${{ secrets.GCP_PROJECT_ID }}/sandbox-docker/sandbox-ui:develop
