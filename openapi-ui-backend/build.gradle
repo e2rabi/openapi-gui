@@ -8,12 +8,12 @@ plugins {
 def getEnvVariable(String name, String defaultValue) {
 	return System.getenv(name) ?: defaultValue
 }
-/*jib {
+jib {
 	from {
 		image = 'gcr.io/distroless/java17-debian12'
 	}
 	to {
-		image = "europe-southwest1-docker.pkg.dev/sandbox-431715/sandbox-docker/sandbox-ui:$version"
+		image = "europe-southwest1-docker.pkg.dev/sandbox-431715/sandbox-docker/openapi-ui:$version"
 		auth {
 			username =getEnvVariable('docker_user','_json_key')
 			def dockerPassword = getEnvVariable('docker_password', '')
@@ -24,7 +24,7 @@ def getEnvVariable(String name, String defaultValue) {
 			}
 		}
 	}
-}*/
+}
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(17)
