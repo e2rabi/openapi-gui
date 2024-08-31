@@ -1,4 +1,3 @@
-import { useReducer } from "react";
 import Header from "../layout/Header";
 import Logo from "../layout/Logo";
 import Navbar from "../layout/Navbar";
@@ -17,37 +16,10 @@ import {
 } from "@/components/ui/resizable"
 import { Button } from "@/components/ui/button"
 import { FileCheck, ScanEye, PlusCircle, ChevronsLeftRight } from "lucide-react"
-import OpenApiSelector from "./OpenApiSelector";
-import { openApiReducer, initialState } from "../../services/reducers/OpenApiReducer";
-import InfoObject from "./InfoObject";
-import ServersObject from "./ServersObject";
 import Schema from "../openapi/Schema";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
-const customStyle = {
-  ...oneDark,
-  'pre[class*="language-"]': {
-    ...oneDark['pre[class*="language-"]'],
-    background: 'transparent',
-  },
-  'code[class*="language-"]': {
-    ...oneDark['code[class*="language-"]'],
-    background: 'transparent',
-  },
-};
-const yamlCode = `
-    apiVersion: v1
-    kind: Pod
-    metadata:
-      name: my-pod
-    spec:
-      containers:
-      - name: my-container
-        image: nginx
-  `;
-import { useSelector, useDispatch } from 'react-redux'
-
+import { useSelector } from 'react-redux'
+import SchemaYamlView from "../openapi/SchemaYamlView";
 const MemoizedCreateApi = () => {
   const schemas = useSelector((state) => state.schema.value);
 
@@ -93,9 +65,7 @@ const MemoizedCreateApi = () => {
                     className="max-w-full rounded-lg border"
                   >
                     <ResizablePanel defaultSize={25}>
-                      <SyntaxHighlighter language="yaml" style={customStyle} className="w-full bg-transparent">
-                        {yamlCode}
-                      </SyntaxHighlighter>
+                      <SchemaYamlView />
                     </ResizablePanel>
                     <ResizableHandle withHandle />
                     <ResizablePanel defaultSize={75}>
