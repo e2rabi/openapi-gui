@@ -15,11 +15,11 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable"
 import { Button } from "@/components/ui/button"
-import { FileCheck, ScanEye, PlusCircle, ChevronsLeftRight } from "lucide-react"
-import Schema from "../openapi/Schema";
+import { FileCheck, ScanEye, PlusCircle, ChevronsLeftRight, Server } from "lucide-react"
+import Schema from "../openapi/schema/Schema";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useSelector } from 'react-redux'
-import SchemaYamlView from "../openapi/SchemaYamlView";
+import SchemaYamlView from "../openapi/schema/SchemaYamlView";
 const MemoizedCreateApi = () => {
   const schemas = useSelector((state) => state.schema.value);
 
@@ -50,7 +50,10 @@ const MemoizedCreateApi = () => {
               <Tabs defaultValue="account" className="w-full">
                 <TabsList>
                   <TabsTrigger value="password">Info</TabsTrigger>
-                  <TabsTrigger value="password">Servers</TabsTrigger>
+                  <TabsTrigger value="password">
+                    <Server className="h-4 w-4" />
+                    <span className="ml-1">Servers</span>
+                  </TabsTrigger>
                   <TabsTrigger value="password">Tags</TabsTrigger>
                   <TabsTrigger value="password">Paths</TabsTrigger>
                   <TabsTrigger value="account">

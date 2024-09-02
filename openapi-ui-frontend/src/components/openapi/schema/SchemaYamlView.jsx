@@ -15,21 +15,7 @@ const customStyle = {
         background: 'transparent',
     },
 };
-const yamlCode = `
-components:
-  schemas:
-    Order:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-          example: 10
-        petId:
-          type: integer
-          format: int64
-          example: 198772
-    `;
+
 const MemoizedSchemaYamlView = () => {
     const schemas = useSelector((state) => state.schema.value)
 
