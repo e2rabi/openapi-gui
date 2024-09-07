@@ -18,11 +18,22 @@ import { Button } from "@/components/ui/button"
 import { FileCheck, ScanEye, PlusCircle, ChevronsLeftRight, Server } from "lucide-react"
 import Schema from "../openapi/schema/Schema";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import SchemaYamlView from "../openapi/schema/SchemaYamlView";
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+} from "@/components/ui/alert"
+import { Plus } from "lucide-react"
+import { addSchema } from "../openapi/schema/SchemaSlice";
 const MemoizedCreateApi = () => {
   const schemas = useSelector((state) => state.schema.value);
+  const dispatch = useDispatch()
+  const createSchema = () => {
+    dispatch(addSchema("newSchema"))
 
+  }
   return (
     <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
       <div className="hidden border-r bg-muted/40 md:block">
@@ -72,6 +83,19 @@ const MemoizedCreateApi = () => {
                     </ResizablePanel>
                     <ResizableHandle withHandle />
                     <ResizablePanel defaultSize={75}>
+                      {
+                        schemas.length == 0 &&
+                        <Alert className="w-full flex flex-col items-center relative mt-2 border-none">
+                          <AlertTitle className="text-green-700">OpenAPI Specification Schemas Object</AlertTitle>
+                          <AlertDescription>
+                            There are no shared schemas defined yet in this document.
+                          </AlertDescription>
+                          <Button className="relative mt-2" onClick={createSchema}>
+                            <Plus className="mr-2 h-4 w-4" /> Create schema
+                          </Button>
+                        </Alert>
+
+                      }
                       {
                         schemas.map((schema, index) => (
                           <Schema key={index} name={schema.name} />

@@ -43,7 +43,7 @@ const MemoizedSchema = ({ name }) => {
     }, [name])
     return (
         <>
-            <EditSchema open={isDialogOpen} onOpenChange={handleOpenEditSchema} schemaName={schemaName} />
+            <EditSchema className="w-[80%] max-w[90%]" open={isDialogOpen} onOpenChange={handleOpenEditSchema} schemaName={schemaName} />
             <Card className="w-full m-2">
                 <CardContent>
                     <div className="w-full">
