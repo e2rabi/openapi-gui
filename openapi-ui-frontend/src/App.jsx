@@ -59,7 +59,7 @@ const router = createBrowserRouter([
     element: <Configuration />,
   },
   {
-    path: "/createApi",
+    path: "/api-builder",
     element: <CreateApi />,
   },
 ]);
