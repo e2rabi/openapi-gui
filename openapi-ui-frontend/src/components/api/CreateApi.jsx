@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/alert"
 import { Plus } from "lucide-react"
 import { addSchema } from "../openapi/schema/SchemaSlice";
+import { Servers } from "../openapi/servers/servers";
 const MemoizedCreateApi = () => {
   const schemas = useSelector((state) => state.schema.value);
   const dispatch = useDispatch()
@@ -57,11 +58,11 @@ const MemoizedCreateApi = () => {
                 </p>
               </div>
             </CardHeader>
-            <CardContent className="h-4/5">
+            <CardContent className="h-4/5 w-full">
               <Tabs defaultValue="account" className="w-full">
-                <TabsList>
+                <TabsList className="w-full justify-start">
                   <TabsTrigger value="password">Info</TabsTrigger>
-                  <TabsTrigger value="password">
+                  <TabsTrigger value="servers">
                     <Server className="h-4 w-4" />
                     <span className="ml-1">Servers</span>
                   </TabsTrigger>
@@ -104,7 +105,9 @@ const MemoizedCreateApi = () => {
                     </ResizablePanel>
                   </ResizablePanelGroup>
                 </TabsContent>
-                <TabsContent value="password">Change your password here.</TabsContent>
+                <TabsContent value="servers">
+                  <Servers />
+                </TabsContent>
               </Tabs>
 
             </CardContent>
