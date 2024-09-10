@@ -19,7 +19,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 
-export function Servers() {
+export default function ServersList() {
     return (
         <Card className="w-full">
             <CardHeader>

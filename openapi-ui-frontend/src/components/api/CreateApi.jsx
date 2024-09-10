@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/alert"
 import { Plus } from "lucide-react"
 import { addSchema } from "../openapi/schema/SchemaSlice";
-import { Servers } from "../openapi/servers/servers";
+import ServerList from "../openapi/servers/ServersList";
 const MemoizedCreateApi = () => {
   const schemas = useSelector((state) => state.schema.value);
   const dispatch = useDispatch()
@@ -106,7 +106,7 @@ const MemoizedCreateApi = () => {
                   </ResizablePanelGroup>
                 </TabsContent>
                 <TabsContent value="servers">
-                  <Servers />
+                  <ServerList />
                 </TabsContent>
               </Tabs>
 
