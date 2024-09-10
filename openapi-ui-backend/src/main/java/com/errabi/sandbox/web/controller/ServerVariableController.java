@@ -10,8 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.net.URI;
-
 @RestController
 @RequestMapping("/openapi/v1/")
 @RequiredArgsConstructor
@@ -19,12 +17,11 @@ public class ServerVariableController {
     private final ServerVariableService serverVariableService;
 
     @PostMapping("/server-variables")
-    public ResponseEntity<ServerVariableModel> createServerVariable(@RequestBody ServerVariableModel serverVariableModel, UriComponentsBuilder ucb ) {
-        ServerVariableModel savedServerVariable = serverVariableService.save(serverVariableModel);
-        URI uri =  ucb.path("/server-variables/{id}")
+    public ResponseEntity<ServerVariableModel> createServerVariable(@RequestBody ServerVariableModel serverVariableModel, UriComponentsBuilder ucb) {
+        var savedServerVariable = serverVariableService.save(serverVariableModel);
+        var uri = ucb.path("/server-variables/{id}")
                 .buildAndExpand(savedServerVariable.id())
                 .toUri();
-        return ResponseEntity.created(uri)
-                .body(savedServerVariable);
+        return ResponseEntity.created(uri).body(savedServerVariable);
     }
 }
