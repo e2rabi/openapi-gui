@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: sandbox-ui
+  name: openapi-gui-deployment
   namespace: dev
   labels:
-    app: sandbox-ui
+    app: openapi-gui
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: sandbox-ui
+      app: openapi-gui
   template:
     metadata:
       labels:
-        app: sandbox-ui
+        app: openapi-gui
     spec:
       containers:
-        - name: sandbox-ui
-          image: europe-southwest1-docker.pkg.dev/sandbox-431715/sandbox-docker/sandbox-ui:1.1.5-SNAPSHOT
+        - name: openapi-gui
+          image: europe-southwest1-docker.pkg.dev/sandbox-431715/openapi-ui/openapi-ui:1.1.5-SNAPSHOT
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
