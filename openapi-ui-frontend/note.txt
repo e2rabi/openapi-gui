@@ -1,0 +1,1 @@
+podman build -t openapi-ui/openapi-ui-app .

@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: openapi-gui
-          image: europe-southwest1-docker.pkg.dev/sandbox-431715/openapi-ui/openapi-ui:1.1.5-SNAPSHOT
+          image: europe-southwest1-docker.pkg.dev/sandbox-431715/openapi-ui/openapi-ui:1.1.6
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
