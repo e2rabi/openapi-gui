@@ -19,7 +19,7 @@ public class Server {
     private Long id;
     private String url;
     private String description;
-    @OneToMany(mappedBy = "server",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "server",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private Set<ServerVariable> variables;
 
 }

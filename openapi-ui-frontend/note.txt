@@ -1,1 +1,3 @@
-podman build -t openapi-ui/openapi-ui-app .
+podman build -t openapi-ui/openapi-ui-app
+
+podman run -it --name my-ubuntu-container ubuntu.

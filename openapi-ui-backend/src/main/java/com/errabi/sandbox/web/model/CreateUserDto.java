@@ -17,6 +17,7 @@ public class CreateUserDto extends AbstractMessageDto{
     private  String firstName ;
     @NotEmpty(message = "Lastname is required")
     private  String lastName ;
+    @Builder.Default
     private  Boolean enabled = false;
     private  Boolean firstLoginChangePassword ;
     @Email(message = "Invalid email")
