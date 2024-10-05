@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openapi-gui-front-deployment
+  namespace: dev
+  labels:
+    app: openapi-gui-front
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: openapi-gui-front
+  template:
+    metadata:
+      labels:
+        app: openapi-gui-front
+    spec:
+      imagePullSecrets:
+        - name: gcr-json-key
+      containers:
+        - name: openapi-gui-front
+          image: europe-southwest1-docker.pkg.dev/sandbox-431715/openapi-ui/openapi-ui-app
+          ports:
+            - containerPort: 80

@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openapi-gui-db-deployment
+  namespace: dev
+  labels:
+    app: openapi-gui-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: openapi-gui-db
+  template:
+    metadata:
+      labels:
+        app: openapi-gui-db
+    spec:
+      imagePullSecrets:
+        - name: gcr-json-key
+      containers:
+        - name: postgres
+          image: europe-southwest1-docker.pkg.dev/sandbox-431715/openapi-ui/postgres:15
+          env:
+            - name: POSTGRES_DB
+              value: postgres
+            - name: POSTGRES_USER
+              value: admin
+            - name: POSTGRES_PASSWORD
+              value: admin
+          ports:
+            - containerPort: 5432
