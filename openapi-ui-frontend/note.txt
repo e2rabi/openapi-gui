@@ -1,3 +1,2 @@
-podman build -t openapi-ui/openapi-ui-app
-
-podman run -it --name my-ubuntu-container ubuntu.
+ podman build -t europe-southwest1-docker.pkg.dev/sandbox-431715/openapi-ui/openapi-ui-frontend .
+ podman push europe-southwest1-docker.pkg.dev/sandbox-431715/openapi-ui/openapi-ui-frontend .

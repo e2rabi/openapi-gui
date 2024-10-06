@@ -7,8 +7,6 @@ metadata:
 spec:
   defaultBackend:
     service:
-      name: "openapi-gui-service"
+      name: "openapi-gui-backend-service"
       port:
         number: 80
-status:
-  loadBalancer: {}

@@ -1,4 +1,4 @@
-FROM postgres:15
+FROM postgres:14.10-alpine
 
 # Set environment variables
 ENV POSTGRES_DB=postgres

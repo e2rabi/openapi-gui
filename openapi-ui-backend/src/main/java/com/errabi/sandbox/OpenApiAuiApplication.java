@@ -17,14 +17,14 @@ import java.util.Set;
 @SpringBootApplication
 @EnableCaching
 @EnableJpaAuditing
-public class SandboxApplication implements ApplicationRunner {
+public class OpenApiAuiApplication implements ApplicationRunner {
 	@Autowired
 	private ServerService serverService;
 	@Autowired
 	private ServerVariableService serverVariableService;
 
 	public static void main(String[] args) {
-		SpringApplication.run(SandboxApplication.class, args);
+		SpringApplication.run(OpenApiAuiApplication.class, args);
 	}
 
 	@Override
