@@ -13,7 +13,11 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import ServerVariable from "./ServerVariable"
 import { SquarePlus } from 'lucide-react'
+import { useDispatch, useSelector } from 'react-redux'
+
 export default function ServersList() {
+    const serverVariable = useSelector((state) => state.serverVariable)
+
     return (
         <Card className="w-full">
             <CardHeader>
@@ -37,8 +41,10 @@ export default function ServersList() {
                     </div>
                 </div>
             </CardContent>
-            <CardFooter className="flex justify-between">
-                <ServerVariable />
+            <CardFooter className="flex flex-col">
+                {
+                    serverVariable.value.map(serverVariable => <ServerVariable name={serverVariable.name} id={serverVariable.id} key={serverVariable.id} />)
+                }
             </CardFooter>
         </Card>
     )

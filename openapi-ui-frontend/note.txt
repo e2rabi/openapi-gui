@@ -1,2 +1,4 @@
  podman build -t europe-southwest1-docker.pkg.dev/sandbox-431715/openapi-ui/openapi-ui-frontend .
  podman push europe-southwest1-docker.pkg.dev/sandbox-431715/openapi-ui/openapi-ui-frontend .
+
+ minikube start --driver=podman --container-runtime=cri-o

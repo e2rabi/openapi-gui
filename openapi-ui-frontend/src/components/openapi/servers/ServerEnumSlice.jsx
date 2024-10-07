@@ -8,8 +8,8 @@ const initialState = {
         { id: '4', value: "value4" },
     ],
 }
-export const serverSlice = createSlice({
-    name: 'server',
+export const ServerEnumSlice = createSlice({
+    name: 'serverEnum',
     initialState,
     reducers: {
         addServer: (state, action) => {
@@ -21,6 +21,6 @@ export const serverSlice = createSlice({
         },
     },
 })
-export const { addServer, removeServer } = serverSlice.actions
+export const { addServer, removeServer } = ServerEnumSlice.actions
 
-export default serverSlice.reducer
+export default ServerEnumSlice.reducer

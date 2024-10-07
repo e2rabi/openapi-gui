@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label"
 import { SquarePlus, Trash2 } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { useDispatch, useSelector } from 'react-redux'
-import { addServer, removeServer } from './ServerSlice'
+import { addServer, removeServer } from './ServerEnumSlice'
 import { v4 as uuidv4 } from 'uuid';
 
 const ServerEnum = ({ id }) => {

@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
 import schemaReducer from './components/openapi/schema/SchemaSlice'
-import serverReducer from './components/openapi/servers/ServerSlice'
+import serverEnumReducer from './components/openapi/servers/ServerEnumSlice'
+import serverVariableReducer from './components/openapi/servers/ServerVariableSlice'
 export const store = configureStore({
     reducer: {
         schema: schemaReducer,
-        server: serverReducer
+        serverEnum: serverEnumReducer,
+        serverVariable: serverVariableReducer,
     },
 })
