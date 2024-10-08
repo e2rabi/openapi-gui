@@ -15,6 +15,10 @@ spec:
       labels:
         app: openapi-gui-db
     spec:
+      volumes:
+        - name: db-pv-storage
+          persistentVolumeClaim:
+            claimName: openapi-ui-db-pvc-volume
       imagePullSecrets:
         - name: gcr-json-key
       containers:
@@ -29,3 +33,6 @@ spec:
               value: admin
           ports:
             - containerPort: 5432
+          volumeMounts:
+            - mountPath: "/var/lib/postgresql/data"
+              name: db-pv-storage
