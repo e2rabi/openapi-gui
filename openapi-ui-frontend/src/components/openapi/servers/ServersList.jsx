@@ -34,7 +34,7 @@ export default function ServersList() {
                         <Label htmlFor="name">Description</Label>
                         <Input id="name" placeholder="Name of your project" />
                     </div>
-                    <div className="flex flex-col space-y-1.5 w-1/5">
+                    <div className="flex flex-col space-y-1.5 w-1/5 relative top-5">
                         <Button>
                             <SquarePlus className="h-4 w-4 mr-1" />
                             Add variable</Button>
@@ -43,7 +43,11 @@ export default function ServersList() {
             </CardContent>
             <CardFooter className="flex flex-col">
                 {
-                    serverVariable.value.map(serverVariable => <ServerVariable name={serverVariable.name} id={serverVariable.id} key={serverVariable.id} />)
+                    serverVariable.value.map(serverVariable => <ServerVariable name={serverVariable.name}
+                        id={serverVariable.id}
+                        key={serverVariable.id}
+                        enums={serverVariable.enums}
+                    />)
                 }
             </CardFooter>
         </Card>

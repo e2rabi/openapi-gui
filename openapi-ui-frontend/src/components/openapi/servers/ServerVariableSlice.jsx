@@ -3,16 +3,17 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
     value: [
-        { id: '1', name: "value1", Description: "Description1", default: "default1" },
-        { id: '2', name: "value2", Description: "Description2", default: "default2" },
-        { id: '3', name: "value3", Description: "Description3", default: "default3" },
-        { id: '4', name: "value4", Description: "Description4", default: "default4" },
+        { id: '1', name: "value1", Description: "Description1", default: "default1", enums: [{ id: '1', value: "enum 1" }] },
+        { id: '2', name: "value2", Description: "Description2", default: "default2", enums: [{ id: '1', value: "enum 1" }] },
     ],
 }
 export const ServerVariableSlice = createSlice({
     name: 'serverVariable',
     initialState,
     reducers: {
+        addServerEnum: (state, action) => {
+            state.value.push(action.payload)
+        },
         addServerVariable: (state, action) => {
             console.log(action.payload)
             state.value.push(action.payload)
@@ -22,6 +23,6 @@ export const ServerVariableSlice = createSlice({
         },
     },
 })
-export const { addServerVariable, removeServerVariable } = ServerVariableSlice.actions
+export const { addServerVariable, removeServerVariable, addServerEnum } = ServerVariableSlice.actions
 
 export default ServerVariableSlice.reducer

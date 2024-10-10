@@ -13,12 +13,12 @@ import { SquarePlus } from 'lucide-react'
 import { v4 as uuidv4 } from 'uuid';
 import { useDispatch, useSelector } from 'react-redux'
 import { addServer } from './ServerEnumSlice'
-const ServerVariable = ({ name }) => {
+import { addServerEnum } from './ServerVariableSlice'
+const ServerVariable = ({ name, enums }) => {
     const dispatch = useDispatch()
-    const serverEnums = useSelector((state) => state.serverEnum)
     return (
 
-        <Card className="w-full">
+        <Card className="w-full mt-3">
             <CardHeader />
             <CardContent>
                 <div className="grid w-full items-center gap-4">
@@ -46,8 +46,7 @@ const ServerVariable = ({ name }) => {
                         <SquarePlus className="h-4 w-4 mr-1" />
                         Add enum Value</Button>
                     {
-                        serverEnums.value.map(enumValue => <ServerEnum id={enumValue.id} key={enumValue.id} />)
-
+                        enums.map(enumValue => <ServerEnum id={enumValue.id} key={enumValue.id} value={enumValue.value} />)
                     }
                 </div>
 

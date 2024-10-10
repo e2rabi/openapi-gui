@@ -112,7 +112,7 @@ const MemoizedCreateApi = () => {
 
             </CardContent>
             <CardFooter className="flex justify-end">
-              <div className="flex justify-start">
+              {/* <div className="flex justify-start">
                 <Button variant="secondary" className="mr-2">
                   <FileCheck className="h-3.5 w-3.5 mr-1" />
                   <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
@@ -131,7 +131,7 @@ const MemoizedCreateApi = () => {
                     Create
                   </span>
                 </Button>
-              </div>
+              </div> */}
             </CardFooter>
           </Card>
         </main>

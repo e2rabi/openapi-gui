@@ -15,7 +15,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { addServer, removeServer } from './ServerEnumSlice'
 import { v4 as uuidv4 } from 'uuid';
 
-const ServerEnum = ({ id }) => {
+const ServerEnum = ({ id, value }) => {
     const dispatch = useDispatch()
     return (
         <Card className="w-full mt-2">
@@ -32,7 +32,7 @@ const ServerEnum = ({ id }) => {
                         </Button>
                     </div>
                     <Label htmlFor="name" className="mr-2">Value</Label>
-                    <Input className="flex-grow" id="name" placeholder="new value" defaultValue={id} />
+                    <Input className="flex-grow" id="name" placeholder="new value" defaultValue={value} />
                 </div>
 
             </CardContent>
