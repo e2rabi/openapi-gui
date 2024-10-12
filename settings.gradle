@@ -2,3 +2,6 @@ rootProject.name = 'openapi-ui'
 include 'openapi-ui-backend'
 include 'openapi-ui-frontend'
 include 'openapi-ui-infrastructure'
+include 'compliance'
+include 'compliance'
+
