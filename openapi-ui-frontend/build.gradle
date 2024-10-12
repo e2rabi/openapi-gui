@@ -12,3 +12,6 @@ task buildReactApp(type: NpmTask) {
     dependsOn 'npmInstall'
     args = ['run', 'build']
 }
+bootJar{
+    enabled = false
+}
