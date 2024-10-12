@@ -2,11 +2,8 @@ server:
   port: 9000
 
 logging:
-  level:
-    root: trace
-#logging:
-#  level:
-#    org.springframework.security: debug
+ level:
+   root: debug
 #
 #
 #spring:
