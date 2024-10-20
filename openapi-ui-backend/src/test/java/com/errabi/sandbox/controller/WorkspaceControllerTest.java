@@ -1,6 +1,6 @@
 package com.errabi.sandbox.controller;
 
-import com.errabi.sandbox.web.model.WorkspaceDto;
+import com.errabi.openapi.web.model.WorkspaceDto;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;

@@ -1,7 +1,7 @@
 package com.errabi.sandbox.controller;
 
-import com.errabi.sandbox.web.model.ServerModel;
-import com.errabi.sandbox.web.model.ServerVariableModel;
+import com.errabi.openapi.web.model.ServerModel;
+import com.errabi.openapi.web.model.ServerVariableModel;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;

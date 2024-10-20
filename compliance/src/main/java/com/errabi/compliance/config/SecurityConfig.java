@@ -72,13 +72,18 @@ public class SecurityConfig {
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http)
             throws Exception {
         http
-                .authorizeHttpRequests((authorize) -> authorize
+                .securityMatcher("/**")  // Match all paths
+                .authorizeHttpRequests(authorize -> authorize
+                        // Allow access to static resources without authentication
+                        .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
+                        // All other requests require authentication
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
                         .permitAll()
                 );
+
         return http.build();
     }
 
@@ -112,6 +117,8 @@ public class SecurityConfig {
                 .clientSettings(ClientSettings.builder().requireAuthorizationConsent(false).build())
                 .tokenSettings(TokenSettings.builder()
                         .accessTokenTimeToLive(Duration.ofHours(1)) // Set access token expiry to 1 hour
+                        .refreshTokenTimeToLive(Duration.ofDays(30)) // Set refresh token expiry to 30 days
+                        .reuseRefreshTokens(true) // Set access token expiry to 1 hour
                         .build())
                 .build();
 

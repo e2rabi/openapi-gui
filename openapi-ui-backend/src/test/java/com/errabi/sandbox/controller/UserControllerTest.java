@@ -1,9 +1,9 @@
 package com.errabi.sandbox.controller;
 
-import com.errabi.sandbox.services.MailService;
-import com.errabi.sandbox.web.model.AuthDto;
-import com.errabi.sandbox.web.model.CreateUserDto;
-import com.errabi.sandbox.web.model.UserDto;
+import com.errabi.openapi.services.MailService;
+import com.errabi.openapi.web.model.AuthDto;
+import com.errabi.openapi.web.model.CreateUserDto;
+import com.errabi.openapi.web.model.UserDto;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
