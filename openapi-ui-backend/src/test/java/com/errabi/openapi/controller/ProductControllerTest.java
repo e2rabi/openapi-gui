@@ -1,6 +1,6 @@
-package com.errabi.sandbox.controller;
+package com.errabi.openapi.controller;
 
-import com.errabi.openapi.web.model.ApiDto;
+import com.errabi.openapi.web.model.ProductDto;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -17,20 +17,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @WithMockUser(username = "admin", password = "admin") // Mock user for authentication
-class ApiControllerTest extends BaseControllerIT{
+class ProductControllerTest extends BaseControllerIT{
     @Test
     @Order(1)
-    void CreateApiOkTest() throws Exception {
-        mockMvc.perform(post("/sandbox-api/v1/api")
-                        .content(asJsonString(ApiDto.builder()
-                                .name("test")
-                                .description("test")
-                                .url("www")
-                                .enabled(true)
-                                .visibility(true)
-                                .httpVerb("http")
-                                .openApiSchema("openapi")
-                                .build()))
+    void CreateProductOkTest() throws Exception {
+        mockMvc.perform(post("/sandbox-api/v1/products")
+                        .content(asJsonString(ProductDto.builder()
+                                                        .name("test")
+                                                        .description("test")
+                                                        .color("#FFFFFF")
+                                                        .enabled(true)
+                                                        .visibility(true)
+                                                        .build()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
@@ -38,31 +36,29 @@ class ApiControllerTest extends BaseControllerIT{
     }
     @Test
     @Order(2)
-    void FindApiByIdOkTest() throws Exception {
-        mockMvc.perform(get("/sandbox-api/v1/api/1"))
+    void FindProductByIdOkTest() throws Exception {
+        mockMvc.perform(get("/sandbox-api/v1/products/1"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
     @Test
     @Order(3)
-    void FindAllApiOkTest() throws Exception {
-        mockMvc.perform(get("/sandbox-api/v1/api"))
+    void FindAllProductsOkTest() throws Exception {
+        mockMvc.perform(get("/sandbox-api/v1/products"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
     @Test
     @Order(4)
-    void UpdateApiOkTest() throws Exception {
-        mockMvc.perform(put("/sandbox-api/v1/api")
-                        .content(asJsonString(ApiDto.builder()
+    void UpdateProductOkTest() throws Exception {
+        mockMvc.perform(put("/sandbox-api/v1/products")
+                        .content(asJsonString(ProductDto.builder()
                                 .id(26L)
                                 .name("card")
                                 .description("update")
-                                .url("test")
+                                .color("#FFF1FF")
                                 .enabled(false)
                                 .visibility(false)
-                                .httpVerb("verb")
-                                .openApiSchema("test")
                                 .build()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -71,8 +67,8 @@ class ApiControllerTest extends BaseControllerIT{
     }
     @Test
     @Order(5)
-    void DeleteApiOkTest() throws Exception {
-        mockMvc.perform(delete("/sandbox-api/v1/api/26"))
+    void DeleteProductOkTest() throws Exception {
+        mockMvc.perform(delete("/sandbox-api/v1/products/26"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }

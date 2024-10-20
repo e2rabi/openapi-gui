@@ -1,4 +1,4 @@
-package com.errabi.sandbox.controller;
+package com.errabi.openapi.controller;
 
 import com.errabi.openapi.services.MailService;
 import com.errabi.openapi.web.model.AuthDto;

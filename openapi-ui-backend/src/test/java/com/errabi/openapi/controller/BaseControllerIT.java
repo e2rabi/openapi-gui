@@ -1,4 +1,4 @@
-package com.errabi.sandbox.controller;
+package com.errabi.openapi.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;

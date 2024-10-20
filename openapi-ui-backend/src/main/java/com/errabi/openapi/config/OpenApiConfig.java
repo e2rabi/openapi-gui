@@ -11,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class OpenApiConfig {
     @Bean
     public CacheManager cacheManager() {
-        return new ConcurrentMapCacheManager("openapi");
+        return new ConcurrentMapCacheManager("sandbox");
     }
 
     @Bean

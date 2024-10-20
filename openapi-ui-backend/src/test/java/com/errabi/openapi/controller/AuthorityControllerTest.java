@@ -1,6 +1,6 @@
-package com.errabi.sandbox.controller;
+package com.errabi.openapi.controller;
 
-import com.errabi.openapi.web.model.AuditDto;
+import com.errabi.openapi.web.model.AuthorityDto;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -17,15 +17,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @WithMockUser(username = "admin", password = "admin") // Mock user for authentication
-class AuditControllerTest extends BaseControllerIT {
+class AuthorityControllerTest extends BaseControllerIT{
     @Test
     @Order(1)
-    void CreateAuditOkTest() throws Exception {
-        mockMvc.perform(post("/sandbox-api/v1/audits")
-                        .content(asJsonString(AuditDto.builder()
-                                .userName("e2rabi")
-                                .data("test")
-                                .component("test")
+    void CreateAuthorityOkTest() throws Exception {
+        mockMvc.perform(post("/sandbox-api/v1/authorities")
+                        .content(asJsonString(AuthorityDto.builder()
+                                .permission("write")
                                 .build()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -34,27 +32,25 @@ class AuditControllerTest extends BaseControllerIT {
     }
     @Test
     @Order(2)
-    void FindAuditByIdOkTest() throws Exception {
-        mockMvc.perform(get("/sandbox-api/v1/audits/1"))
+    void FindAuthorityByIdOkTest() throws Exception {
+        mockMvc.perform(get("/sandbox-api/v1/authorities/1"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
     @Test
     @Order(3)
-    void FindAllAuditsOkTest() throws Exception {
-        mockMvc.perform(get("/sandbox-api/v1/audits"))
+    void FindAllAuthoritiesOkTest() throws Exception {
+        mockMvc.perform(get("/sandbox-api/v1/authorities"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
     @Test
     @Order(4)
-    void UpdateAuditOkTest() throws Exception {
-        mockMvc.perform(put("/sandbox-api/v1/audits")
-                        .content(asJsonString(AuditDto.builder()
+    void UpdateAuthorityOkTest() throws Exception {
+        mockMvc.perform(put("/sandbox-api/v1/authorities")
+                        .content(asJsonString(AuthorityDto.builder()
                                 .id(1L)
-                                .userName("amine")
-                                .data("test2")
-                                .component("test2")
+                                .permission("read")
                                 .build()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -63,8 +59,8 @@ class AuditControllerTest extends BaseControllerIT {
     }
     @Test
     @Order(5)
-    void DeleteAuditOkTest() throws Exception {
-        mockMvc.perform(delete("/sandbox-api/v1/audits/1"))
+    void DeleteAuthorityOkTest() throws Exception {
+        mockMvc.perform(delete("/sandbox-api/v1/authorities/1"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }

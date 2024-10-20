@@ -1,6 +1,6 @@
-package com.errabi.sandbox.controller;
+package com.errabi.openapi.controller;
 
-import com.errabi.openapi.web.model.SolutionDto;
+import com.errabi.openapi.web.model.WorkspaceDto;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -17,18 +17,16 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @WithMockUser(username = "admin", password = "admin") // Mock user for authentication
-class SolutionControllerTest extends BaseControllerIT{
+class WorkspaceControllerTest extends BaseControllerIT{
     @Test
     @Order(1)
-    void CreateSolutionOkTest() throws Exception {
-        mockMvc.perform(post("/sandbox-api/v1/solutions")
-                        .content(asJsonString(SolutionDto.builder()
-                                .name("test")
-                                .description("test")
-                                .color("#FFFFFF")
+    void CreateWorkspaceOkTest() throws Exception {
+        mockMvc.perform(post("/sandbox-api/v1/workspace")
+                        .content(asJsonString(WorkspaceDto.builder()
+                                .name("e2rabi")
+                                .description("Amine")
                                 .enabled(true)
                                 .visibility(true)
-                                .image("url")
                                 .build()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -37,30 +35,28 @@ class SolutionControllerTest extends BaseControllerIT{
     }
     @Test
     @Order(2)
-    void FindSolutionByIdOkTest() throws Exception {
-        mockMvc.perform(get("/sandbox-api/v1/solutions/1"))
+    void FindWorkspaceByIdOkTest() throws Exception {
+        mockMvc.perform(get("/sandbox-api/v1/workspace/1"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
     @Test
     @Order(3)
-    void FindAllSolutionsOkTest() throws Exception {
-        mockMvc.perform(get("/sandbox-api/v1/solutions"))
+    void FindAllWorkspacesOkTest() throws Exception {
+        mockMvc.perform(get("/sandbox-api/v1/workspaces"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
     @Test
     @Order(4)
-    void UpdateSolutionOkTest() throws Exception {
-        mockMvc.perform(put("/sandbox-api/v1/solutions")
-                        .content(asJsonString(SolutionDto.builder()
+    void UpdateWorkspaceOkTest() throws Exception {
+        mockMvc.perform(put("/sandbox-api/v1/workspace")
+                        .content(asJsonString(WorkspaceDto.builder()
                                 .id(26L)
-                                .name("card")
-                                .description("update")
-                                .color("#FFF1FF")
+                                .name("test")
+                                .description("test")
                                 .enabled(false)
-                                .visibility(false)
-                                .image("url2")
+                                .visibility(true)
                                 .build()))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
@@ -69,8 +65,8 @@ class SolutionControllerTest extends BaseControllerIT{
     }
     @Test
     @Order(5)
-    void DeleteSolutionOkTest() throws Exception {
-        mockMvc.perform(delete("/sandbox-api/v1/solutions/26"))
+    void DeleteWorkspaceOkTest() throws Exception {
+        mockMvc.perform(delete("/sandbox-api/v1/workspace/26"))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
