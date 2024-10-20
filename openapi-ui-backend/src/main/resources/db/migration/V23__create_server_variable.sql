@@ -6,5 +6,9 @@ create table server_variable (
                                  description varchar(255),
                                  enum_values varchar(255),
                                  name varchar(255),
+                                 color varchar(255),
+                                 created_by varchar(255),
+                                 enabled boolean not null,
+                                 last_modified_by varchar(255),
                                  primary key (id)
 );

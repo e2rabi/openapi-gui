@@ -5,7 +5,6 @@ import com.errabi.openapi.entities.Role;
 import com.errabi.openapi.entities.User;
 import com.errabi.openapi.entities.Workspace;
 import com.errabi.openapi.web.model.*;
-import com.errabi.sandbox.web.model.*;
 import org.mapstruct.*;
 
 import java.util.stream.Collectors;

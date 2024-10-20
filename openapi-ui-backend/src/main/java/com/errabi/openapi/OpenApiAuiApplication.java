@@ -41,8 +41,8 @@ public class OpenApiAuiApplication implements ApplicationRunner {
 				.description("description")
 				.variables(Set.of(serverVariableModel))
 				.build();
-		serverService.save(serverModel);
+		//serverService.save(serverModel);
 
-		serverVariableService.findAll().forEach(System.out::println);
+		//serverVariableService.findAll().forEach(System.out::println);
 	}
 }
