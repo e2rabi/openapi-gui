@@ -14,10 +14,12 @@ import { Label } from "@/components/ui/label"
 import ServerVariable from "./ServerVariable"
 import { SquarePlus } from 'lucide-react'
 import { useDispatch, useSelector } from 'react-redux'
+import { addServerVariable } from "./ServerVariableSlice"
+import { v4 as uuidv4 } from 'uuid';
 
 export default function ServersList() {
     const serverVariable = useSelector((state) => state.serverVariable)
-
+    const dispatch = useDispatch()
     return (
         <Card className="w-full">
             <CardHeader>
@@ -35,7 +37,7 @@ export default function ServersList() {
                         <Input id="name" placeholder="Name of your project" />
                     </div>
                     <div className="flex flex-col space-y-1.5 w-1/5 relative top-5">
-                        <Button>
+                        <Button onClick={() => dispatch(addServerVariable({ id: uuidv4(), name: "value3", Description: "Description3", default: "default1", enums: [{ id: '1', value: "enum 1" }] },))}>
                             <SquarePlus className="h-4 w-4 mr-1" />
                             Add variable</Button>
                     </div>

@@ -12,10 +12,11 @@ import { Label } from "@/components/ui/label"
 import { SquarePlus, Trash2 } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { useDispatch, useSelector } from 'react-redux'
-import { addServer, removeServer } from './ServerEnumSlice'
+import { addServerEnum, removeServerVariable } from './ServerVariableSlice';
+
 import { v4 as uuidv4 } from 'uuid';
 
-const ServerEnum = ({ id, value }) => {
+const ServerEnum = ({ serverVariableId, id, value }) => {
     const dispatch = useDispatch()
     return (
         <Card className="w-full mt-2">
@@ -24,10 +25,10 @@ const ServerEnum = ({ id, value }) => {
 
                 <div className="flex w-full items-center">
                     <div className="flex flex-row items-start mr-4">
-                        <Button variant="outline" className="mr-2" onClick={() => dispatch(addServer({ id: uuidv4(), value: "newValue" }))}>
+                        <Button variant="outline" className="mr-2" onClick={() => dispatch(addServerEnum({ id: uuidv4(), value: "newValue" }))}>
                             <SquarePlus className="h-4 w-4" />
                         </Button>
-                        <Button variant="outline" className="mr-2" onClick={() => dispatch(removeServer(id))}>
+                        <Button variant="outline" className="mr-2" onClick={() => dispatch(removeServerVariable({ id: serverVariableId }))}>
                             <Trash2 className="h-4 w-4" />
                         </Button>
                     </div>

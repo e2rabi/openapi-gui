@@ -12,14 +12,23 @@ export const ServerVariableSlice = createSlice({
     initialState,
     reducers: {
         addServerEnum: (state, action) => {
-            state.value.push(action.payload)
+            console.log("delete by id", action.payload.id)
+            state.value = state.value.filter(e => {
+                let obj = JSON.parse(JSON.stringify(e));
+                console.log(obj)
+                return obj.id !== action.payload.id;
+            })
         },
         addServerVariable: (state, action) => {
-            console.log(action.payload)
             state.value.push(action.payload)
         },
         removeServerVariable: (state, action) => {
-            state.value = state.value.filter(server => server.id !== action.payload)
+            console.log("delete by id", action.payload.id)
+            state.value = state.value.filter(e => {
+                let obj = JSON.parse(JSON.stringify(e));
+                console.log(obj)
+                return obj.id !== action.payload.id;
+            })
         },
     },
 })

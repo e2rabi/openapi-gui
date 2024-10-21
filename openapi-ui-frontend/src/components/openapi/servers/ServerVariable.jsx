@@ -13,8 +13,8 @@ import { SquarePlus } from 'lucide-react'
 import { v4 as uuidv4 } from 'uuid';
 import { useDispatch, useSelector } from 'react-redux'
 import { addServer } from './ServerEnumSlice'
-import { addServerEnum } from './ServerVariableSlice'
-const ServerVariable = ({ name, enums }) => {
+import { addServerEnum } from './ServerVariableSlice';
+const ServerVariable = ({ id, name, enums }) => {
     const dispatch = useDispatch()
     return (
 
@@ -42,11 +42,11 @@ const ServerVariable = ({ name, enums }) => {
             </CardContent>
             <CardFooter className="flex justify-between">
                 <div className="flex flex-col w-full">
-                    <Button className="w-48 mb-4" onClick={() => dispatch(addServer({ id: uuidv4(), value: "newValue" }))}>
+                    <Button className="w-48 mb-4" onClick={() => dispatch(addServerEnum({ id: id, value: "newValue" }))}>
                         <SquarePlus className="h-4 w-4 mr-1" />
                         Add enum Value</Button>
                     {
-                        enums.map(enumValue => <ServerEnum id={enumValue.id} key={enumValue.id} value={enumValue.value} />)
+                        enums.map(enumValue => <ServerEnum serverVariableId={id} id={enumValue.id} key={enumValue.id} value={enumValue.value} />)
                     }
                 </div>
 
